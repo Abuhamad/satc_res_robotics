@@ -1,0 +1,103 @@
+\documentclass[11pt]{NSF}
+\usepackage{bm}
+\usepackage{color,xcolor,colortbl} 
+\usepackage{hyperref} 
+\usepackage{graphicx} 
+\usepackage{vmargin} 
+\usepackage{enumitem, soul}
+\usepackage{amsmath,amssymb,xspace, comment}
+\usepackage{tikz}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{booktabs,wrapfig}
+\usepackage{makecell}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{tabularray}
+\usepackage{tcolorbox}
+
+\newtcolorbox{goalsbox}[2][]
+{
+  colframe = #2!25,
+  colback  = #2!10,
+  coltitle = #2!20!black,  
+  #1,
+}
+
+\setpapersize{USletter}
+\setmarginsrb{1in}{1in}{1in}{1in}{0pt}{0mm}{0pt}{0mm}
+
+
+\renewcommand*{\thefootnote}{\fnsymbol{footnote}}
+\newcommand{\pseudodot}{{\lower 2.4pt\hbox{$\cdot$}}}
+\renewcommand{\title}[1]{\begin{center}\LARGE\bfseries{#1}\end{center}}
+\setul{0.8pt}{}
+\sodef\an{}{-.02em}{0.2em plus0.2em}{0.5em plus.1em minus.1em}
+
+\newcommand*\cib[1]{\tikz[baseline=(char.base)]{
+                \node[shape=circle,fill=black,text=white,draw,inner sep=0.3pt] (char) {#1};}}
+
+\hypersetup{colorlinks=true,citecolor=blue,linkcolor=blue,urlcolor=blue}
+\newcommand{\etal}{{\em et al.}\xspace}
+\newcommand{\eg}{{\em e.g.,}\xspace}
+\newcommand{\ie}{{\em i.e.,}\xspace}
+\newcommand{\etc}{{\em etc.}\xspace}
+\newcommand{\BfPara}[1]{{\vspace{1ex}\noindent\bfseries\an{#1}.}\xspace}
+\newcommand{\BfParaUL}[1]{{\noindent\ul{\textbf{#1}.}}\xspace}
+
+\begin{document}
+%
+% Remove page numbers---Research.gov will paginate the document instead
+%
+\pagestyle{empty} 
+%
+% Line spacing: 
+% The Proposal and Award Policies and Procedures Guide
+% (PAPPG: https://www.nsf.gov/publications/pub_summ.jsp?ods_key=pappg)
+% mandates, in Chapter 2, section B.2, that the main text should have no more than
+% six lines to the vertical inch. With 72 points per inch, the minimum line skip 
+% would be 12 points.
+%
+\setlength{\baselineskip}{12.6pt} % in text mode
+\setlength{\normalbaselineskip}{12.6pt} % in math mode
+
+
+
+\title{\Large
+%Robust Human-in-the-Loop Robotic Learning Using Large Vision-Language Models
+SaTC 2.0: RES: Toward Secure and Robust Generalist Robotic Models}
+\begin{center}
+   {\bfseries\filcenter
+Mohammed Abuhamad, Loyola University Chicago} 
+\end{center}
+
+
+
+\section{Overview}
+
+This proposal aims to address the security and safety challenges in developing foundation models for robotics, ensuring robust frameworks and defense mechanisms for such models as they incorporate various pre-trained models for different modality, and securing against inherited vulnerabilities and adversarial threats.
+Generalist foundation robotic models are inspired by advancements in large language, vision, and vision-language models and represent a pivotal development in intelligent robotic systems. 
+Cross-embodiment robotic datasets and new end-to-end training methods are becoming more democratized, paving the way for significant advancements in foundation robotic models in the near future.
+These models incorporate various pre-trained models (\eg vision and language models) that are trained on Internet-scale datasets.
+Recent studies show that these models enable robotic systems to reason, interact, and learn new tasks in diverse unseen environments.
+However, ensuring their security, safety, and trustworthiness is challenging. This proposal focuses on creating comprehensive frameworks, benchmarks, advanced security measures, and specialized methods to enhance the security and reliability of these models for practical applications.
+This main objective can be achieved through three main tasks: \cib{1} performing a comprehensive vulnerability analysis in foundation robotic models, \cib{2} investigating the modality-inherited vulnerabilities and their impact on multimodal robots, and \cib{3} developing benchmarks to ensure the robustness and trustworthiness of robotic models.
+To successfully conduct these tasks, we must overcome unique challenges of building and examining robotic models due to their complex architectures, the multimodal nature of their input, restrictions on the output/action space (which is bounded by the robot embodiment and data), and the evolving landscape of security measures.
+
+\BfPara{Keywords} trustworthy AI/ML security; robotic foundation models; vision-language-action models; adversarial robustness; multimodal security; safety benchmarking. % VERIFY first keyword against NSF 25-515 controlled list
+
+
+\section{Intellectual Merit}
+This work aims to enhance the security and robustness of foundation models in robotics by \cib{1} developing a taxonomy and framework for threat vectors in multimodal robotic systems, \cib{2} analyzing cross-modal attack propagation to uncover vulnerabilities in vision-language-action integration, and \cib{3} creating benchmarks and evaluation frameworks for robotic security, safety, and interpretability, bridging AI, cybersecurity, and robotics.
+The project will deliver transformative outcomes, including security-enhanced foundational robotics models, open-source tools for attacks, defenses, and interpretability, and datasets to enable replication and further research. It will provide an attack framework, assessment methods for robotic embodiments, and evaluation benchmarks to advance secure robotic systems.
+The educational components of this project integrate research findings into academic courses and professional workshops. It emphasizes hands-on labs and research participation for students from various educational levels. These efforts aim to promote a strong focus on security-conscious design and implementation in AI and robotics.
+
+
+
+\section{Broader Impacts}
+This project will improve the security, robustness, and trustworthiness of foundation models in robotics, facilitating their safe and responsible deployment in critical systems. By addressing fundamental vulnerabilities and establishing comprehensive security frameworks, this work will increase public confidence and acceptance in robotic systems while cultivating a new generation of security-conscious researchers and practitioners in robotics and AI.
+The project will provide open-source tools, datasets, benchmarks, and security frameworks, fostering collaboration and innovation in the research community and industry. These transformative resources will enable researchers and practitioners to evaluate and improve the security of robotic systems and accelerate progress in the field. The methodologies developed here will extend beyond robotics and benefit adjacent domains, contributing to the security of AI and multimodal models.
+Educational and outreach initiatives in this work will promote awareness of robotic and AI security challenges across academic and professional communities through curricula, labs, workshops, panel discussions, and seminars.
+This will create substantial knowledge-transfer pathways between academia and industry, ensuring that research advances are rapidly incorporated into professional practice.
+
+\end{document}

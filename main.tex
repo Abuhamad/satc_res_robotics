@@ -1,0 +1,62 @@
+\documentclass[11pt,letterpaper]{article}
+\input{settings.tex}
+
+\begin{document}
+\pagestyle{empty} 
+
+
+\setlength{\baselineskip}{12.6pt} % in text mode
+\setlength{\normalbaselineskip}{12.6pt} % in math mode
+\title{\Large
+SaTC 2.0: RES: Toward Secure and Robust Generalist Robotic  Models} 
+\begin{center}
+   {\bfseries\filcenter} ~\vspace{2ex}
+   {\Large\bfseries\filcenter
+Project Description
+\\\rule{\textwidth}{0.4pt}}
+%Mohammed Abuhamad, Loyola University Chicago} 
+\end{center}
+
+
+\input{01}
+\input{02}
+\input{sections/impact}
+\input{sections/prior_support}
+
+
+%\input{sections/education}
+%\include{sections/education}
+%\include{sections/mentoring}
+
+
+\newpage\newsection{A}
+\renewcommand\refname{References Cited}
+
+% I prefer to use the IEEE bibliography style. 
+% That's  NOT required by the NSF guidelines. 
+% Feel Free to use whatever style you prefer
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+
+
+\newpage\newsection{B}
+\input{sections/budgetjustification}
+
+\newpage\newsection{C}
+\input{sections/facilities}
+
+\newpage\newsection{D}
+\input{sections/datamanagement}
+
+\newpage\newsection{E}
+\input{sections/mentoring}
+
+\newpage\newsection{F}
+\input{sections/summary}
+
+\newpage\newsection{F}
+\input{sections/synergy}
+
+
+
+\end{document}

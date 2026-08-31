@@ -1,0 +1,135 @@
+\usepackage{nsfproposal}
+\usepackage{bm}
+\usepackage{amsthm}
+\usepackage{color,xcolor,colortbl} 
+\usepackage{hyperref} 
+\usepackage{graphicx} 
+\usepackage{vmargin} 
+\usepackage{enumitem, soul}
+\usepackage{amsmath,amssymb,xspace, comment}
+\usepackage{tikz}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{booktabs,wrapfig}
+\usepackage{makecell}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{tabularray}
+\usepackage{tcolorbox}
+\usepackage{mfirstuc}
+\usepackage{makecell}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{rotating}
+\usepackage{tabularray}
+\usepackage{wasysym}
+
+\MFUnocap{are}
+\MFUnocap{or}
+\MFUnocap{etc}
+\MFUnocap{and}
+\MFUnocap{with}
+\MFUnocap{of}
+\MFUnocap{a}
+
+
+\newtcolorbox{goalsbox}[2][]
+{
+  colframe = #2!25,
+  colback  = #2!10,
+  coltitle = #2!20!black,  
+  #1,
+}
+
+\setpapersize{USletter}
+\setmarginsrb{1in}{1in}{1in}{1in}{0pt}{0mm}{0pt}{0mm}
+
+
+\renewcommand*{\thefootnote}{\fnsymbol{footnote}}
+\newcommand{\pseudodot}{{\lower 2.4pt\hbox{$\cdot$}}}
+\renewcommand{\title}[1]{\begin{center}\LARGE\bfseries{#1}\end{center}}
+\setul{0.8pt}{}
+\sodef\an{}{-.02em}{0.2em plus0.2em}{0.5em plus.1em minus.1em}
+
+\newcommand*\cib[1]{\tikz[baseline=(char.base)]{
+                \node[shape=circle,fill=black,text=white,draw,inner sep=0.3pt] (char) {#1};}}
+
+\hypersetup{colorlinks=true,citecolor=blue,linkcolor=blue,urlcolor=blue}
+\newcommand{\etal}{{\em et al.}\xspace}
+\newcommand{\eg}{{\em e.g.,}\xspace}
+\newcommand{\ie}{{\em i.e.,}\xspace}
+\newcommand{\etc}{{\em etc.}\xspace}
+% \renewcommand{\sectionautorefname}{{\S\hspace{-0.5ex}}}
+% \renewcommand{\subsectionautorefname}{{\S\hspace{-0.5ex}}}
+% \renewcommand{\subsectionautorefname}{Table}
+\newcommand{\algorithmautorefname}{Algorithm}
+\renewcommand{\tableautorefname}{Table}
+\renewcommand{\itemautorefname}{Table}
+
+\newcommand{\xo}{\raisebox{0.4ex}{\textbf{$\chi$}}\xspace}
+\newcommand{\xod}{{{\xo}-embodied}\xspace}
+\newcommand{\xot}{{{\xo}-embodiment}\xspace}
+\newcommand{\ours}{{\small$\textsf{{X}-RSecure}$}\xspace}
+\newcommand{\BfPara}[1]{{\noindent\bfseries\an{#1}.}\xspace}
+\newcommand{\BfParaUL}[1]{{\noindent\ul{\textbf{#1}.}}\xspace}
+\newcommand{\dd}{\Circle}
+\newcommand{\vv}{\CIRCLE}
+\newcommand{\bb}{\RIGHTcircle}
+\newcommand{\ee}{$\cdot$}
+\newcommand{\BfParaC}[1]{{\vspace{1ex}\noindent\bfseries{\capitalisewords{#1}.}\xspace}}
+
+\newcommand{\todo}[1]{\textcolor{blue}{[$\rightarrow$#1]}}
+\newcommand{\mo}[1]{\textcolor{red!85!black}{#1}}
+\usepackage{txfonts}
+\renewcommand{\rmdefault}{txr}
+% \usepackage{algpseudocode}
+% \usepackage[linesnumbered]{algorithm2e}
+
+\usepackage{tcolorbox}
+\tcbuselibrary{theorems}
+
+
+% 
+
+
+\newtcbtheorem[]{observation}{\textbf{}}%
+{colframe=white!95!black,fonttitle=\bfseries,coltitle=black, boxsep = 2pt, left = 0pt, right = 0pt, top = 1pt, bottom = 2pt, boxrule = 0pt, bottomrule = 0pt, toprule = 0pt}{th}{}
+
+
+\newtheoremstyle{styledef}%
+{\topsep}% Space above
+{\topsep}% Space below 
+{}% Body font
+{3pt}% Indent amount
+{\bfseries}% Theorem head font
+{.}% Punctuation after theorem head
+{3pt}% Space after theorem head
+{}% Theorem head spec (can be left empty, meaning ‘normal’)
+\theoremstyle{styledef}
+
+%\newtheorem{observation}{Observation}
+
+\newcommand{\observationdef}[2][0.97\textwidth]{
+  \vspace{2ex}\par\noindent\tikzstyle{mybox} = [fill=gray!10,
+   thick,rectangle,inner sep=6pt,path picture={\fill [white!40!black] ([xshift=-8.1cm]path picture bounding box.north) rectangle (path picture bounding box.south west);}]
+  \begin{tikzpicture}
+  \centering
+   \node [mybox] (box){%
+    \begin{minipage}{#1}{ #2}\end{minipage}
+   };
+  \end{tikzpicture}
+}
+
+\setlength{\baselineskip}{12.6pt} % in text mode
+\setlength{\normalbaselineskip}{12.6pt} % in math mode
+
+\usetikzlibrary{positioning}
+
+
+% Make all figure and table captions small
+\usepackage{caption}
+\captionsetup[figure]{font=small}
+\captionsetup[table]{font=small}
+
+
+

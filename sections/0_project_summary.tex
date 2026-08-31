@@ -1,0 +1,128 @@
+\documentclass[11pt]{NSF}
+\usepackage{bm}
+\usepackage{color,xcolor,colortbl} 
+\usepackage{hyperref} 
+\usepackage{graphicx} 
+\usepackage{vmargin} 
+\usepackage{enumitem, soul}
+\usepackage{amsmath,amssymb,xspace, comment}
+\usepackage{tikz}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{booktabs,wrapfig}
+\usepackage{makecell}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{tabularray}
+\usepackage{tcolorbox}
+
+\newtcolorbox{goalsbox}[2][]
+{
+  colframe = #2!25,
+  colback  = #2!10,
+  coltitle = #2!20!black,  
+  #1,
+}
+
+\setpapersize{USletter}
+\setmarginsrb{1in}{1in}{1in}{1in}{0pt}{0mm}{0pt}{0mm}
+
+
+\renewcommand*{\thefootnote}{\fnsymbol{footnote}}
+\newcommand{\pseudodot}{{\lower 2.4pt\hbox{$\cdot$}}}
+\renewcommand{\title}[1]{\begin{center}\LARGE\bfseries{#1}\end{center}}
+\setul{0.8pt}{}
+\sodef\an{}{-.02em}{0.2em plus0.2em}{0.5em plus.1em minus.1em}
+
+\newcommand*\cib[1]{\tikz[baseline=(char.base)]{
+                \node[shape=circle,fill=black,text=white,draw,inner sep=0.3pt] (char) {#1};}}
+
+\hypersetup{colorlinks=true,citecolor=blue,linkcolor=blue,urlcolor=blue}
+\newcommand{\etal}{{\em et al.}\xspace}
+\newcommand{\eg}{{\em e.g.,}\xspace}
+\newcommand{\ie}{{\em i.e.,}\xspace}
+\newcommand{\etc}{{\em etc.}\xspace}
+\newcommand{\BfPara}[1]{{\vspace{1ex}\noindent\bfseries\an{#1}.}\xspace}
+\newcommand{\BfParaUL}[1]{{\noindent\ul{\textbf{#1}.}}\xspace}
+
+\begin{document}
+%
+% Remove page numbers---Research.gov will paginate the document instead
+%
+\pagestyle{empty} 
+%
+% Line spacing: 
+% The Proposal and Award Policies and Procedures Guide
+% (PAPPG: https://www.nsf.gov/publications/pub_summ.jsp?ods_key=pappg)
+% mandates, in Chapter 2, section B.2, that the main text should have no more than
+% six lines to the vertical inch. With 72 points per inch, the minimum line skip 
+% would be 12 points.
+%
+\setlength{\baselineskip}{12.6pt} % in text mode
+\setlength{\normalbaselineskip}{12.6pt} % in math mode
+
+
+
+\title{\Large
+%Robust Human-in-the-Loop Robotic Learning Using Large Vision-Language Models
+CAREER: Robust Robotic Manipulators with Human-in-the-Loop Learning via Large Vision-Language Models}
+\begin{center}
+   {\bfseries\filcenter
+Mohammed Abuhamad, Loyola University Chicago} 
+\end{center}
+
+
+
+\section{Overview}
+
+The primary objective of this project is to develop a holistic framework that integrates security, privacy, adversarial robustness, and interpretability into the training and deployment of robotic manipulators. This framework aims to address the multifaceted challenges posed by robotic learning in environments originally designed for human operation. By leveraging advanced techniques from various domains of AI, we seek to create robotic systems that are capable of learning from vast amounts of human experiences while maintaining high standards of security, privacy, and transparency.
+To achieve this objective, the project will combine state-of-the-art techniques from the following areas:
+\cib{1} Privacy-Preserving Machine Learning:
+Implement differential privacy methods to protect sensitive data collected from human demonstrations, ensuring that individual privacy is maintained while allowing for effective learning.
+\cib{2} Federated Learning: Utilize federated learning frameworks to enable decentralized training of robotic models across multiple devices without sharing raw data, thus preserving data privacy.
+\cib{3} Adversarial Robustness:
+Develop adversarial training methods to enhance the robustness of robotic controllers against malicious inputs and unexpected environmental changes.
+\cib{4} Interpretable AI:
+Integrate attention mechanisms into the learning models to highlight which parts of the input data are most influential in the decision-making process, providing transparency and interpretability.
+\cib{5} Large Vision-Language Models (VLMs):
+Train VLMs on large datasets of human demonstrations to generate goal-conditioned motion sequences, facilitating the transfer of human knowledge to robotic systems.
+Moreover, leverage the vision-language understanding capabilities of VLMs to improve the contextual awareness and decision-making abilities of robotic manipulators.
+
+The project will be executed in several phases:
+\cib{1} Data Collection and Privacy Protection:
+Collect large-scale datasets of human experiences, ensuring privacy through differential privacy techniques and federated learning frameworks.
+Model Development and Training:
+\cib{2} Develop and train robotic learning models using adversarial training and robust learning methods to enhance their resilience against adversarial conditions.
+Incorporate interpretability techniques, such as attention mechanisms and saliency maps, into the models to provide transparency in their decision-making processes.
+\cib{3} Integration of VLMs:
+Train VLMs on the collected datasets to generate goal-conditioned motion sequences and improve the contextual understanding of robotic systems.
+\cib{4} Evaluation and Iteration:
+Evaluate the performance, robustness, and interpretability of the developed models in real-world scenarios.
+Iterate on the models based on feedback and performance metrics to continuously improve their capabilities.
+
+The expected outcome of this project is the creation of advanced robotic manipulators that are capable of learning from millions of human experiences in a secure, private, robust, and interpretable manner. These robotic systems will be able to perform various tasks in human-designed environments, such as household chores and industrial operations, with high levels of efficiency and reliability. By ensuring that these systems are transparent in their decision-making processes and resilient against adversarial conditions, we aim to foster trust and safety in the deployment of autonomous robotic manipulators in real-world applications.
+
+
+\BfPara{Significance and Objective} 
+% It is clear that AI and AI-powered tools have gained momentum in both development and usage and are becoming increasingly prevalent in the workplace. 
+The significance of this project lies in its potential to revolutionize the deployment of robotic manipulators in human environments by addressing critical challenges related to security, privacy, adversarial robustness, and interpretability. By developing a comprehensive framework that integrates advanced techniques from privacy-preserving machine learning, adversarial training, interpretable AI, and large vision language models, the project aims to create robotic systems that can learn effectively from vast amounts of human experiences while ensuring high standards of data privacy and security. The primary objective is to produce robust, transparent, and reliable robotic manipulators capable of performing complex tasks in environments originally designed for humans, thereby enhancing their utility and fostering greater trust and safety in their real-world applications.
+
+
+
+\section{Intellectual Merit}
+This project innovatively integrates state-of-the-art techniques from diverse AI disciplines to address the complex challenges of deploying robotic manipulators in human environments. 
+By employing privacy-preserving machine learning, it ensures the protection of sensitive data from human demonstrations, fostering ethical AI development. 
+The use of adversarial training and robust reinforcement learning enhances the resilience of robotic systems against malicious inputs and unforeseen conditions, ensuring reliability and safety. 
+Interpretable AI methods, such as attention mechanisms and saliency-based methods, provide transparency and accountability in robotic decision-making, crucial for gaining user trust. 
+Additionally, leveraging large vision language models to generate goal-conditioned motion sequences from human experiences significantly advances the transfer of human knowledge to robots. 
+
+
+
+\section{Broader Impacts}
+This proposal, if funded, will enhances the trustworthiness and reliability of AI systems, which is crucial for their widespread adoption in diverse sectors such as healthcare, manufacturing, and domestic environments. This can lead to increased efficiency and safety in tasks performed by robots, ultimately improving the quality of life and workplace productivity. 
+Furthermore, the ethical handling of sensitive data through privacy-preserving techniques sets a new standard for responsible AI development, promoting public trust in AI technologies. 
+Educationally, the project provides a rich, interdisciplinary platform for training the next generation of AI researchers and engineers in the principles of secure and ethical AI. 
+Economically, the advancements can stimulate innovation and competitiveness in the AI and robotics industries, potentially leading to new business opportunities and job creation. 
+This project not only pushes the boundaries of scientific knowledge but also ensures that these advancements are aligned with societal values and needs.
+
+\end{document}

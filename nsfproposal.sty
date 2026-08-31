@@ -1,0 +1,39 @@
+\NeedsTeXFormat{LaTeX2e}[1995/06/01]
+\ProvidesPackage{nsfproposal}[2015/09/06 Generic NSF proposal settings]
+
+\RequirePackage{mathpazo}
+\RequirePackage{mathptmx} % Times Roman fonts for text and math
+%\RequirePackage[scaled=.92]{helvet} % Helvetica fonts for text
+
+\RequirePackage{courier} % Courier fonts for text
+
+% tight sectioning
+\RequirePackage[bf,compact]{titlesec}
+\titleformat*{\section}{\bfseries\Large}
+\titleformat*{\subsection}{\bfseries\large}
+\titleformat*{\subsubsection}{\bfseries}
+\titleformat*{\paragraph}{\bfseries}
+
+\RequirePackage[dvipsnames,svgnames,table]{xcolor}
+
+\RequirePackage{wrapfig}
+
+\RequirePackage{graphicx}
+
+\RequirePackage[obeyspaces]{url}
+\urlstyle{sf}
+\RequirePackage[breaklinks,colorlinks,linkcolor=DarkGreen,citecolor=DarkRed,urlcolor=white!0!blue!99]{hyperref}
+
+\RequirePackage{microtype} % for kerning perfectionists (but also saves space over all)
+
+\RequirePackage{booktabs} % for tabular perfectionists
+
+\RequirePackage[sort&compress,numbers]{natbib}
+
+\RequirePackage{paralist} % for {compactitem,compactenum,compactdesc} (and others) alternative:{mdwlist}
+
+\RequirePackage[letterpaper,margin=1in]{geometry}
+
+\RequirePackage{xspace} % to fix spacing issues after text-producing macros
+\newcommand{\newsection}[1]{\pagenumbering{arabic}\renewcommand{\thepage}{#1--\arabic{page}}}
+\endinput
