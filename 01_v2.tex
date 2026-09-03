@@ -238,6 +238,7 @@ The educational components of this project integrate research findings into acad
 \begin{tikzpicture}[
   timeline/.style={ultra thick, draw=black!60, rounded corners=3pt},
     label/.style={align=center,  text width=2.3cm, inner sep=1pt},
+    label2/.style={align=center,  text width=3cm, inner sep=1pt},
     event2022/.style={rounded corners=3pt, draw=black!70, fill=white, thick, minimum size=6mm, align=center, text=black},
     event2023/.style={rounded corners=3pt, draw=black!70, fill=gray!10, thick, minimum size=6mm,  align=center, text=black},
     event2024/.style={rounded corners=3pt, draw=black!70, fill=gray!50, thick, minimum size=6mm, align=center, text=black},
@@ -253,15 +254,19 @@ The educational components of this project integrate research findings into acad
     \draw[-, line width=0.5pt, draw=white] (15,0) to[out=-0, in=0] (15,-1);
     \draw[timeline,line width=6pt] (15,-1) -- (0.5,-1);
     \draw[-, line width=0.5pt, draw=white] (15,-1) -- (0.5,-1);
-    \draw[timeline,line width=6pt] (0.5,-1) to[out=-180, in=180] (0.5,-3);
-    \draw[-, line width=0.5pt, draw=white] (0.5,-1) to[out=-180, in=180] (0.5,-3);
-    \draw[timeline,line width=6pt] (0.5,-3) -- (15,-3);
-    \draw[-, line width=0.5pt, draw=white] (0.5,-3) -- (15,-3);
-    \draw[timeline,line width=6pt] (15,-3) to[out=-0, in=0] (15,-4);
+    \draw[timeline,line width=6pt] (0.5,-1) to[out=-180, in=180] (0.5,-2.5);
+    \draw[-, line width=0.5pt, draw=white] (0.5,-1) to[out=-180, in=180] (0.5,-2.5);
+    \draw[timeline,line width=6pt] (0.5,-2.5) -- (15,-2.5);
+    \draw[-, line width=0.5pt, draw=white] (0.5,-2.5) -- (15,-2.5);
+    \draw[timeline,line width=6pt] (15,-2.5) to[out=-0, in=0] (15,-4);
     \draw[-, line width=0.5pt, draw=white] (15,-3) to[out=-0, in=0] (15,-4);
-    \draw[timeline,line width=6pt] (15,-4) -- (1,-4); 
-    \draw[-, line width=0.5pt, draw=white] (15,-4) -- (1,-4);
-    \draw[-stealth, line width=6pt, draw=black!60] (1,-4) -- (0.8,-4);
+    \draw[timeline,line width=6pt] (15,-4) -- (0.5,-4); 
+    \draw[-, line width=0.5pt, draw=white] (15,-4) -- (0.5,-4);
+    \draw[timeline,line width=6pt] (0.5,-4) to[out=-180, in=180] (0.5,-5.5);
+    \draw[-, line width=0.5pt, draw=white] (0.5,-4) to[out=-180, in=180] (0.5,-5.5);
+    \draw[timeline,line width=6pt] (0.5,-5.5) -- (12.9,-5.5);
+    \draw[-, line width=0.5pt, draw=white] (0.5,-5.5) -- (12.9,-5.5);
+    \draw[-stealth, line width=6pt, draw=black!60] (12.9,-5.5) -- (14.1,-5.5);
 
     %%% Foundation Models %%%
     \node[event2022] (cliport) at (2.5,0) {\cite{shridhar2022cliport}};
@@ -295,57 +300,57 @@ The educational components of this project integrate research findings into acad
     \node[label, above=3pt of openvla] {OpenVLA };
 
     %%% Specialized Applications %%%
-    \node[event2024] (deer) at (0.9,-1) {\cite{yue2024deer}};
+    \node[event2024] (deer) at (1.1,-1) {\cite{yue2024deer}};
     \node[label, below=3pt of deer] {Deer-VLA };
     
-    \node[event2024] (uni) at (2.7,-1) {\cite{zhang2024uni}};
+    \node[event2024] (uni) at (2.9,-1) {\cite{zhang2024uni}};
     \node[label, below=3pt of uni] {Uni-NaVid };
     
-    \node[event2024] (revla) at (4.3,-1) {\cite{dey2024revla}};
+    \node[event2024] (revla) at (4.6,-1) {\cite{dey2024revla}};
     \node[label, below=3pt of revla] {ReVLA };
 
-    \node[event2024] (occllama) at (5.8,-1) {\cite{wei2024occllama}};
+    \node[event2024] (occllama) at (6.1,-1) {\cite{wei2024occllama}};
     \node[label, below=3pt of occllama] {Occllama };
 
-    \node[event2024] (pi0) at (7.2,-1) {\cite{black2024pi_0}};
+    \node[event2024] (pi0) at (7.4,-1) {\cite{black2024pi_0}};
     \node[label, below=3pt of pi0] {Pi-01 };
 
-    \node[event2024] (rdt) at (8.5,-1) {\cite{liu2024rdt}};
+    \node[event2024] (rdt) at (8.7,-1) {\cite{liu2024rdt}};
     \node[label, below=3pt of rdt] {RDT-1B };
 
-    \node[event2024] (cogact) at (10,-1) {\cite{li2024cogact}};
+    \node[event2024] (cogact) at (10.2,-1) {\cite{li2024cogact}};
     \node[label, below=3pt of cogact] {CogAct };
 
-    \node[event2024] (edgevla) at (11.8,-1) {\cite{budzianowski20edgevla}};
+    \node[event2024] (edgevla) at (11.9,-1) {\cite{budzianowski20edgevla}};
     \node[label, below=3pt of edgevla] {EdgeVLA };
 
-    \node[event2024] (showui) at (13.4,-1) {\cite{lin2024showui}};
+    \node[event2024] (showui) at (13.6,-1) {\cite{lin2024showui}};
     \node[label, below=3pt of showui] {ShowUI };
 
     %%% Robotics Focus %%%
-    \node[event2024] (navila) at (1, -3) {\cite{cheng2024navila}};
-    \node[label, above=3pt of navila] {NaviLa};
+    \node[event2024] (navila) at (1, -2.5) {\cite{cheng2024navila}};
+    \node[label, below=3pt of navila] {NaviLa};
 
-    \node[event2024] (quar) at (2.5, -3) {\cite{ding2024quar}};
-    \node[label, above=3pt of quar] {Quar-VLA};
+    \node[event2024] (quar) at (2.5, -2.5) {\cite{ding2024quar}};
+    \node[label, below=3pt of quar] {Quar-VLA};
 
-    \node[event2024] (bivla) at (4.4, -3) {\cite{gbagbe2024bi}};
-    \node[label, above=3pt of bivla] {Bi-VLA};
+    \node[event2024] (bivla) at (4.4, -2.5) {\cite{gbagbe2024bi}};
+    \node[label, below=3pt of bivla] {Bi-VLA};
 
-    \node[event2024] (robomamba) at (6.3, -3) {\cite{liu2024robomamba}};
-    \node[label, above=3pt of robomamba] {RoboMamba};
+    \node[event2024] (robomamba) at (6.3, -2.5) {\cite{liu2024robomamba}};
+    \node[label, below=3pt of robomamba] {RoboMamba};
 
-    \node[event2025] (otter) at (7.8, -3) {\cite{huang2025otter}};
-    \node[label, above=3pt of otter] {Otter};
+    \node[event2025] (otter) at (7.8, -2.5) {\cite{huang2025otter}};
+    \node[label, below=3pt of otter] {Otter};
 
-    \node[event2025] (pointvla) at (9.2, -3) {\cite{li2025pointvla}};
-    \node[label, above=3pt of pointvla] {PointVLA};
+    \node[event2025] (pointvla) at (9.2, -2.5) {\cite{li2025pointvla}};
+    \node[label, below=3pt of pointvla] {PointVLA};
 
-    \node[event2025] (combatvla) at (11.3, -3) {\cite{chen2025combatvla}};
-    \node[label, above=3pt of combatvla] {CombatVLA};
+    \node[event2025] (combatvla) at (11.3, -2.5) {\cite{chen2025combatvla}};
+    \node[label, below=3pt of combatvla] {CombatVLA};
 
-    \node[event2025] (hybridvla) at (13.5, -3) {\cite{liu2025hybridvla}};
-    \node[label, above=3pt of hybridvla] {HybridVLA};
+    \node[event2025] (hybridvla) at (13.5, -2.5) {\cite{liu2025hybridvla}};
+    \node[label, below=3pt of hybridvla] {HybridVLA};
 
     %%% General Capabilities %%%
     \node[event2025] (covla) at (2.7, -4) {\cite{arai2025covla}}; % Changed from -6 to -5.2
@@ -373,12 +378,33 @@ The educational components of this project integrate research findings into acad
 
     \node[event2025] (dexvla) at (14.5, -4) {\cite{wen2025dexvla}}; % Changed from -6 to -5.2
     \node[label, below=3pt of dexvla] {DexVLA};
-\end{tikzpicture}
+    %%% Newest Generalist Models (Q1--Q2 2025) %%%
+    \node[event2024] (gr2) at (1.3, -4) {\cite{cheang2024gr2}};
+    \node[label, below=3pt of gr2] {GR-2};
+
+    \node[event2025] (spatialvla) at (1.3,-5.5) {\cite{qu2025spatialvla}};
+    \node[label, below=3pt of spatialvla] {SpatialVLA};
+
+    \node[event2025] (openvlaoft) at (3.7,-5.5) {\cite{openvla_oft}};
+    \node[label2, below=3pt of openvlaoft] {OpenVLA-OFT};
+
+    \node[event2025] (grootn1) at (6,-5.5) {\cite{gr00tn1}};
+    \node[label, below=3pt of grootn1] {GR00T N1};
+
+    \node[event2025] (geminirobotics) at (8.6,-5.5) {\cite{geminirobotics2025}};
+    \node[label2, below=3pt of geminirobotics] {Gemini Robotics};
+
+    \node[event2025] (pi05) at (10.8,-5.5) {\cite{pi05_2025}};
+    \node[label, below=3pt of pi05] {Pi-0.5};
+
+    \node[event2025] (worldvla) at (12.7,-5.5) {\cite{cen2025worldvla}};
+    \node[label, below=3pt of worldvla] {WorldVLA};\end{tikzpicture}
 }
 \vspace{-4.4ex}
 \caption{\small Recent robotic VLA models from {\fcolorbox{black}{white}{\small \text{2022}}} to {\fcolorbox{black}{gray}{\text{2025}}}.}\vspace{-1ex}
 \label{fig:vla-timeline}
   \end{minipage}
+  \vspace{-2ex}
 \end{wrapfigure}
 % {\vspace{-1ex}} 
 \BfPara{End-to-end Robotic Learning}
@@ -391,7 +417,7 @@ High-capacity models have demonstrated an exceptional ability to process and lea
 These models leverage their vast parameter space, \eg GPT-3, Jurassic-1, WuDao-2 with 175B+, Microsoft and Nvidia's Megatron-Turing NLG with 530B, and Google's Switch Transformer with 1.56 trillion parameters, to capture intricate patterns and relationships within the data, enabling them to generalize effectively across a wide array of tasks. 
 Compared to these models, models used for robotic learning directly are relatively smaller, \eg RT-1~\cite{rt-1}, MOO~\cite{stone2023open}, and CLIPort~\cite{shridhar2022cliport} (with CLIP-ViT-Base), have 35M+, 111M, and 400M+, respectively. RT-2~\cite{rt-2} and variations of RT-2-X~\cite{9} incorporate pre-trained VLMs, which have large parameter space (\eg RT-2-PaLM-E and RT-2-PaLI-X have 12B and 55B, respectively).
 Scaling up these models faces many challenges: (1) maintaining real-time inference under strict time constraints (\eg 3-5Hz), (2) maintaining robustness and coherence when generalizing to novel tasks and environments, (3) addressing the computational demands and resource requirements of training and deployment, (4) managing the complexity of integrating multimodal inputs, and (5) ensuring reliability and safety in dynamic and unpredictable real-world settings.
-As end-to-end techniques and integration of LLM and VLM backbones become more prevalent~\cite{9} (see the evolution of robotic models in \autoref{fig:vla-timeline}), security research for these models is limited. Generalist robotic models continue to emerge rapidly through 2025 and 2026~\cite{gr00tn1,geminirobotics2025,pi05_2025,rdt1b,openvla_oft}, extending the trend shown in \autoref{fig:vla-timeline} beyond its early-2025 horizon. Ensuring that these models are resilient to adversarial attacks is crucial and requires immediate attention.
+As end-to-end techniques and integration of LLM and VLM backbones become more prevalent~\cite{9} (see the evolution of robotic models in \autoref{fig:vla-timeline}), security research for these models is limited. Generalist robotic models continue to emerge rapidly, with recent examples such as SpatialVLA, OpenVLA-OFT, {GR00T}~N1, Gemini Robotics, pi-0.5, and WorldVLA~\cite{qu2025spatialvla,openvla_oft,gr00tn1,geminirobotics2025,pi05_2025,cen2025worldvla,cheang2024gr2} added to \autoref{fig:vla-timeline}. Ensuring that these models are resilient to adversarial attacks is crucial and requires immediate attention.
 To this end, we identify the following challenges.
 
 \BfPara{C1: Wide-array of Data and Model Adoption}

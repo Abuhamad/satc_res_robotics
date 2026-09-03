@@ -147,49 +147,95 @@
   }
 
 @inproceedings{seferis2025randomized,
-  title     = {Randomized Smoothing Meets Vision-Language Models},
-  author    = {NEEDS VERIFICATION},
-  booktitle = {Conference on Empirical Methods in Natural Language Processing (EMNLP)},
-  year      = {2025},
-  note      = {VERIFY: reported first author Seferis et al. Extends certified robustness (randomized smoothing) to generative VLM outputs mapped to discrete robot commands. Confirm title, authors, EMNLP 2025 venue, and arXiv id before submission.}
+    title = "Randomized Smoothing Meets Vision-Language Models",
+    author = "Seferis, Emmanouil  and
+      Wu, Changshun  and
+      Kollias, Stefanos  and
+      Bensalem, Saddek  and
+      Cheng, Chih-Hong",
+    editor = "Christodoulopoulos, Christos  and
+      Chakraborty, Tanmoy  and
+      Rose, Carolyn  and
+      Peng, Violet",
+    booktitle = "Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing",
+    month = nov,
+    year = "2025",
+    address = "Suzhou, China",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2025.emnlp-main.1396/",
+    doi = "10.18653/v1/2025.emnlp-main.1396",
+    pages = "27468--27478",
+    ISBN = "979-8-89176-332-6",
+    abstract = "Randomized smoothing (RS) is one of the prominent techniques to ensure the correctness of machine learning models, where point-wise robustness certificates can be derived analytically. While RS is well understood for classification, its application to generative models is unclear, since their outputs are sequences rather than labels. We resolve this by connecting generative outputs to an oracle classification task and showing that RS can still be enabled: the final response can be classified as a discrete action (e.g., service-robot commands in VLAs), as harmful vs. harmless (content moderation or toxicity detection in VLMs), or even applying oracles to cluster answers into semantically equivalent ones. Provided that the error rate for the oracle classifier comparison is bounded, we develop the theory that associates the number of samples with the corresponding robustness radius. We further derive improved scaling laws analytically relating the certified radius and accuracy to the number of samples, showing that the earlier result of 2 to 3 orders of magnitude fewer samples sufficing with minimal loss remains valid even under weaker assumptions. Together, these advances make robustness certification both well-defined and computationally feasible for state-of-the-art VLMs, as validated against recent jailbreak-style adversarial attacks."
+}
 }
 
-@inproceedings{li2026whenattention,
-  title     = {Reconstructing Visual Tokens to Erase Backdoors in Robotic Policies},
-  author    = {NEEDS VERIFICATION},
-  booktitle = {IEEE International Conference on Robotics and Automation (ICRA)},
-  year      = {2026},
-  note      = {VERIFY: reported first author Li et al. Mitigates backdoor attacks by reconstructing visual tokens before action decoding. Confirm title, authors, ICRA 2026 acceptance/venue, and arXiv id before submission.}
+
+@misc{li2026whenattention,
+      title={When Attention Betrays: Erasing Backdoor Attacks in Robotic Policies by Reconstructing Visual Tokens}, 
+      author={Xuetao Li and Pinhan Fu and Wenke Huang and Nengyuan Pan and Songhua Yang and Kaiyan Zhao and Guancheng Wan and Mengde Li and Jifeng Xuan and Miao Li},
+      year={2026},
+      eprint={2602.03153},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2602.03153}, 
 }
 
 @misc{li2025attackvla,
-  title  = {{AttackVLA}: Benchmarking Adversarial and Backdoor Attacks on Vision-Language-Action Models},
-  author = {NEEDS VERIFICATION},
-  year   = {2025},
-  howpublished = {arXiv preprint},
-  note   = {VERIFY: reported first author Li et al. Benchmark suite evaluating evasion and poisoning threats against VLA models. Confirm title, authors, venue, and arXiv id before submission.}
+      title={AttackVLA: Benchmarking Adversarial and Backdoor Attacks on Vision-Language-Action Models}, 
+      author={Jiayu Li and Yunhan Zhao and Xiang Zheng and Zonghuan Xu and Yige Li and Xingjun Ma and Yu-Gang Jiang},
+      year={2025},
+      eprint={2511.12149},
+      archivePrefix={arXiv},
+      primaryClass={cs.CR},
+      url={https://arxiv.org/abs/2511.12149}, 
 }
 
 @misc{sun2026maniparena,
-  title  = {{ManipArena}: Physically-Grounded Evaluation of General-Purpose Robotic Intelligence},
-  author = {NEEDS VERIFICATION},
-  year   = {2026},
-  howpublished = {arXiv preprint},
-  note   = {VERIFY: reported first author Sun et al. Physically realistic, diagnostically controlled evaluation protocol beyond simulator-centric benchmarks. Confirm title, authors, venue, and arXiv id before submission.}
+      title={ManipArena: Comprehensive Real-world Evaluation of Reasoning-Oriented Generalist Robot Manipulation}, 
+      author={Yu Sun and Meng Cao and Yang Ping and Kaidong Zhang and Qingxuan Chen and Rongtao Xu and Liangwang Ruan and Xuecheng Chen and Dongxiu Liu and Yunxiao Yan and Zunnan Xu and Runze Xu and Charles Yang and Peilun Zhang and Xiaofan Li and Ruyi Gan and Liang Ma and Yuehao Yin and Jincheng Yu and Lufang Chen and Yuxin Liang and Peng Zhai and Hao Wang and Ivan Laptev and Ian Reid and Qian Wang and Xiaodan Liang},
+      year={2026},
+      eprint={2603.28545},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2603.28545}, 
 }
 
 @misc{schofield2026chain,
-  title  = {Chain of Spatial Thoughts: Modality-Agnostic Spatial Grounding},
-  author = {NEEDS VERIFICATION},
-  year   = {2026},
-  howpublished = {arXiv preprint},
-  note   = {VERIFY: reported first author Schofield et al. Modality-agnostic spatial grounding for interpreting how models map instructions to physical coordinates. Confirm title, authors, venue, and arXiv id before submission.}
+  title={Chain of Spatial Thoughts: Modality-Agnostic Spatial Grounding for Vision Language Models}, 
+      author={Hunter Schofield and Mohammed Elmahgiubi and Mohammad Mahdavian and Richard Shi and Jinjun Shan and Amir Rasouli and Dongfeng Bai},
+      year={2026},
+      eprint={2608.10278},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2608.10278}, 
 }
 
 @misc{jahangard2025multimodal,
-  title  = {A Multi-Modal Neuro-Symbolic Approach for Spatial Reasoning},
-  author = {NEEDS VERIFICATION},
-  year   = {2025},
-  howpublished = {arXiv preprint},
-  note   = {VERIFY: reported first author Jahangard et al. Neuro-symbolic techniques for fine-grained spatial reasoning providing explicit interpretability. Confirm title, authors, venue, and arXiv id before submission.}
+  title={A Multi-Modal Neuro-Symbolic Approach for Spatial Reasoning-Based Visual Grounding in Robotics}, 
+      author={Simindokht Jahangard and Mehrzad Mohammadi and Abhinav Dhall and Hamid Rezatofighi},
+      year={2025},
+      eprint={2510.27033},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2510.27033}, 
+}
+
+@misc{cheang2024gr2,
+      title={GR-2: A Generative Video-Language-Action Model with Web-Scale Knowledge for Robot Manipulation}, 
+      author={Chi-Lam Cheang and Guangzeng Chen and Ya Jing and Tao Kong and Hang Li and Yifeng Li and Yuxiao Liu and Hongtao Wu and Jiafeng Xu and Yichu Yang and Hanbo Zhang and Minzhao Zhu},
+      year={2024},
+      eprint={2410.06158},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2410.06158}, 
+}
+@misc{cen2025worldvla,
+      title={WorldVLA: Towards Autoregressive Action World Model}, 
+      author={Jun Cen and Chaohui Yu and Hangjie Yuan and Yuming Jiang and Siteng Huang and Jiayan Guo and Xin Li and Yibing Song and Hao Luo and Fan Wang and Deli Zhao and Hao Chen},
+      year={2025},
+      eprint={2506.21539},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2506.21539}, 
 }

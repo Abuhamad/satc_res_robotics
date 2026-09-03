@@ -96,9 +96,25 @@ For each variable, the target action/value is mapped to a value from the 256 bin
 used for RT-1 training is a standard categorical cross-entropy entropy and causal masking that was utilized in prior transformer-based controllers~\cite{reed2022generalist,lee2022multi}. 
 We use the same implementation/design choices for RT-1 model as reported by the original work. Other variations of RT-1, \eg different base/backbone models and operation modes (\ie local or cloud-based inference), will be implemented as RT-1-X designs.
 
+
+\noindent\textbf{\cib{2} RT-2~\cite{rt-2} and RT-2-X~\cite{9}} RT-2 is a large (12--55B parameters) VLA model trained on Internet-scale vision and language data, along with robotic control data. 
+RT-2 casts the tokenized actions as text tokens.
+As such, any pre-trained VLM (\eg Pali-X~\cite{chen2023palix}, Flamingo~\cite{alayrac2022flamingo}, {P}a{LM}-E~\cite{driess2023palme}) can be fine-tuned for robotic control, thus leveraging the backbone of VLMs and transferring some of their generalization properties.
+Action encoding and discretization are performed as in \cite{rt-1} for the RT-1 model. 
+To fine-tune a VLM into a VLA model, tokens should be associated with the discrete action bins (\ie reserving 256 tokens to serve as action tokens). 
+In order to define a target for VLM fine-tuning, the action vector is represented by a single string that simply concatenates action tokens for each dimension with a space character:
+For example, a possible instantiation of the target,
+``$\textit{terminate} \enspace \Delta \text{pos}_x \enspace \Delta \textit{pos}_y \enspace \Delta \textit{pos}_z \enspace \Delta \textit{rot}_x \enspace \Delta \textit{rot}_y \enspace \Delta \textit{rot}_z \enspace \textit{gripper\_extension}
+$'',
+could be: ``\textit{1 128 91 241 5 101 127}''.
+To ensure that RT-2 outputs valid action tokens during decoding, the output vocabulary is
+constrained to only sampling valid action tokens when the model is prompted with a robot-action task.
+We note that the model, \ie the orginal VLM, can still output the full range of language tokens on standard vision-language tasks.
+Our implementation focuses on the RT-2-PaLI-X variants~\cite{chen2023palix} built on the backbone of ViT~\cite{dosovitskiy2021image} visual model and UL2~\cite{tay2023ul2} language model, and pre-trained on WebLI~\cite{chen2023palix} dataset. %Variations of RT-2 will be implemented as RT-2-X designs for \xod training.
+
 \begin{wraptable}{r}{0.5\textwidth}
 \centering
-\vspace{-2.5ex}
+\vspace{-2ex}
 \caption{{\small Possible VLMs (and variations) for RT-2-X.}}
 \label{tab:VLMs}
 \vspace{-2ex}
@@ -120,35 +136,9 @@ LLaVA-1.5~\cite{liu2024improved} & Vicuna-v1.5 & MLP & CLIP ViT-L \\
 LLaMA Adapter-V2~\cite{gao2023llama} & LLaMA & Linear & CLIP ViT-L \\
 PandaGPT~\cite{su2023pandagpt} & Vicuna & Linear & ImageBind \\
 \bottomrule
-\end{tabular}}\vspace{-3ex}
+\end{tabular}}\vspace{-2ex}
 \end{wraptable}
-
-\noindent\textbf{\cib{2} RT-2~\cite{rt-2} and RT-2-X~\cite{9}} RT-2 is a large (12--55B parameters) VLA model trained on Internet-scale vision and language data, along with robotic control data. 
-RT-2 casts the tokenized actions as text tokens.
-As such, any pre-trained VLM (\eg Pali-X~\cite{chen2023palix}, Flamingo~\cite{alayrac2022flamingo}, {P}a{LM}-E~\cite{driess2023palme}) can be fine-tuned for robotic control, thus leveraging the backbone of VLMs and transferring some of their generalization properties.
-Action encoding and discretization are performed as in \cite{rt-1} for the RT-1 model. 
-To fine-tune a VLM into a VLA model, tokens should be associated with the discrete action bins (\ie reserving 256 tokens to serve as action tokens). 
-In order to define a target for VLM fine-tuning, the action vector is represented by a single string that simply concatenates action tokens for each dimension with a space character:
-For example, a possible instantiation of the target,
-``$\textit{terminate} \enspace \Delta \text{pos}_x \enspace \Delta \textit{pos}_y \enspace \Delta \textit{pos}_z \enspace \Delta \textit{rot}_x \enspace \Delta \textit{rot}_y \enspace \Delta \textit{rot}_z \enspace \textit{gripper\_extension}
-$'',
-could be: ``\textit{1 128 91 241 5 101 127}''.
-To ensure that RT-2 outputs valid action tokens during decoding, the output vocabulary is
-constrained to only sampling valid action tokens when the model is prompted with a robot-action task.
-We note that the model, \ie the orginal VLM, can still output the full range of language tokens on standard vision-language tasks.
-Our implementation focuses on the RT-2-PaLI-X variants~\cite{chen2023palix} built on the backbone of ViT~\cite{dosovitskiy2021image} visual model and UL2~\cite{tay2023ul2} language model, and pre-trained on WebLI~\cite{chen2023palix} dataset. %Variations of RT-2 will be implemented as RT-2-X designs for \xod training.
-
 We will explore the adoption of other existing VLMs in the RT-2-X implementation for \xod training. 
-% VLMs, 
-% including Flamingo \cite{alayrac2022flamingo}, OpenFlamingo \cite{awadalla2023openflamingo}, SPHINX-X \cite{gao2024sphinx},
-% Qwen-VL \cite{bai2023qwen},
-% BLIP-2 \cite{li2023blip}, 
-% InstructBLIP \cite{dai2024instructblip}, BLIVA \cite{hu2024bliva},
-% MiniGPT-4 \cite{zhu2023minigpt}, 
-% MiniGPT-v2 \cite{chen2023minigpt}, 
-% LLaVA \cite{liu2024visual}, 
-% LLaVA-1.5 \cite{liu2024improved},  
-% LLaMA Adapter-V2 \cite{gao2023llama}, and PandaGPT \cite{su2023pandagpt}. 
 \autoref{tab:VLMs} lists common open-source VLMs along with their respective components.
 Typically, a VLM is composed of three key elements: a visual encoder (\ie vision model), an adapter, and an LLM backbone. 
 The visual encoder extracts visual features from the input images, facilitating subsequent LLM reasoning and understanding of visual semantics. 
@@ -185,29 +175,7 @@ Action heads can be added/replaced/fine-tuned during downstream fine-tuning (\eg
 
 
 \noindent\textbf{\cib{6} ACT~\cite{zhao2023learningFB}} ACT is a VLA model that uses ResNet~\cite{resnet} as the vision encoder and transformer-based
-conditional variational autoencoder (CVAE)~\cite{sohn2015learning} that generates a sequence of actions.
-The original ACT was designed to process visual data and joint positions without additional language instructions. 
-Similar to Octo~\cite{team2024octo}, ACT processes the images (multiple views if available, \eg original ACT uses 4 camera views) through a ResNet model, adds positional embeddings, and feeds them into a transformer-based CVAE-encoder (along with joint positions) to generate a sequence of actions (projected using MLP to chunks of absolute joint positions) through the CVAE-decoder.
-For example, for Bimanual robots, the observation includes 4 RGB images (4 cameras), each at $480\times640$ resolution, and joint positions for two robot arms (7+7=14 positions in total).
-The ResNet processes each image ($480\times640\times3$) and outputs feature maps of 4 images $\times$ $15\times20\times512$.
-These feature maps are flattened ($1200\times512$), added to positional embeddings, and fed into the transformer encoder with additional joint position information.
-The transformer decoder processes the encoder output through cross-attention to generate a sequence of actions ($k \times 512$ where $k$ is the number of action chunks). To generate the final actions, the output is down-projected with an MLP to $k \times 14$ dimensions, corresponding to the target joint positions for the next $k$ steps.
-Our implementation of ACT will follow the original design choices, but changes are adopted to accommodate data from other embodiments, which can change the number of views and action dimensions, \eg the Xarm7 robot has 1 camera view (additional views can be added) and 7 action dimensions (7 degree-of-freedom positions).
-
-
-% \noindent\textbf{{\cib{$\star$}} Different Model: Horizon Gaze.} 
-
-
-
-
-
-
-
-
-
-
-\BfPara{Preliminary Experiments: Robotic Models} 
-We have conducted preliminary experiments to evaluate the performance of robotic models, \ie RT-1, RT-2, Octo, and ACT on simulated and real robotic tasks. 
+conditional variational autoencoder (CVAE)~\cite{sohn2015learning} that generates a sequence of actions. The original ACT 
 \begin{wrapfigure}{r}{0.45\textwidth}{\vspace{-2ex}}
   \centering
 \begin{minipage}{0.45\textwidth}
@@ -260,6 +228,21 @@ We have conducted preliminary experiments to evaluate the performance of robotic
       \label{fig:res}
     \end{minipage}\vspace{-2ex}
 \end{wrapfigure}
+was designed to process visual data and joint positions without additional language instructions. 
+Similar to Octo~\cite{team2024octo}, ACT processes the images (multiple views if available, \eg original ACT uses 4 camera views) through a ResNet model, adds positional embeddings, and feeds them into a transformer-based CVAE-encoder (along with joint positions) to generate a sequence of actions (projected using MLP to chunks of absolute joint positions) through the CVAE-decoder.
+For example, for Bimanual robots, the observation includes 4 RGB images (4 cameras), each at $480\times640$ resolution, and joint positions for two robot arms (7+7=14 positions in total).
+The ResNet processes each image ($480\times640\times3$) and outputs feature maps of 4 images $\times$ $15\times20\times512$.
+These feature maps are flattened ($1200\times512$), added to positional embeddings, and fed into the transformer encoder with additional joint position information.
+The transformer decoder processes the encoder output through cross-attention to generate a sequence of actions ($k \times 512$ where $k$ is the number of action chunks). To generate the final actions, the output is down-projected with an MLP to $k \times 14$ dimensions, corresponding to the target joint positions for the next $k$ steps.
+Our implementation of ACT will follow the original design choices, but changes are adopted to accommodate data from other embodiments, which can change the number of views and action dimensions, \eg the Xarm7 robot has 1 camera view (additional views can be added) and 7 action dimensions (7 degree-of-freedom positions).
+
+
+
+
+
+
+\BfPara{Preliminary Experiments: Robotic Models} 
+We have conducted preliminary experiments to evaluate the performance of robotic models, \ie RT-1, RT-2, Octo, and ACT on simulated and real robotic tasks. 
 For simulation, we used Simpler~\cite{li24simpler} benchmark for three tasks: \emph{Close the drawer}, \emph{Move closer}, and \emph{Pick the Coke Can} using Google robot embodiment, while for real experiments, we used Xarm7 robot for three tasks: \emph{Stack Cubes}, \emph{Duck in Bowl}, and \emph{Sweep} (see~\autoref{fig:xarm7}).
 For the simulation tasks, models were fine-tuned (using single third-person view and language-conditioned control) using 50 episodes per task. Language instructions are not used for ACT. Five training runs were performed per model, where each run was trained for 20,000 iterations with a batch size of 512 and a learning rate of 1e-5 using AdamW optimizer. The evaluation was performed on 25 episodes per task over five runs with different random seeds.
 Similar training and evaluation settings were used for the real robotic tasks, but with visual observations only and no language instructions to avoid any changes on the ACT model architecture. 
@@ -333,6 +316,18 @@ Therefore, attacks must be systematic and guided by practical experience in fiel
 \BfPara{Attacking Robotic Foundation Models}
 ~{Let $\mathcal{M}$ represent a robotic foundation model, which takes a tuple of inputs, \eg $(\{\bm{x}\}, \{\bm{t}\}, \{\bm{s}\}, \dots)$ representing input modalities (\ie a set (at least one) of images \{$\bm{x}\} \in \mathcal{X}$, set of text instructions \{$\bm{t}\} \in \mathcal{T}$, set of sensory/position data $\{\bm{s}\}\in \mathcal{S}$, and other available information) and outputs a set of tokenized actions $\mathcal{M}(\{\bm{x}\}, \{\bm{t}\}, \{\bm{s}\}, \dots)=\{\bm{a}_{out}\}$.
 Since robots could have multiple embodiments/tasks (and various action spaces), some inputs could become a placeholder/masked $\oslash$ or nonexistent modified to fit the model.}
+%%{\vspace{-2ex}}
+% Let $\mathcal{M}$ represent a robotic foundation model, which takes a tuple of inputs, \eg $(\{\bm{x}\}, \{\bm{t}\}, \{\bm{s}\}, \dots)$ representing input modalities (\ie a set (at least one) of images \{$\bm{x}\} \in \mathcal{X}$, set of text instructions \{$\bm{t}\} \in \mathcal{T}$, set of sensory/position data $\{\bm{s}\}\in \mathcal{S}$, and other available information) and outputs a set of tokenized actions $\mathcal{M}(\{\bm{x}\}, \{\bm{t}\}, \{\bm{s}\}, \dots)=\{\bm{a}_{out}\}$.
+% Since robots could have multiple embodiments/tasks (and various action spaces), some inputs could become a placeholder/masked $\oslash$ or nonexistent modified to fit the model.
+For example, RT-2 and OpenVLA models receive only images and textual instruction $\mathcal{M}(\{\bm{x}\}, \{\bm{t}\})=\bm{a}_{out}$, 
+%RoboCat and RT-1 receive images and no text, $\mathcal{M}(\{\bm{x}\}, \oslash)=\bm{a}_{out}$, 
+Octo receives images, text, and sensory data $\mathcal{M}(\{\bm{x}\}, \{\bm{t}\}, \{\bm{s}\})=\bm{a}_{out}$, and ACT receives only images and sensory data $\mathcal{M}(\{\bm{x}\}, \{\bm{s}\})=\bm{a}_{out}$.
+If Octo is used for robots/datasets that do not provide text instructions, the model processes available inputs and mask unavailable ones $\mathcal{M}(\{\bm{x}\}, \oslash,\{\bm{s}\})=\bm{a}_{out}$.
+The output $\{\bm{a}_{out}\}$ is one or chunks of actions, each is a sequence of tokens representing predicted actions.
+
+
+
+The attack operation $\mathcal{P} (.)$ is defined as a perturbation function that alters the inputs (one or more 
 \begin{wraptable}{r}{0.5\textwidth}
 \centering \vspace{-2ex}
 \caption{{\small Stages (Training and Inference), targets (Privacy, Integrity, Availability, and Abuse) and types ( White- (\dd), Gray- (\bb), and Black-box (\vv) ) of common Evasion, Poisoning, and Privacy attacks.}}\vspace{-3.5ex}
@@ -380,18 +375,8 @@ rowsep=0pt,
                                                   & Prompt and Context Stealing    & \ee                                       & \checkmark                                         & \checkmark                                       & \ee                                        & \ee                                           & \ee                                    & \vv                          
 \end{tblr}
 }{\vspace{-3ex}}
-\end{wraptable}%%{\vspace{-2ex}}
-% Let $\mathcal{M}$ represent a robotic foundation model, which takes a tuple of inputs, \eg $(\{\bm{x}\}, \{\bm{t}\}, \{\bm{s}\}, \dots)$ representing input modalities (\ie a set (at least one) of images \{$\bm{x}\} \in \mathcal{X}$, set of text instructions \{$\bm{t}\} \in \mathcal{T}$, set of sensory/position data $\{\bm{s}\}\in \mathcal{S}$, and other available information) and outputs a set of tokenized actions $\mathcal{M}(\{\bm{x}\}, \{\bm{t}\}, \{\bm{s}\}, \dots)=\{\bm{a}_{out}\}$.
-% Since robots could have multiple embodiments/tasks (and various action spaces), some inputs could become a placeholder/masked $\oslash$ or nonexistent modified to fit the model.
-For example, RT-2 and OpenVLA models receive only images and textual instruction $\mathcal{M}(\{\bm{x}\}, \{\bm{t}\})=\bm{a}_{out}$, 
-%RoboCat and RT-1 receive images and no text, $\mathcal{M}(\{\bm{x}\}, \oslash)=\bm{a}_{out}$, 
-Octo receives images, text, and sensory data $\mathcal{M}(\{\bm{x}\}, \{\bm{t}\}, \{\bm{s}\})=\bm{a}_{out}$, and ACT receives only images and sensory data $\mathcal{M}(\{\bm{x}\}, \{\bm{s}\})=\bm{a}_{out}$.
-If Octo is used for robots/datasets that do not provide text instructions, the model processes available inputs and mask unavailable ones $\mathcal{M}(\{\bm{x}\}, \oslash,\{\bm{s}\})=\bm{a}_{out}$.
-The output $\{\bm{a}_{out}\}$ is one or chunks of actions, each is a sequence of tokens representing predicted actions.
-
-
-
-The attack operation $\mathcal{P} (.)$ is defined as a perturbation function that alters the inputs (one or more modalities, such as images, text, and sensory data) to mislead the model into producing an incorrect/unintended output action.
+\end{wraptable}
+modalities, such as images, text, and sensory data) to mislead the model into producing an incorrect/unintended output action.
 % We denote attacks on robotic models as $\mathcal{P} (.)$, which can be applied to one or more input modalities, \eg images, text, and sensory data.
 For example, $\mathcal{P}(\bm{x})$ attacks image inputs $\bm{x}$, $\mathcal{P}(\bm{t}_{in})$ attacks text inputs $\bm{t}_{in}$, and $\mathcal{P}(\bm{x}, \bm{t}_{in})$ attacks both images and instructions.
 \ul{Adversarial specificity} can be either \textbf{targeted} or \textbf{untargeted} against security concepts Integrity, Confidentiality, and Availability.
@@ -407,10 +392,17 @@ Several threat models can be defined based on the adversarial specificity/goals,
 
 
 
-\BfPara{Attacking Robotic Foundation Models: Preliminary Study} We have co-\\
-{\vspace{-2.5ex}}
+\BfPara{Attacking Robotic Foundation Models: Preliminary Study} We have conducted two preliminary experiments to evaluate the effectiveness of adversarial attacks on models trained on Simpler~\cite{li24simpler} benchmark using three tasks. Both experiments were conducted on the same three tasks as in the preliminary experiments, and evaluated using 25 episodes repeated 5 times.
+The first experiment examined untargeted white-box attacks using visual perturbations on robotic models. We implemented three established attack methods: PGD~\cite{madry2017towards}, FGSM~\cite{goodfellow2014explaining}, and C\&W~\cite{carlini2017towards}. This attack scenario assumes the attacker has complete access to the parameters of the model's visual encoder, \ie EfficientNet-B3 (RT-1), Vision Transformer (RT-2), and ResNet (Octo and ACT). Such an assumption is realistic since these robotic models typically incorporate open-source pre-trained visual encoders, making their architecture and parameters readily available to potential attackers.
+We evaluated the success rate of the attacks by measuring the percentage of successful adversarial examples where the generated actions differ from the true ground-truth actions with a threshold of 30\%. \autoref{fig:visual_white_box} shows the success rate of the attacks on various models. % using 25 episodes repeated 5 times.
+
+The second experiment examined black-box attacks using token-based language perturbations against robotic models (except ACT as it does not support language instructions). We assume the attacker has no access to the model's parameters and can only query the model. The attacker can manipulate the language instructions by deleting/replacing/adding tokens to the original instructions.
+We adopted a similar attack approach to one used in SHIELD~\cite{abuhamad2025shield}, our previous work. %which focused on enhancing the robustness of code attribution models.
+The attack perturbs 20\% of the tokens in the instructions with random tokens from the tokenizer vocabulary, and probes the model with a query limit of 500 queries. The attack terminates if the query limit is reached or if the model's output action differs from the ground-truth action by more than 30\%, in which case the attack is successful.
+The results are shown
+% {\vspace{-2.5ex}}
 \begin{wrapfigure}{r}{0.3\textwidth}
-\vspace{-5ex}
+\vspace{-2.5ex}
 \centering
 \begin{minipage}{0.3\textwidth}
 \centering
@@ -424,16 +416,9 @@ Several threat models can be defined based on the adversarial specificity/goals,
 \caption{Task success rate of models before and after black-box token-based language perturbations.}
   \label{fig:visual_black_box}
 \end{minipage}
-\vspace{-3ex}
+\vspace{-5ex}
 \end{wrapfigure}
-nducted two preliminary experiments to evaluate the effectiveness of adversarial attacks on models trained on Simpler~\cite{li24simpler} benchmark using three tasks. Both experiments were conducted on the same three tasks as in the preliminary experiments, and evaluated using 25 episodes repeated 5 times.
-The first experiment examined untargeted white-box attacks using visual perturbations on robotic models. We implemented three established attack methods: PGD~\cite{madry2017towards}, FGSM~\cite{goodfellow2014explaining}, and C\&W~\cite{carlini2017towards}. This attack scenario assumes the attacker has complete access to the parameters of the model's visual encoder, \ie EfficientNet-B3 (RT-1), Vision Transformer (RT-2), and ResNet (Octo and ACT). Such an assumption is realistic since these robotic models typically incorporate open-source pre-trained visual encoders, making their architecture and parameters readily available to potential attackers.
-We evaluated the success rate of the attacks by measuring the percentage of successful adversarial examples where the generated actions differ from the true ground-truth actions with a threshold of 30\%. \autoref{fig:visual_white_box} shows the success rate of the attacks on various models. % using 25 episodes repeated 5 times.
-
-The second experiment examined black-box attacks using token-based language perturbations against robotic models (except ACT as it does not support language instructions). We assume the attacker has no access to the model's parameters and can only query the model. The attacker can manipulate the language instructions by deleting/replacing/adding tokens to the original instructions.
-We adopted a similar attack approach to one used in SHIELD~\cite{abuhamad2025shield}, our previous work. %which focused on enhancing the robustness of code attribution models.
-The attack perturbs 20\% of the tokens in the instructions with random tokens from the tokenizer vocabulary, and probes the model with a query limit of 500 queries. The attack terminates if the query limit is reached or if the model's output action differs from the ground-truth action by more than 30\%, in which case the attack is successful.
-The results are shown in~\autoref{fig:visual_black_box}, where we observe that the success rate of the models drops significantly after the attack, indicating that even simple token-based perturbations can disrupt the model's performance.
+ in~\autoref{fig:visual_black_box}, where we observe that the success rate of the models drops significantly after the attack, indicating that even simple token-based perturbations can disrupt the model's performance.
 These results demonstrate the potential vulnerabilities of robotic models to adversarial attacks.
 In these preliminary experiments we operationalized attack success as a 30\% action-token deviation proxy. In the full evaluation protocol described below, we replace this proxy with task success rate (TSR) under attack as the primary metric and retain action deviation only as a secondary physical-consequence proxy, for which we provide empirical justification through its mapping to end-effector displacement.
 
@@ -474,9 +459,9 @@ In a different study~\cite{cui2023robustness}, manipulating visual contents that
 Gao \textit{et al.} \cite{gao2024inducing} introduce verbose images, creating imperceptible perturbations to make VLMs generate longer output sentences. Such an attack raises energy consumption and latency, which can have serious consequences in robotics.
 In a cross-modal analysis, creating and refining visual perturbations using adaptive prompts can identify numerous prompts that are effective with specific visual perturbations, resulting in high transferability of adversarial samples \cite{luo2024image}.
 % Wu \textit{et al.} \cite{wu2024adversarial} leverage adversarial text sequences to direct gradient-based perturbations on a single trigger image for attacking VLMs.
-\ul{In this sub-task, we will explore various evasion and poisoning attacks to understand their mechanisms and impacts on robotics models.}
+\ul{In this sub-task, we will propose new attack, Action-Bin Boundary Perturbation (ABBP), and investigate the cross-modal behavior and impact of various evasion and poisoning attacks on robotics models.}
 
-\BfPara{Proposed Attack: Action-Bin Boundary Perturbation (ABBP)} We propose ABBP, a gradient-based white-box attack designed to exploit the uniform 256-bin discretization of the VLA action space. Because adjacent bins encode physically close but discretely different control signals, ABBP optimizes perturbations to drive predicted action tokens across bin boundaries in a coordinated fashion across all degrees of freedom, subject to a kinematically-consistent Jacobian constraint so the induced action remains reachable. We treat PGD~\cite{madry2017towards}, FGSM~\cite{goodfellow2014explaining}, and C\&W~\cite{carlini2017towards} as baselines rather than contributions. The claimed perturbation-budget advantage over these baselines is not assumed: our formal analysis will compare the required $L_\infty$ budget after normalizing to physical consequence, since a one-bin action shift and a language-token substitution are not directly comparable units. We frame ABBP as research to be conducted, gated by a formal go/no-go check on whether action-space discretization yields a structurally distinct vulnerability.
+\BfPara{Proposed Attack: ABBP} We propose ABBP, a gradient-based white-box attack designed to exploit the uniform 256-bin discretization of the VLA action space. Because adjacent bins encode physically close but discretely different control signals, ABBP optimizes perturbations to drive predicted action tokens across bin boundaries in a coordinated fashion across all degrees of freedom, subject to a kinematically-consistent Jacobian constraint so the induced action remains reachable. We treat PGD~\cite{madry2017towards}, FGSM~\cite{goodfellow2014explaining}, and C\&W~\cite{carlini2017towards} as baselines rather than contributions. The claimed perturbation-budget advantage over these baselines is not assumed: our formal analysis will compare the required $L_\infty$ budget after normalizing to physical consequence, since a one-bin action shift and a language-token substitution are not directly comparable units. We frame ABBP as research to be conducted, gated by a formal go/no-go check on whether action-space discretization yields a structurally distinct vulnerability.
 
 \subsubsection{T1-2: Gray-box Attacks}
 Gray-box attacks exploit partial knowledge of the model, such as its architecture or some aspects of the training pipeline/data. Gray-box attacks provide insights into model vulnerabilities, helping identify and mitigate weaknesses with moderate/limited adversarial knowledge. Multiple evasion and privacy attacks can be conducted under the gray-box scenario (see \autoref{table:attacks_models}).
@@ -524,7 +509,16 @@ Regarding training-time VLM defenses, most work \cite{chen2023dress,zhang2023adv
 Recent work has begun to develop VLA-specific defenses, including structure-aware robust fine-tuning, randomized smoothing for certified robustness, and backdoor token reconstruction, which we will build on and compare against~\cite{zhang2026structure,seferis2025randomized,li2026whenattention}.
 {\ul{In this sub-task, we will develop and explore the effect of various defenses against attacks on robotic models.}}
 % {\vspace{-1ex}}
-\begin{wraptable}{r}{0.36\textwidth}{\vspace{-2ex}}
+
+
+\BfPara{Action-Space Anomaly Detection} Beyond porting inference- and training-time VLM defenses, we propose 
+a robotics-specific defense unavailable to general VLMs: an action-space anomaly detector operating on predicted actions rather than inputs. The detector flags out-of-distribution and kinematically-implausible actions, such as predictions violating the reachable workspace, joint limits, or defined safety zones, independent of the input modality under attack. Because the detector inspects the action output directly, this defense complements input-side defenses and remains effective when the compromised modality is unknown. We will characterize the detection rate and false-positive trade-off across embodiments and attack types.
+
+
+\BfPara{Proposed Defenses: TACD and AGAT} We instantiate the action-space defense as the Temporal Action Consistency Detector (TACD), which raises detection from the per-step level to the sequence level to catch TTDA-style drift that per-step kinematic checks miss by construction. TACD uses a single multi-task trajectory-forecasting model conditioned on a task embedding, trained jointly on the benign demonstrations of all tasks to avoid per-task model proliferation, with a per-task threshold calibrated on held-out benign episodes. We complement detection with Action-Grounded Adversarial Fine-Tuning (AGAT), which augments fine-tuning with kinematically-constrained ABBP-style perturbations. To remain compute-feasible on the available hardware, AGAT is implemented with LoRA rank-16 adaptation (roughly 25M trainable parameters) rather than full-model backpropagation. We will evaluate TACD and AGAT against at least three baseline defenses (input smoothing, VLM-ported adversarial training, and ensemble voting), reporting detection-rate versus false-positive Pareto curves per embodiment and attack type.
+
+\subsubsection{Evaluation Plan and Deliverables}
+\begin{wraptable}{r}{0.36\textwidth}{\vspace{-3ex}}
 \centering
 \caption{(\textbf{T})raining \& (\textbf{I})nference defenses.}\vspace{-2ex}
 \label{tab:defense}
@@ -545,14 +539,8 @@ Recent work has begun to develop VLA-specific defenses, including structure-awar
 \cite{li2024red}  ~\textbf{T}$\rightarrow$  Fine-tuning/Contrastive learning \\
  \bottomrule
 \end{tabular}
-}\vspace{-4ex}
+}\vspace{-2ex}
 \end{wraptable}
-
-\BfPara{Action-Space Anomaly Detection} Beyond porting inference- and training-time VLM defenses, we propose a robotics-specific defense unavailable to general VLMs: an action-space anomaly detector operating on predicted actions rather than inputs. The detector flags out-of-distribution and kinematically-implausible actions, such as predictions violating the reachable workspace, joint limits, or defined safety zones, independent of the input modality under attack. Because the detector inspects the action output directly, this defense complements input-side defenses and remains effective when the compromised modality is unknown. We will characterize the detection rate and false-positive trade-off across embodiments and attack types.
-
-\BfPara{Proposed Defenses: TACD and AGAT} We instantiate the action-space defense as the Temporal Action Consistency Detector (TACD), which raises detection from the per-step level to the sequence level to catch TTDA-style drift that per-step kinematic checks miss by construction. TACD uses a single multi-task trajectory-forecasting model conditioned on a task embedding, trained jointly on the benign demonstrations of all tasks to avoid per-task model proliferation, with a per-task threshold calibrated on held-out benign episodes. We complement detection with Action-Grounded Adversarial Fine-Tuning (AGAT), which augments fine-tuning with kinematically-constrained ABBP-style perturbations. To remain compute-feasible on the available hardware, AGAT is implemented with LoRA rank-16 adaptation (roughly 25M trainable parameters) rather than full-model backpropagation. We will evaluate TACD and AGAT against at least three baseline defenses (input smoothing, VLM-ported adversarial training, and ensemble voting), reporting detection-rate versus false-positive Pareto curves per embodiment and attack type.
-
-\subsubsection{Evaluation Plan and Deliverables}
 We will benchmark various attacks (\autoref{table:attacks_models}) and defenses (\autoref{tab:defense}) against state-of-the-art robotic models using comprehensive datasets. Our primary metric is task success rate (TSR) under attack, a binary task-completion judgment using the two-point scoring system of our preliminary experiments. We retain the 30\% action-token deviation as a secondary physical-consequence proxy, alongside Attack Success Rate, \textit{Contain} \cite{lu2024test} (presence of attacker-specific action tokens), \textit{Exactmatch} \cite{luo2024image,lu2024test} (perfect match with attacker-specific tokens), transferability, and perturbation imperceptibility. 
 To further ground these token-level metrics in physical consequences, we report maximum end-effector action displacement and the rate of safety-zone and force-threshold violations. We evaluate our proposed defenses against at least three baseline defenses, and we construct a full model~$\times$~model~$\times$~attack transferability matrix across the model families and embodiments in our scope. We report all metrics as mean~$\pm$~std over at least ten runs with multiple seeds, and assess significance with Welch's $t$-test.
 We will align this protocol with recent physically-grounded evaluation practice for robot policies~\cite{sun2026maniparena}.
@@ -672,9 +660,9 @@ Deliverables include: \cib{1} benchmarks for safety and interpretability of robo
 
 \subsection{Work Plan, Timeline, and Team}
 
-\BfPara{Staged Scope} We stage the program into a Minimum Viable Research (MVP) phase in Years~1 and~2 and a scale-up phase in Years~3 and~4. The MVP phase targets two open, architecturally complementary models (OpenVLA and Octo) on two embodiments (the Xarm7 real arm and the Google robot in the Simpler~\cite{li24simpler} simulator), and develops ABBP and TTDA with ported baselines together with the TACD and AGAT defenses and their baselines. The scale-up phase adds a flow-matching family (pi-0~\cite{black2024pi_0} or OpenVLA-OFT), a morphologically distinct embodiment (Franka or Spot), the T2 multimodal track, certified-robustness defenses, and the full public release of VLA-SecBench. The MVP still supports generalizable claims because OpenVLA and Octo span the autoregressive and diffusion policy families, and the Xarm7 and Simpler pairing spans real and simulated embodiments.
-
-\BfPara{Timeline} \autoref{fig:workplan_timeline} summarizes the work-package schedule under the calendar aligned to the budget period.
+\BfPara{Staged Scope} We stage the program into Phase 1 (Years~1 and~2) and a Phase 2 (Years~3 and~4). Phase 1 targets open and architecturally complementary models on two embodiments (Xarm7 and the Google robot), and develops ABBP and TTDA with ported baselines together with the TACD and AGAT defenses and their baselines. 
+The Phase 2 adds emerging models, multimodal analysis, certified-robustness defenses, and the full public release of VLA-SecBench. 
+\autoref{fig:workplan_timeline} summarizes the schedule of the research-plan tasks under the calendar aligned to the budget period.
 
 \begin{figure*}[t]
 \centering
@@ -683,21 +671,21 @@ Deliverables include: \cib{1} benchmarks for safety and interpretability of robo
   bar/.style={fill=gray!40, draw=black!70, rounded corners=2pt},
   ]
   %%% phase (MVP / Scale-up) background shading %%%
-  \fill[gray!7]  (0,-3.5) rectangle (8,1.4);
-  \fill[gray!14] (8,-3.5) rectangle (16,1.4);
+  \fill[gray!7]  (0,-3.4) rectangle (8,1.4);
+  \fill[gray!14] (8,-3.4) rectangle (16,1.4);
 
   %%% horizontal row separators %%%
-  \foreach \hy in {0.65,-0.05,-0.75,-1.45,-2.15,-2.85}
+  \foreach \hy in {0.80,0.20,-0.40,-1.00,-1.60,-2.20,-2.80}
     \draw[very thin, gray!25] (0,\hy) -- (16,\hy);
 
   %%% vertical quarter gridlines %%%
   \foreach \gx in {1,2,3,5,6,7,9,10,11,13,14,15}
-    \draw[very thin, gray!25] (\gx,-3.5) -- (\gx,1.4);
+    \draw[very thin, gray!25] (\gx,-3.4) -- (\gx,1.4);
   %%% year boundary lines %%%
   \foreach \gx in {4,8,12}
-    \draw[thin, black!40] (\gx,-3.5) -- (\gx,1.4);
+    \draw[thin, black!40] (\gx,-3.4) -- (\gx,1.4);
   %%% outer chart border %%%
-  \draw[black!60, rounded corners=1pt] (0,-3.5) rectangle (16,1.4);
+  \draw[black!60, rounded corners=1pt] (0,-3.4) rectangle (16,1.4);
 
   %%% year header band %%%
   \fill[gray!15, draw=black!40, rounded corners=2pt] (0,1.9) rectangle (16,2.5);
@@ -714,76 +702,46 @@ Deliverables include: \cib{1} benchmarks for safety and interpretability of robo
   }
 
   %%% left-hand labels %%%
-  \node[anchor=east, font=\scriptsize\bfseries\sffamily] at (-0.3,2.2)  {Work package};
-  \node[anchor=east] at (-0.3,1.0)  {WP0 Infrastructure \& repository};
-  \node[anchor=east] at (-0.3,0.3)  {WP1 Attack primitives (Aim 1)};
-  \node[anchor=east] at (-0.3,-0.4) {WP2 Defense validation (Aim 2)};
-  \node[anchor=east] at (-0.3,-1.1) {WP3 Evaluation rigor};
-  \node[anchor=east] at (-0.3,-1.8) {WP4 Multimodal attacks (Aim 3)};
-  \node[anchor=east] at (-0.3,-2.5) {WP5 Benchmark \& transferability (Aim 4)};
-  \node[anchor=east] at (-0.3,-3.2) {WP6 Education \& broader impacts};
+  \node[anchor=east, font=\scriptsize\bfseries\sffamily] at (-0.3,2.2)  {Research task};
+  \node[anchor=east] at (-0.3,1.10)  {T0 Repository, models \& data};
+  \node[anchor=east] at (-0.3,0.50)  {T1-1 White-box attacks (ABBP)};
+  \node[anchor=east] at (-0.3,-0.10) {T1-2 Gray-box attacks};
+  \node[anchor=east] at (-0.3,-0.70) {T1-3 Black-box attacks (TTDA)};
+  \node[anchor=east] at (-0.3,-1.30) {T1-4 Defenses (TACD, AGAT)};
+  \node[anchor=east] at (-0.3,-1.90) {T2 Multimodal attacks};
+  \node[anchor=east] at (-0.3,-2.50) {T3-1 Safety \& benchmarks (VLA-SecBench)};
+  \node[anchor=east] at (-0.3,-3.10) {T3-2 Interpretability};
 
-  %%% work-package bars (active quarters) %%%
-  \fill[bar] (0,0.76)  rectangle (3,1.24);   % WP0: Y1Q1--Q3
-  \fill[bar] (1,0.06)  rectangle (6,0.54);   % WP1: Y1Q2--Y2Q2
-  \fill[bar] (2,-0.64) rectangle (8,-0.16);  % WP2: Y1Q3--Y2Q4
-  \fill[bar] (1,-1.34) rectangle (5,-0.86);  % WP3: Y1Q2--Y2Q1
-  \fill[bar] (8,-2.04) rectangle (12,-1.56); % WP4: Y3Q1--Q4
-  \fill[bar] (9,-2.74) rectangle (16,-2.26); % WP5: Y3Q2--Y4Q4
-  \fill[bar] (5,-3.44) rectangle (16,-2.96); % WP6: Y2Q2--Y4Q4
+  %%% research-task bars (active quarters) %%%
+  \fill[bar] (0,0.88)   rectangle (3,1.32);   % T0
+  \fill[bar] (8,0.88)   rectangle (9,1.32);   % T0 (refresh)
+  \fill[bar] (1,0.28)   rectangle (6,0.72);   % T1-1
+  \fill[bar] (2,-0.32)  rectangle (7,0.12);   % T1-2
+  \fill[bar] (2,-0.92)  rectangle (8,-0.48);  % T1-3
+  \fill[bar] (8,-0.92)  rectangle (10,-0.48); % T1-3 (extend)
+  \fill[bar] (3,-1.52)  rectangle (8,-1.08);  % T1-4
+  \fill[bar] (9,-1.52)  rectangle (12,-1.08); % T1-4 (certified)
+  \fill[bar] (8,-2.12)  rectangle (12,-1.68); % T2
+  \fill[bar] (7,-2.72)  rectangle (16,-2.28); % T3-1
+  \fill[bar] (10,-3.32) rectangle (14,-2.88); % T3-2
 
   %%% milestone diamonds along the bottom axis %%%
   \foreach \mx/\ml in {0.5/M0, 1.5/M1, 2.5/M2, 4.5/M3, 5.5/M4a, 6.5/M4, 7.5/M5, 9.5/M6, 13.5/M7} {
-    \draw[very thin, gray!45] (\mx,-3.5) -- (\mx,-3.63);
-    \fill[black, draw=black] (\mx,-3.73) -- (\mx-0.11,-3.85) -- (\mx,-3.97) -- (\mx+0.11,-3.85) -- cycle;
-    \node[font=\tiny\sffamily, anchor=north, inner sep=1pt] at (\mx,-4.0) {\ml};
+    \draw[very thin, gray!45] (\mx,-3.4) -- (\mx,-3.53);
+    \fill[black, draw=black] (\mx,-3.63) -- (\mx-0.11,-3.73) -- (\mx,-3.83) -- (\mx+0.11,-3.73) -- cycle;
+    \node[font=\tiny\sffamily, anchor=north, inner sep=1pt] at (\mx,-3.9) {\ml};
   }
 
   %%% phase captions %%%
-  \node[font=\tiny\itshape\sffamily, text=black!60] at (4,-4.4)  {MVP phase (Years 1--2)};
-  \node[font=\tiny\itshape\sffamily, text=black!60] at (12,-4.4) {Scale-up phase (Years 3--4)};
+  \node[font=\tiny\itshape\sffamily, text=black!60] at (4,-4.25)  {MVP phase (Years 1--2)};
+  \node[font=\tiny\itshape\sffamily, text=black!60] at (12,-4.25) {Scale-up phase (Years 3--4)};
 \end{tikzpicture}%
 }
-\caption{Gantt-style work-plan timeline. Calendar aligned to the budget period: Year~1 = Sep~2026--Aug~2027, \ldots, Year~4 = Sep~2029--Aug~2030; quarters Q1~(Sep--Nov), Q2~(Dec--Feb), Q3~(Mar--May), Q4~(Jun--Aug). Bars indicate active quarters; diamonds mark milestones (M0--M7).}
+\caption{Gantt-style work-plan timeline. Calendar aligned to the anticipated award start (May~2027): Year~1 = May~2027--Apr~2028, \ldots, Year~4 = May~2030--Apr~2031; quarters Q1~(May--Jul), Q2~(Aug--Oct), Q3~(Nov--Jan), Q4~(Feb--Apr). Bars indicate active quarters; diamonds mark milestones (M0--M7). {\footnotesize\textbf{Milestones:} \textbf{M0} compute/NSF ACCESS allocation secured; \textbf{M1} ABBP formal specification; \textbf{M2} MVP model zoo operational; \textbf{M3} ABBP vs.\ PGD comparison; \textbf{M4a} preliminary TACD false-positive check; \textbf{M4} formal TACD detection gate; \textbf{M5} VLA-SecBench v0.5 \& pi-0 availability; \textbf{M6} multimodal coupling benefit shown; \textbf{M7} VLA-SecBench v1.0 release.}}
 \label{fig:workplan_timeline}
 \end{figure*}
 
-\BfPara{Milestones and Go/No-Go Gates}
-\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\itemindent=-1em
-\item \textbf{M0 (Y1Q1):} NSF ACCESS Explore allocation or an equivalent institutional GPU node secured. NO-GO: restrict white-box evaluation to the encoder-only threat model and resubmit the allocation request.
-\item \textbf{Co-PI confirmation (pre-submission):} Co-PI confirmed with a signed collaboration letter and documented Xarm7 access before submission.
-\item \textbf{M1 (Y1Q2):} ABBP formal specification complete. NO-GO: reframe Aim~1 around TTDA as the primary novel primitive.
-\item \textbf{M2 (Y1Q3):} MVP model zoo operational on at least ten tasks, reproducing preliminary baselines.
-\item \textbf{M3 (Y2Q1):} ABBP versus PGD comparison shows a statistically significant advantage at matched, physically-normalized budget. NO-GO: reframe ABBP as an architectural-analysis finding.
-\item \textbf{M4a (Y2Q2):} preliminary TACD false-positive check on benign demonstrations. NO-GO: revise the threshold strategy before full defense-evaluation runs.
-\item \textbf{M4 (Y2Q3):} formal TACD detection/false-positive gate.
-\item \textbf{M5 (Y2Q4):} VLA-SecBench v0.5 prototype, and pi-0 (or an equivalent open flow-matching VLA) availability confirmed. NO-GO on availability: substitute an Octo-large diffusion variant and document the substitution.
-\item \textbf{M6 (Y3Q2):} multimodal coupling benefit over unimodal baselines demonstrated.
-\item \textbf{M7 (Y4Q2):} VLA-SecBench v1.0 ready for release with dual-use review complete. Interpretability-tool validation is completed earlier, at Y3Q4, to reduce Year-4 load.
-\end{itemize}
 
-\BfPara{Division of Labor} \autoref{tab:division_labor} assigns parallel security and robotics tracks so the PI and Co-PI progress without blocking each other.
-
-\begin{table}[t]
-\centering
-\footnotesize
-\setlength{\tabcolsep}{4pt}
-\caption{Division of labor across the two-investigator team.}
-\label{tab:division_labor}
-\begin{tabular}{p{0.46\linewidth} p{0.46\linewidth}}
-\toprule
-\textbf{PI (AI/ML security)} & \textbf{Co-PI [Co-PI: TBD] (robot learning)} \\
-\midrule
-Attack formal design and analysis (ABBP, TTDA theory) & Real-robot infrastructure and Xarm7 setup \\
-Defense design and analysis (AGAT, ported defenses) & TTDA/TACD real-robot implementation and false-positive testing \\
-Benchmark design, transferability matrix, statistics & Physical-metric instrumentation (end-effector displacement, force/safety zones) \\
-Multimodal coupling design (T2), threat taxonomy & Real-robot experiments, physical patches, scale-up embodiment integration \\
-Curriculum lead, publication lead & Adversarial-robotics lab (robot component) \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\BfPara{Compute Plan} ABBP gradient evaluation targets OpenVLA's released visual encoders (DINOv2 and SigLIP, roughly 300M parameters combined), AGAT uses LoRA rank-16 adaptation, and the team will apply for an NSF ACCESS Explore allocation in Y1Q1 as the first infrastructure milestone.
 
 
 % \subsection{Task Implementation and Timeline}
