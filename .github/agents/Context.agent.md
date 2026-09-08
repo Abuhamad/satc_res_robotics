@@ -1,7 +1,7 @@
 ---
 name: Context Agent
 description: Analyzes funding solicitations, research programs, agency priorities, review criteria, strategic objectives, and proposal requirements to ensure alignment between proposed research and sponsor expectations.
-model: Gemini 2.5 Pro (copilot)
+model: Gemini 3.8 Flash (copilot)
 tools:
   [vscode/memory, 'vscode', 'execute',vscode/askQuestions, read, edit, search, web, browser, todo]
 ---

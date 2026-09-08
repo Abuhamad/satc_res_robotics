@@ -1,450 +1,739 @@
-# NSF SaTC 2.0 (NSF 25-515) RES Panel Review
+# NSF SaTC 2.0: RES Academic Reviewer Assessment
 
-**Proposal Title:** "SaTC 2.0: RES: Toward Secure and Robust Generalist Robotic Models"  
-**PI:** Mohammed Abuhamad, Loyola University Chicago  
-**Program:** Trustworthy Computing & Information Security (SaTC 2.0)  
-**Review Date:** August 31, 2026  
-**Panel Assignment:** Research Experiences for Undergraduates (RES) / Secure and Trustworthy Robotics
-
----
-
-## Executive Summary
-
-This proposal addresses an emerging and timely problem: the security and trustworthiness of generalist Vision-Language-Action (VLA) robotic foundation models. The work proposes a comprehensive security framework across three tasks: (T0) building a multi-embodiment dataset repository, (T1) systematic vulnerability analysis via white/gray/black-box attacks, (T2) multimodal attack propagation, and (T3) safety benchmarks and interpretability. The proposal includes preliminary attack results on 4 VLA models (RT-1, RT-2, Octo, ACT) across 6 robots and 15 datasets, plus a novel robotics-specific defense mechanism based on action-space anomaly detection. While the scope and timeliness are commendable, significant concerns about technical novelty, evaluation rigor, feasibility of a 4-year single-PI effort, and clarity of threat models temper enthusiasm.
+**Proposal Title**: "Toward Secure and Robust Generalist Robotic Models"  
+**PI**: Mohammed Abuhamad (Loyola University Chicago)  
+**Co-PI**: [TBD]  
+**Budget**: $555,171 total (4 years)  
+**Evaluation Date**: September 8, 2026  
+**Review Mode**: Academic Reviewer (Skeptical Senior Peer)  
 
 ---
 
-## 1. Intellectual Merit
+## EXECUTIVE SUMMARY
 
-### 1.1 Strengths
+This proposal addresses an important and timely problem—security of Vision-Language-Action (VLA) foundation models in robotics—and proposes a comprehensive three-task framework: (T1) vulnerability analysis via white/gray/black-box attacks, (T2) modality-inherited vulnerabilities, and (T3) safety benchmarks and interpretability, culminating in an open VLA-SecBench benchmark.
 
-1. **Timely and Important Problem:** VLA models are rapidly entering deployment across industrial and service robotics. Security hardening at this foundational stage is strategically valuable and rare in the literature. The proposal positions itself as the first comprehensive security framework for end-to-end robotic policies.
+**Critical Issues Preventing Funding Recommendation:**
 
-2. **Comprehensive Threat Taxonomy:** Table 1 (attack taxonomy spanning evasion, poisoning, privacy, abuse; across training/inference; white/gray/black-box; multiple targets) is well-structured and provides clear categorization. The formal notation $\mathcal{M}(\{\mathbf{x}\}, \{\mathbf{t}\}, \{\mathbf{s}\})$ rigorously frames the threat space.
+1. **Co-PI Status Unresolved (Co-PI: TBD)** — A blocking feasibility issue. Robotics expertise is undefined.
+2. **Preliminary Evaluation is Weak** — Only 3 toy simulation tasks + 3 simple real robot tasks; no defense evaluation; no comparison to concurrent work (BadVLA, AdvVLA).
+3. **Technical Novelty is Incremental** — Attacks are adaptations of existing VLM/LLM techniques; defenses lack validation. ABBP and TTDA are framed as "proposed research to be validated" with conditional go/no-go checks.
+4. **Scope Exceeds Feasibility** — 6 embodiments, 15 datasets, 6 model families for 1 part-time PI + 1 graduate student is unrealistic.
+5. **Multimodal Attacks (T2) Deferred** — Repositioned from core contribution to "scale-up track in Years 3–4," reducing MVP novelty.
 
-3. **Multi-Embodiment, Multi-Model Evaluation Plan:** 6 robots, 15 datasets, 5+ VLA models (RT-1, RT-2, Octo, ACT, OpenVLA) demonstrates breadth. This specificity raises the credibility of generalizability claims compared to single-model robotics security work.
-
-4. **Concrete Preliminary Results:** White-box and black-box attack demonstrations show non-trivial success rates (white-box success rates vary by model/task; black-box token perturbations degrade performance significantly). These ground the proposal in evidence rather than speculation.
-
-5. **Action-Space Anomaly Detection:** A novel robotics-specific defense unavailable to general VLMs (detects kinematically implausible actions, joint limits, workspace violations) that complements input-side defenses and remains effective when compromised modality is unknown.
-
-6. **Educational Integration:** Explicit commitment to curriculum development, labs, workshops, and student engagement aligns well with SaTC program values and provides broader impact beyond research.
-
-### 1.2 Weaknesses
-
-#### Critical Weakness #1: Limited Attack Novelty; Over-Reliance on Ported Methods
-
-**Issue:** The core attack methods—PGD, FGSM, C&W (white-box), prompt injection/jailbreak (gray/black-box)—are well-established from vision and LLM security literature. Robotic-specific adaptations exist (e.g., trajectory-level attacks, kinematic constraints) but are cited as future comparisons, not core contributions.
-
-- White-box attacks: Standard gradient-based methods applied to visual encoders (EfficientNet-B3, ViT).
-- Gray-box attacks: Surrogate-model transfer from CLIP/BLIP alignment.
-- Black-box attacks: Token deletion/replacement/random perturbation is straightforward and shows limited sophistication.
-
-**Concern:** This feels like an engineering/systems contribution—systematically applying known attacks to a new domain—rather than algorithmic innovation. For NSF SaTC RES, a single-PI proposal must compensate with exceptional execution, evaluation rigor, or theoretical insight. None are evident.
-
-**Actionable Fix:**
-- Develop attack methods that exploit multimodal VLA-specific properties not present in VLMs (e.g., temporal action consistency, kinematic coordination constraints, embodiment-specific action token adjacency). Demonstrate these outperform naive port-overs.
-- Provide formal analysis of why robotic action quantization (discrete bins) creates vulnerabilities distinct from language tokenization.
+**Recommendation: REJECT** — Major revisions required before resubmission.
 
 ---
 
-#### Critical Weakness #2: Action-Space Anomaly Detection Insufficient as Core Defense
+## 1. SIGNIFICANCE
 
-**Issue:** While novel to robotics, the proposed defense is more of a *safety filter* than a *security mechanism*:
-
-1. **Bounded but valid attacks:** Adversarial examples can be crafted to satisfy kinematic constraints (workspace, joint limits, safety zones) and still cause harm (e.g., unsafe grasping, unstable manipulation, incorrect task execution).
-2. **False negatives:** Preliminary results lack any demonstration of anomaly detector effectiveness. What is the false-positive rate? Can attackers adapt by learning valid action boundaries?
-3. **Not a defense against all attack classes:** Ineffective against poisoning (training-time) or privacy attacks. Handles only inference-time evasion.
-4. **Incomplete specification:** Threshold tuning for workspace/joint limits not detailed. Robustness to adversarial domain shift (e.g., when physical constraints change) not addressed.
-
-**Concern:** The proposal claims this is a major technical contribution justifying the research scope, but no preliminary evaluation shows it actually stops attacks. Without evidence, this reads as a strawman defense.
-
-**Actionable Fix:**
-- Conduct preliminary adversarial robustness evaluation: Generate white-box adversarial examples constrained to the valid action space. Report detection rates and false-positive rates.
-- Compare anomaly detection to baseline defenses (e.g., input smoothing, ensemble voting, certified defenses). Show relative advantage.
-- Extend detector to catch subtle behavioral anomalies (e.g., predicted actions that are kinematically valid but contradict task intent) using auxiliary task classifiers or causal models.
-
----
-
-#### Critical Weakness #3: Evaluation Rigor and Generalizability Gaps
-
-**Issue:** Preliminary results raise more questions than answers:
-
-1. **Arbitrary Success Metrics:** 30% action deviation threshold lacks justification. What physical consequence maps to this threshold? Why not use task success rate as primary metric?
-2. **Limited Experimental Scope:** 3 simulation + 3 real tasks (Close Drawer, Pick Coke Can, Stack Cubes, etc.). These are basic manipulation tasks. What about locomotion, navigation, or complex multi-step reasoning?
-3. **No Transferability Analysis:** Do attacks on RT-1 transfer to Octo or OpenVLA? Are black-box attacks transferable across models? The proposal mentions this but provides zero data.
-4. **Baseline Defenses Missing:** No comparison to input smoothing, JPEG compression, adversarial training, or ensemble methods. Without baselines, impossible to assess whether proposed defenses are state-of-the-art.
-5. **Closed-Model Evaluation Challenges:** RT-2 (55B PaLM-E) and proprietary OpenVLA variants may not be available for detailed white-box evaluation. How are results grounded in reality?
-6. **Statistical Rigor:** Preliminary results show single runs or 5 runs with single random seed reported. No confidence intervals, significance tests, or multiple-run aggregation visible.
-
-**Concern:** A 4-year NSF RES grant demands rigorous, reproducible evaluation. Current preliminary work doesn't meet this bar.
-
-**Actionable Fix:**
-- Expand evaluation to 10+ tasks spanning manipulation, locomotion, and navigation with diverse embodiments.
-- Report primary metric as task success rate under attack (binary), secondary metrics as action deviation and physical-consequence proxies (safety violations, end-effector displacement).
-- Conduct full transferability matrix: $M_i$ models $\times$ $T_j$ tasks $\times$ Attack $A_k$ methods.
-- Compare all proposed defenses to 3+ baseline defenses; report Pareto frontier of robustness vs. computational cost.
-- Run all experiments 10+ times, report mean ± std, perform statistical significance testing (e.g., Welch's t-test).
-
----
-
-#### Weakness #4: Scope vs. Single-PI Feasibility Over 4 Years
-
-**Issue:** The proposal spans an ambitious scope:
-
-- **Data Management (T0):** Integrating 15 datasets, training/maintaining 5+ VLA models across 6 embodiments.
-- **Attack Development (T1):** Implementing white/gray/black-box evasion, poisoning, privacy, and abuse attacks (~12-15 attack types from Table 1).
-- **Defense Development (T1, T2, T3):** Multiple inference/training-time defenses, anomaly detection, interpretability methods.
-- **Real Robot Experiments:** Executing attacks/defenses on physical Xarm7, Franka, Spot, etc.
-- **Educational Output:** Curriculum development, workshops, student training.
-
-**Constraints:**
-- **Single PI at Loyola University Chicago:** Limited graduate student availability, modest computational infrastructure, no existing robotics lab described.
-- **Cost and Logistics:** Real-robot experiments are expensive. Maintaining 6 robot platforms, 15 datasets, cloud inference for large VLAs (RT-2 55B requires cloud or expensive GPU) is resource-intensive.
-- **Timeline Pressure:** Realistic estimate for quality execution of T1 alone is 2-3 years (attack development, evaluation, responsible disclosure). T2 and T3 cannot fully parallelize.
-
-**Concern:** This reads as a 2-3 person, 6-year effort, not a single-PI, 4-year RES project. Over-commitment risks.
-
-**Actionable Fix:**
-- Sharpen scope: Focus on T1 (vulnerability analysis) and T3 (safety/interpretability). Defer comprehensive multimodal attacks (T2) to future work or position as a postdoc/PhD extension.
-- Prioritize 2-3 embodiments (e.g., Franka, Xarm7, Spot) and 3-4 VLA models. Show depth, not breadth.
-- Leverage cloud APIs for inference; focus on attack/defense logic, not model deployment infrastructure.
-- Explicitly bound real-robot experiments to 20-30 hours per year per embodiment to manage cost/logistics.
-- Hire a postdoc or fund 1-2 PhD students explicitly (not implicit in RES budget) to handle real-robot work.
-
----
-
-#### Weakness #5: Threat Model and Trust Definition Lack Clarity
-
-**Issue:** The proposal frames trust as "assurance that a robotic foundation model produces safe, intended physical actions under both benign and adversarial multimodal inputs." This is circular:
-
-1. **What constitutes "intended"?** Defined by task specification, human operator, pre-trained prior? Proposal doesn't say.
-2. **Threat Model Undefined:** Who has access to the model? (Cloud API with rate-limiting? Local inference? On-device?) Which threat scenarios are in-scope? (Insider data poisoning during training? Inference-time API jailbreaking? Physical sensor attacks?) Proposal conflates all.
-3. **Trustworthiness vs. Robustness:** Trust in ML systems typically involves fairness, explainability, reproducibility, safety margins, and privacy. This proposal focuses narrowly on adversarial robustness. Are other trust dimensions in or out of scope?
-4. **Inherited Vulnerabilities:** The claim that VLA models "inherit" vulnerabilities from vision and language backbones is asserted but not rigorously defined. Which vulnerabilities transfer? Which are neutralized by task structure?
-
-**Concern:** Without clear threat models, evaluation claims lack grounding. "We defend against unknown attacks" is not scientifically testable.
-
-**Actionable Fix:**
-- Define explicit threat actors and scenarios: (a) Adversary with white-box access (insider threat), (b) Adversary with black-box API access (external), (c) Adversary controlling training data (supply-chain attack), (d) Adversary controlling sensor inputs (physical attack). For each, specify attack goals (cause task failure vs. cause specific harmful action).
-- Define trust operationally as a vector: Robustness to white/gray/black-box attacks; Interpretability of predictions; Explainability of failures; Safety margin (actions avoid harm by $k$ sigma); Fairness (no task/embodiment bias). Report progress on each.
-- Distinguish this SaTC work from generic robustness: Connect results to trustworthiness criteria (e.g., "A robot is trustworthy if it passes safety benchmarks $B_1, B_2, B_3$ with $\geq 95\%$ success and recovers from adversarial inputs within 2 timesteps").
-
----
-
-## 2. Broader Impacts
+**Score: 6/10**
 
 ### Strengths
+- **Timely Problem**: VLA models (RT-1, RT-2, OpenVLA, Octo) are deployed in industrial and service robotics. Security hardening at this foundational stage is strategically important and relatively unexplored.
+- **Critical Gap**: Recent work (Robey et al. 2024: jailbreaks on LLM-controlled robots; Shi et al. 2024: adversarial vulnerabilities in quadrupedal control) demonstrates that vulnerabilities are real.
+- **Practical Deployment Context**: Millions of industrial robots + service robots (logistics, medicine, home, defense) will eventually adopt foundation models. Understanding threats is necessary for safety.
 
-1. **Public Safety & Acceptance:** Hardening VLA models improves public confidence in robotic deployment in shared human-robot spaces (logistics, healthcare, manufacturing).
-2. **Educational Pathways:** Explicit curriculum development, high-school/undergraduate labs, and mentoring create workforce development pipeline in secure AI/robotics.
-3. **Open-Source Community Resources:** Promised attack/defense tools, benchmarks, and datasets lower barriers to entry for other researchers.
-4. **Interdisciplinary Bridge:** Connecting AI security, robotics, and cybersecurity communities is valuable.
+### Limitations
+- **Not Unprecedented**: Prior work has already identified jailbreaks (Robey et al.), backdoors (BadVLA, AdvVLA), and adversarial attacks on robot policies. This proposal frames itself as "first comprehensive framework," but more accurately it's "first systematic evaluation across embodiments + incremental attacks + benchmarking."
+- **Threat Immediacy Unclear**: Are practitioners *today* deploying VLAs in adversarial settings, or is this a future-looking concern? The proposal doesn't quantify the immediate threat to practitioners.
+- **Limited Scope Impact**: Even if successful, findings apply to a narrow domain (end-to-end learned policies). Don't generalize to classical control, symbolic AI, or hybrid systems.
+
+**Verdict**: Important but not groundbreaking significance. Problem is well-motivated but not uniquely urgent vs. other SaTC investments.
+
+---
+
+## 2. PERCEIVED NOVELTY
+
+**Score: 5/10**
+
+### Core Contributions Assessed
+
+**ABBP (Action-Bin Boundary Perturbation)**
+- Claims to exploit 256-bin discretization of action space via kinematically-consistent Jacobian constraint.
+- Formulation is **vague**: No formal specification of objective function, constraint formulation, or comparison to PGD.
+- Framing is hedged: "We frame ABBP as research to be conducted, gated by a formal go/no-go check on whether action-space discretization yields a structurally distinct vulnerability."
+- **Verdict**: Conditional contribution. If action-bin discretization yields distinct vulnerability, novelty is moderate (adaptation of constrained optimization). If not, ABBP is not a contribution.
+- **Risk**: High. Preliminary evidence of superiority over PGD is absent.
+
+**TTDA (Temporal Trajectory Drift Attack)**
+- Targets multi-step action chunks in chunking policies (Octo), exploiting per-step kinematic checks to allow cumulative drift.
+- Somewhat novel but **narrow scope**: Only applies to chunking policies. Extension to flow-matching policies deferred to Years 3–4 "contingent on model availability."
+- Lacks formal analysis: "We will formalize sufficient conditions for such drift" is future work.
+- **Verdict**: Novel for specific architecture but unvalidated. Narrow applicability limits impact.
+- **Risk**: Moderate-High. Formal analysis may reveal drift is infeasible or requires impractical perturbations.
+
+**Defenses (TACD, AGAT)**
+- TACD (Temporal Action Consistency Detector): Multi-task trajectory forecasting with per-task thresholds. This is trajectory-level anomaly detection, which is **standard practice**, not novel.
+- AGAT (Action-Grounded Adversarial Fine-Tuning): Adversarial fine-tuning with LoRA rank-16. Standard technique. No novelty.
+- **Verdict**: Low novelty. TACD is reasonable but not innovative.
+
+**VLA-SecBench**
+- Open benchmark with cross-model transferability matrix, interpretability tools, attack/defense implementations.
+- **Novelty**: Low. Benchmarking is engineering. Similar efforts underway (AttackVLA, ManiparArena, cited in proposal).
+- **Value**: High for community. Infrastructure contribution, not research innovation.
+
+### Non-Novel Elements (Porting Existing Work)
+- **White-box attacks**: PGD, FGSM, C&W (2014–2017 methods) applied to visual encoders.
+- **Gray-box attacks**: Prompt injection, jailbreak, membership inference. Standard LLM/VLM attack vectors.
+- **Black-box attacks**: Token deletion/replacement, transfer-based. Existing methodology.
+- **Multimodal attacks (T2)**: "Variations of attacks by Qi et al., Walmer et al. will be implemented against robotic models." This is porting, not innovation. **Critically, T2 is deferred to Years 3–4.**
+
+### Reviewer Concern
+"This proposal is primarily an engineering integration of known attack taxonomies and defense methods, with two incremental attack proposals (ABBP, TTDA) that are conditionally validated and one core defense (TACD) that is a standard anomaly detector. Much is porting VLM attacks to VLAs without exploiting VLA-specific structure. This is solid systems engineering but not a compelling research innovation."
+
+**Verdict**: Below novelty bar for competitive SaTC funding. Would need clear evidence that ABBP/TTDA yield structurally distinct, practically superior attacks.
+
+---
+
+## 3. TECHNICAL DEPTH
+
+**Score: 6/10**
+
+### Strengths
+- **Comprehensive Threat Taxonomy** (Table 1 in 02_v2.tex): Evasion, poisoning, privacy, abuse; across training/inference; white/gray/black-box. Well-structured and clear.
+- **Multi-Modal Threat Formulation**: Formal notation $\mathcal{M}(\{\mathbf{x}\}, \{\mathbf{t}\}, \{\mathbf{s}\})$ frames input modalities rigorously.
+- **Preliminary System Design**: Described five VLA architectures (RT-1, RT-2, Octo, ACT, RoboCat) with technical details on visual encoders, adapters, LLM backbones.
+- **Evaluation Metrics**: Task Success Rate, action-token deviation, end-effector displacement, safety-zone violations, imperceptibility, transferability. Thoughtful metric selection.
 
 ### Weaknesses
 
-1. **Dual-Use Concerns Minimized:** While responsible disclosure is mentioned ("offensive analysis serves solely to build defenses"), there is minimal discussion of how released attack tooling will be gated to prevent misuse. What governance model ensures tools don't enable weaponized robots or autonomous harm?
+**ABBP Formulation Vague**
+- Proposal states: "ABBP optimizes perturbations to drive predicted action tokens across bin boundaries in a coordinated fashion across all degrees of freedom, subject to a kinematically-consistent Jacobian constraint."
+- Questions:
+  - How is Jacobian constraint formally incorporated? Hard constraint or soft penalty?
+  - How does this differ from constrained optimization in prior work (e.g., Carlini-Wagner)?
+  - Why is a "formal go/no-go check" necessary? Suggests uncertainty about whether ABBP is fundamentally different from PGD.
+- **No Preliminary Comparison**: Zero evidence that ABBP outperforms or differs from PGD.
+- **Verdict**: Lack of technical rigor in flagship contribution.
 
-2. **Generalizability Claims Overstated:** Proposal claims methodologies "extend beyond robotics and benefit adjacent domains (security of AI/multimodal models)" but provides no evidence. How does robotics-specific action-space anomaly detection generalize to autonomous vehicles, medical AI, or other multimodal systems?
+**TTDA Lacks Formal Analysis**
+- Proposal states: "We will formalize sufficient conditions for such drift and characterize how chunk length affects feasibility."
+- This is **future work**. No formal analysis provided.
+- Claim that attack surface is "structurally absent in single-output VLMs" is unproven.
+- **Verdict**: Foundational work incomplete.
 
-3. **Equity and Access:** Benchmarks and tools will likely be available to well-resourced researchers with access to VLA models and robot hardware. Does this widen or narrow the gap for institutions with limited resources?
+**Preliminary Results Are Weak**
+- White-box attacks (Figure 1): Success rates reported (~80% for PGD on RT-1) but no comparison to baseline accuracy or prior work. Is ABBP better? Unclear.
+- Black-box attacks (Figure 2): Task success drops from ~100% to near 0% with 20% token perturbation. This shows fragility but is not a sophisticated attack.
+- Only 25 evaluation episodes × 5 runs = 125 trials. Limited statistical power.
+- No confidence intervals or significance tests.
+- No defense evaluation whatsoever.
 
-4. **No Discussion of Long-Term Impact:** What happens when VLA architectures evolve in 2-3 years? Do defenses remain relevant? Proposal should address how to maintain/update benchmarks.
+**Evaluation Plan Detailed but Not Grounded**
+- Promises cross-model transferability matrix, yet zero preliminary transferability data.
+- Promises comparison to 3+ baseline defenses, yet zero preliminary defense evaluation.
+- Plans for 6 embodiments, 15 datasets, but preliminary scope is 2 embodiments, 4 models.
+- Large gap between preliminary and full scope raises execution risk.
 
----
+**Defenses Underdeveloped**
+- TACD: Multi-task trajectory forecasting is standard. No preliminary false-positive rates, detection rates, or comparisons.
+- AGAT: LoRA fine-tuning is standard. No preliminary robustness evaluation.
+- No evidence these defenses stop attacks.
 
-## 3. SaTC 2.0 Specific Criteria
+**Multimodal Coupling Formulation Missing**
+- T2 promises to target FiLM, projection MLP, cross-attention with "model-specific co-perturbation objective." No formal definition. No preliminary results.
+- Proposal positions this as "scale-up track in Years 3–4," deferring core work.
 
-### 3.1 Clarity of Trust Definition
-
-**Score: Fair**
-
-- Proposal defines trust narrowly as adversarial robustness; doesn't engage with broader trustworthiness dimensions (fairness, interpretability, privacy).
-- Definition is goal-circular ("safe, intended actions") without operational grounding.
-- **Recommendation:** Expand trust framework to align with NIST AI Risk Management Framework.
-
-### 3.2 Concreteness of Threat Model
-
-**Score: Fair-to-Good**
-
-- Table 1 provides concrete attack taxonomy (evasion, poisoning, privacy, abuse; white/gray/black-box; training/inference).
-- However, deployment threat scenarios are underspecified. Are threats from insider training-time attacks or external inference-time attacks the priority?
-- Doesn't clearly distinguish between attacks on open-source models (e.g., OpenVLA) vs. commercial APIs.
-
-**Recommendation:** Map threat model to realistic deployment scenarios (e.g., "autonomous warehouse picker defended against supply-chain backdoor injections" vs. "home robot defended against jailbreak via user-provided instructions").
-
-### 3.3 Generalizable Security Science (Not Single-Platform)
-
-**Score: Good**
-
-- Multi-embodiment, multi-model evaluation (6 robots, 5 VLA architectures, 15 datasets) shows effort to generalize beyond one platform.
-- However, all tested models share similar architectural patterns (vision encoder + LLM/VLM + action decoder). Generalizability to radically different architectures (e.g., RL-based policies, differentiable physics models) unclear.
-
-**Recommendation:** Include at least one non-transformer-based model (e.g., CNN-LSTM) to test robustness of generalizations.
-
-### 3.4 Evaluation Rigor and Reproducibility
-
-**Score: Fair**
-
-- Preliminary results are limited in scope (3 simulation + 3 real tasks, no baselines, no transferability analysis).
-- Closed-source models (RT-2 via proprietary partners) may hinder reproducibility.
-- Promised open-source implementation, but no timeline or commitment level.
-
-**Recommendation:** 
-- Commit to reproducibility standard: "All experiments reproducible on publicly available models (OpenVLA, Octo) and Simpler sim benchmark by end of Year 2."
-- Pre-register experiment protocol with OSF (Open Science Framework).
-
-### 3.5 Responsible Computing & Dual-Use Mitigation
-
-**Score: Fair**
-
-- Proposal mentions "responsible-disclosure practices" and gates for attack tools but lacks detail.
-- No discussion of how to prevent attackers from using released tools to harm robots.
-- No ethics review or institutional oversight mechanism described.
-
-**Recommendation:**
-- Define gating policy explicitly: e.g., "Attack code released only to researchers with institutional affiliation and under Data Use Agreement; no public release until 12 months after publication."
-- Engage ethics board or responsible AI committee for guidance on dual-use mitigation.
-
-### 3.6 Scope vs. Investment (4-Year Single-PI Budget)
-
-**Score: Poor**
-
-- Scope (T0-T3 across 5+ models, 6 embodiments, 15 datasets) is 2-3× larger than feasible for single-PI, 4-year effort.
-- Budget not provided, but robotics infrastructure (6 robots, cloud compute, graduate students) likely exceeds typical NSF SaTC RES budget (~$200K-350K over 4 years).
-- Real-robot experiments are logistics-heavy; few single-PI labs can sustain 6 platforms over 4 years.
-
-**Recommendation:** Dramatically scope-down or request additional co-PI support (e.g., collaboration with Google Robotics, CMU, UC Berkeley for platform access).
+**Verdict**: Technical depth is solid in framing and experimental design, but novel contributions lack formal grounding or validation. Risk is high that ABBP/TTDA will not deliver.
 
 ---
 
-## 4. Reviewer Assessment: Strengths & Weaknesses Summary
+## 4. EVALUATION STRENGTH
+
+**Score: 5/10**
+
+### Planned Evaluation (Strengths)
+- Primary metric (Task Success Rate under attack) is appropriate and physically grounded.
+- Secondary metrics (action-token deviation, end-effector displacement, safety violations) are well-chosen.
+- Cross-model transferability matrix addresses generalization.
+- Evaluation across 6 embodiments, 15 datasets is ambitious scope.
+- Planned comparison to 3+ baseline defenses.
+- Welch's t-tests for significance (statistical rigor).
+
+### Planned Evaluation (Limitations)
+- TSR is binary; may be coarse for subtle attacks.
+- 30% action-token deviation proxy lacks justification.
+- Assumes defenses are applicable across embodiments; embodiment-specific false-positive rates not discussed.
+- "At least ten runs with multiple seeds" is acceptable but modest for deep learning.
+
+### Preliminary Evaluation (Major Weaknesses)
+
+**Limited Task Scope**
+- Only 3 simulation tasks (Close Drawer, Move Closer, Pick Coke Can) and 3 real robot tasks (Stack Cubes, Duck in Bowl, Sweep).
+- These are basic manipulation tasks. No complex multi-step reasoning, navigation, or high-consequence scenarios.
+- Gap between preliminary scope (2 embodiments) and full scope (6 embodiments) is large.
+
+**Weak Baselines**
+- White-box: Only PGD, FGSM, C&W. No comparison to certified defenses, randomized smoothing, or recent work.
+- Black-box: Only 20% token perturbation. No comparison to other black-box attack methods.
+- Defense baselines: **None**. No comparison to input smoothing, ensemble voting, or other defenses.
+
+**No Comparison to Concurrent Work**
+- Cites BadVLA (backdoor attacks on VLAs), AdvVLA (adversarial attacks on VLAs), but does not compare attacks or defenses.
+- Does not benchmark against these concurrent efforts.
+
+**Arbitrary Success Metrics**
+- 30% action-token deviation used to define attack success. How was this threshold chosen? Is it imperceptible? Unproven.
+- Figures report success rates but no comparison to baseline model accuracy.
+
+**Limited Model Coverage**
+- Only 4 models evaluated (RT-1, RT-2, Octo, ACT).
+- Full scope targets 6 models. OpenVLA, RoboCat evaluation missing.
+
+**No Transferability Preliminary Results**
+- Proposal promises cross-model transferability matrix; zero preliminary data.
+- Do attacks on RT-1 transfer to Octo? Unknown. This is critical for understanding generalization.
+
+**No Defense Evaluation**
+- TACD and AGAT: Zero preliminary results.
+- How well do they work? False-positive rates? Unknown.
+- No comparison to baselines.
+
+**Statistical Rigor**
+- Figures lack error bars, confidence intervals, significance tests.
+- Only 5 random seeds; limited statistical power.
+
+**Reviewer Concern**
+"Preliminary evaluation does not support feasibility of ambitious full evaluation. Attacks not compared to prior work or shown to outperform baselines. Defenses completely unevaluated. Scope gap between preliminary (2 embodiments, 4 models) and full (6 embodiments, 6 models) suggests execution risk of incomplete evaluation."
+
+**Verdict**: Planned evaluation is comprehensive and well-designed, but preliminary data is insufficient to demonstrate feasibility. High risk of under-delivery on full evaluation.
+
+---
+
+## 5. CLARITY & POSITIONING
+
+**Score: 7/10**
 
 ### Strengths
-
-1. **Timeliness:** VLA security is underexplored and urgent as models enter production.
-2. **Comprehensive Taxonomy:** Well-structured attack categorization and threat model.
-3. **Preliminary Evidence:** Demonstrates non-trivial vulnerabilities in real models.
-4. **Robotics-Specific Defense:** Action-space anomaly detection is novel (though underevaluated).
-5. **Multi-Embodiment Scope:** Ambitious breadth increases credibility of generalizability.
+- Generally well-written with strong figures (VLA timeline, threat taxonomy, pipeline architecture, work-plan Gantt chart).
+- Clear problem motivation and three-task structure.
+- Comprehensive background on robotic learning and foundation models.
+- Detailed timeline with milestones and dependencies.
 
 ### Weaknesses
 
-1. **Limited Algorithmic Novelty:** Attacks are ports from VLM/LLM security; defenses are engineering adaptations.
-2. **Action-Space Anomaly Detection Unvalidated:** No evidence it stops attacks; insufficient as core contribution.
-3. **Evaluation Gaps:** Narrow task scope, missing baselines, no transferability analysis, arbitrary success metrics.
-4. **Feasibility Concerns:** Scope exceeds single-PI 4-year effort; underestimates robotics infrastructure demands.
-5. **Threat Model Ambiguity:** Unclear which threat scenarios are priority; trust definition is circular.
-6. **Reproducibility Risk:** Dependence on closed-source models; limited detail on open-source commitment.
+**Co-PI Status Unresolved**
+- Budget lists "George K. Thiruvathukal, Co-Principal Investigator" with salary allocation.
+- But text states "[Co-PI: TBD]".
+- Is Thiruvathukal confirmed or not? This is ambiguous and problematic for evaluation.
+
+**ABBP Confidence Unclear**
+- Framing as "proposed research to be validated rather than completed results" and "gated by a formal go/no-go check" suggests uncertainty about whether attack works.
+- Why not perform go/no-go analysis before proposal submission?
+
+**Multimodal Attacks Downgraded**
+- Initially claims three "conceptual ideas," including "investigation of modality-specific vulnerabilities in multimodal robots" (T2).
+- Later repositions T2 as "scale-up track in Years 3–4 that builds on T1 baselines."
+- This is a significant scope reduction. If multimodal attacks are core, they should be in MVP.
+
+**"First Comprehensive Framework" Claim Overstated**
+- Proposal repeatedly claims this is the "first comprehensive framework." But:
+  - Robey et al. (2024): jailbreak attacks on robots
+  - Shi et al. (2024): adversarial vulnerabilities
+  - BadVLA, AdvVLA (cited): attacks on VLAs
+- More honest framing: "First systematic evaluation across multiple embodiments and model families + two novel attacks (ABBP, TTDA) + open benchmark."
+
+**Threat Model Ambiguous**
+- Discusses white/gray/black-box attacks but doesn't clearly prioritize which threat scenario is most realistic.
+- Doesn't distinguish between open-source models (OpenVLA) vs. commercial APIs.
+- "Trust" defined as producing "safe, intended physical actions" — circular definition. What is "intended"?
+
+**Risk Mitigation Absent**
+- What if ABBP/TTDA fail (go/no-go check returns negative)? No contingency.
+- What if certain models (RT-2) are unavailable? No contingency.
+- What if transferability is zero? Impact on benchmark utility not discussed.
+
+**Responsible Disclosure Vague**
+- States "attack tooling will be gated appropriately to prevent misuse" but provides no specifics.
+- No timeline for disclosure relative to publication.
+- No approval process defined.
+
+**Verdict**: Proposal is clear and well-structured, but key ambiguities (Co-PI status, ABBP confidence, multimodal scope, threat model) create confusion. Honest framing of novelty would strengthen proposal.
 
 ---
 
-## 5. Top 5 Weaknesses & Actionable Fixes
+## 6. RELATED WORK POSITIONING
 
-### Weakness #1: Insufficient Technical Novelty in Attack Methods
+**Score: 6/10**
 
-**Severity: High**
+### Strengths
+- VLA Timeline (Figure in 01_v2.tex): Comprehensive evolution from RT-1 (2022) through 2025 models (SpatialVLA, GR00T, Gemini Robotics). Valuable context.
+- Covers foundation models (RT-X, Octo, OpenVLA), defenses (JailGuard, ECSO, alignment methods), and robotic vulnerabilities (Robey et al., Shi et al.).
+- Threat taxonomy cites VLM security literature (evasion, poisoning, privacy, abuse).
 
-**Current State:** Attacks are direct ports from vision/LLM literature without exploiting VLA-specific structure.
+### Gaps
 
-**Actionable Fix:**
-1. Develop attacks that exploit action tokenization and temporal consistency (e.g., attacks that target action token adjacency or temporal causal relations).
-2. Analyze mathematical properties of action space (discrete bins, kinematic constraints) that enable novel attack surfaces.
-3. Demonstrate $\geq 20\%$ improvement over naive port-overs on attack success rate or imperceptibility.
-4. Publish attack methodology as distinct contribution before benchmark results.
+**Concurrent Work Not Deeply Engaged**
+- Cites BadVLA and AdvVLA but doesn't clearly differentiate:
+  - BadVLA: Backdoor attacks on VLAs
+  - AdvVLA: Adversarial attacks on VLAs
+  - This proposal: Comprehensive evaluation + ABBP/TTDA + defenses + benchmark
+- Major omission: How does ABBP differ from or improve on AdvVLA attacks? Unclear.
 
-**Success Metric:** By Year 1.5, submit at least one paper introducing VLA-specific attack algorithms to a top-tier venue (e.g., USENIX Security, CCS).
+**Recent Jailbreak Work Underexplored**
+- Cites Robey et al. (2024) on jailbreaks but doesn't deeply engage.
+- Are jailbreaks (text-only) fundamentally different from TTDA (temporal trajectory)? Proposal doesn't explain.
+- How do defenses for jailbreaks (ECSO, MLLM-Protector) relate to TACD? Not discussed.
 
----
+**Certified Defenses Sidelined**
+- Proposal mentions "randomized smoothing for certified robustness" in future work but doesn't plan certified defenses as core contribution.
+- This is a missed opportunity; certified defenses are more principled than detection-based anomaly detectors.
 
-### Weakness #2: Action-Space Anomaly Detection Lacks Preliminary Evidence
+**Interpretability in Robotics**
+- Cites generic VLM interpretability methods (Attention Rollout, heatmaps, probing tasks).
+- Limited engagement with robotics-specific interpretability (causal analysis of actions, counterfactual trajectories).
 
-**Severity: High**
+**Transferability Theory**
+- Promises cross-model transferability matrix but doesn't ground in related work on adversarial transferability.
+- What factors drive or inhibit transfer across VLA architectures? No theoretical framework provided.
 
-**Current State:** Proposed as core defense but zero preliminary results shown.
+**Embodiment-Specific Vulnerabilities**
+- Targets 6 embodiments but doesn't discuss whether vulnerabilities differ (e.g., are arms more/less vulnerable than quadrupeds?).
+- No engagement with embodiment-aware learning literature.
 
-**Actionable Fix:**
-1. Conduct white-box attack experiments with detector enabled. Report:
-   - Detection rate (% of attacks caught before execution)
-   - False-positive rate (% of benign actions flagged)
-   - Pareto frontier: Detection rate vs. false-positive rate as threshold varies
-2. Compare to baselines: input smoothing, adversarial training, ensemble averaging.
-3. Test on at least 2 embodiments × 2 models.
-4. Publish detector design and evaluation as a methods paper by Year 1.
+**Positioning Against Concurrent Work**
+- Proposal should explicitly state: "BadVLA targets training-time backdoors; AdvVLA targets single-model adversarial robustness. We provide: (1) systematic evaluation across embodiments, (2) novel attacks (ABBP, TTDA) exploiting [specific VLA properties], (3) multimodal attack analysis, (4) open benchmark."
+- Currently, positioning is generic.
 
-**Success Metric:** Demonstrate detector catches ≥70% of white-box attacks with ≤5% false-positive rate by Year 1.
-
----
-
-### Weakness #3: Evaluation Scope Too Narrow; Missing Baselines & Transferability
-
-**Severity: High**
-
-**Current State:** 3-6 tasks, no baseline defenses, no transferability analysis, 30% success threshold unjustified.
-
-**Actionable Fix:**
-1. Expand evaluation suite to ≥10 tasks spanning manipulation (grasping, placing, insertion), locomotion (navigation, climbing), and complex reasoning.
-2. Implement 3-5 baseline defenses: input smoothing (Gaussian blur, JPEG compression), adversarial training, ensemble voting, certified defenses (randomized smoothing).
-3. Conduct full transferability study:
-   - Train attacks on model $M_1$, test on $M_2, M_3, \ldots$ (all model pairs).
-   - Report transfer success rate matrix.
-4. Define success metric operationally: "Attack succeeds if task completion rate drops ≥20% or safety zone is violated ≥1 time per 100 steps."
-5. Run all experiments 10+ times, report mean ± std, perform Welch's t-tests for significance.
-
-**Success Metric:** By Year 2, produce comprehensive benchmark paper with results on 10+ tasks, 5+ models, 5+ defenses, full transferability matrix.
+**Verdict**: Related work coverage is comprehensive but positioning is somewhat shallow. Proposal should more clearly articulate what is novel relative to BadVLA, AdvVLA, and concurrent work.
 
 ---
 
-### Weakness #4: Feasibility & Scope Over-Commitment
+## 7. FEASIBILITY PERCEPTION
 
-**Severity: Medium-High**
+**Score: 5/10**
 
-**Current State:** Ambitious scope (T0-T3, 6 robots, 5 models, 15 datasets) infeasible for single-PI 4-year effort.
+### Positive Factors
+- Budget ($555K) is reasonable and not inflated. Realistic for 4-year project.
+- Timeline (4 years, MVP + scale-up) is realistic for phased approach.
+- Preliminary experiments demonstrate PI can execute robotic learning experiments.
+- Infrastructure in place (GPU cluster, Loyola RDC, SSL lab with robotic equipment).
+- Prior work on AI security shows PI is capable.
 
-**Actionable Fix:**
-1. **Prioritize:** Focus on T1 (vulnerability analysis) as core contribution. Relegate T2 (multimodal) to secondary/exploratory work. Position T3 (safety/interpretability) as preliminary benchmarks, not full evaluation.
-2. **Narrow embodiments:** Target 2-3 platforms (e.g., Franka Emika, Xarm7) with publicly available models. Use simulation (Simpler, Isaac Sim) for breadth instead of real robots.
-3. **Model selection:** Commit to OpenVLA and Octo (open-source, reproducible). Use RT-2 only if cloud API access is secured; do not rely on local reproduction.
-4. **Budget real-robot time:** Max 30 hours/year per embodiment; focus on high-impact scenarios (e.g., 5 attack types × 6 tasks).
-5. **Hire support:** Request funding for 1 postdoc (attack methods) and 2 PhD students (evaluation, real robots), not just REU students. Clarify that "single-PI" effort includes advisor mentorship, not solo execution.
+### Negative Factors
 
-**Success Metric:** By Year 1, publish detailed work plan and timeline showing feasible milestones for each PI effort-allocation.
+**Team Size vs. Scope**
+- 1 PI (1 summer month/year) = ~1.3 months/year
+- 1 Co-PI (1 summer month/year, but TBD) = ~1.3 months/year
+- 1 Graduate student (full-time) = ~12 months/year
+- 1 Undergraduate student (10 hrs/week) = ~0.25 FTE
+- **Total: ~15 person-months/year**
+
+**Scope for 15 Person-Months/Year:**
+- T0: Build/train/evaluate models on 6 embodiments, 15 datasets
+- T1: Implement white/gray/black-box attacks (12-15 attack types from Table 1)
+- T1-4: Develop and evaluate defenses (TACD, AGAT, baselines)
+- T2: Multimodal attacks (deferred to Years 3–4 but still added work)
+- T3-1: Safety benchmarks
+- T3-2: Interpretability methods
+- Real robot experiments on 6 embodiments
+- Educational output (curriculum, workshops)
+
+**This is 30–35 person-months/year of work.** Ratio of work-to-capacity is 2–2.3×.
+
+**Co-PI Status Risk**
+- If Co-PI falls through, remaining team lacks robot learning expertise.
+- PI is AI security researcher; graduate student alone cannot manage robotics experiments.
+- **Critical feasibility blocker**.
+
+**Model Availability Risk**
+- Budget includes $[PLACEHOLDER] for "black-box API for proprietary VLAs in Years 3–4."
+- Placeholder suggests uncertainty about cost and availability.
+- If proprietary models unavailable, benchmark is incomplete.
+
+**Real-Robot Logistics**
+- Maintaining 6 robot platforms over 4 years is expensive and labor-intensive.
+- Proposal budgets ~30 GPU compute + travel but doesn't clearly budget for robot maintenance, dataset management, or systems engineering.
+- Single PI lab at Loyola likely does not have dedicated robotics engineering staff.
+
+**Preliminary Scope vs. Full Scope**
+- Preliminary: 2 embodiments (Xarm7, Google robot), 4 models, 3 tasks each.
+- Full: 6 embodiments, 6 models, 10+ tasks per embodiment.
+- Gap suggests risk of incomplete full evaluation.
+
+**Phase 2 Scope Creep**
+- Years 1–2 (MVP): ABBP, TTDA, TACD, AGAT on 2 embodiments.
+- Years 3–4 (Scale-up): Multimodal attacks, certified defenses, full VLA-SecBench release.
+- Phase 2 is compressed and dependent on Phase 1 completion. If Phase 1 runs behind, Phase 2 is squeezed.
+
+**Student Retention**
+- Graduate student graduation cycle: onboarding + research = 2–3 years. If student graduates Year 2, replacement must be recruited and onboarded. Transition loss is ~6 months.
+- Proposal doesn't discuss contingency for turnover.
+
+**Contingency Planning: Absent**
+- What if ABBP/TTDA fail go/no-go checks? No backup attacks specified.
+- What if models unavailable? No fallback to simulation-only evaluation.
+- What if multimodal coupling proves infeasible? No alternative T2 approach.
+- What if graduate student leaves? No replacement/backup plan.
+
+**Verdict**: Proposal is feasible under ideal conditions but faces significant execution risks. Co-PI TBD is a critical blocker. Team-to-scope ratio is tight (2–2.3×). Contingency planning is absent. High risk of incomplete deliverables or rushed execution.
 
 ---
 
-### Weakness #5: Threat Model & Trust Definition Lack Operational Grounding
+## 8. BROADER IMPACTS
 
-**Severity: Medium**
+**Score: 7/10**
 
-**Current State:** Trust defined circularly; threat actors/scenarios underspecified; SaTC-specific criteria unclear.
+### Strengths
+- **Educational Integration**: Curriculum modules, labs, workshops for HS/undergrad/grad students. Detailed mentoring plans (undergrad weekly meetings, grad student bi-weekly meetings, career guidance).
+- **Open-Source Release**: Commitment to release attack tools, defenses, datasets, benchmarks under permissive licenses. Enables community reuse.
+- **VLA-SecBench**: Open benchmark could become standard for community evaluation.
+- **Workforce Development**: CyberRamblers program already recruiting from underrepresented groups (50% goal). Synergistic activities show PI's engagement (SecureAI program, CS seminar series, curriculum development).
+- **Interdisciplinary Bridge**: Connects AI security, robotics, and cybersecurity communities.
 
-**Actionable Fix:**
-1. Define explicit threat actor profiles:
-   - **Insider (white-box):** Disgruntled ML engineer with model code.
-   - **External API (black-box):** Unauthorized user with limited query budget.
-   - **Supply-chain:** Attacker can inject backdoors during training data collection.
-   - **Physical (sensor):** Attacker can modify camera input or sensory readings.
-2. For each actor, specify attack goals: (a) Cause task failure, (b) Cause specific harmful action, (c) Extract proprietary data, (d) Corrupt trajectory.
-3. Define trustworthiness evaluation protocol: Robot is trustworthy if it (1) Resists attacks with <5% success rate, (2) Recovers gracefully (returns to safe state within 1 second), (3) Logs intrusions for audit, (4) Explains decisions to human operators (interpretability).
-4. Map each task (T0-T3) to trustworthiness criteria; show causal link.
-5. Align with SaTC program outcomes: "This work advances understanding of [which] trustworthiness dimensions in [robotics domain]?"
+### Limitations
+- **Responsible Disclosure Details Sparse**: Promises "attack tooling will be gated appropriately" but no specifics on gates, timelines, or approval processes. Could be clearer.
+- **Industry Engagement Missing**: No workshops or outreach to roboticists/vendors. How will findings be communicated to practitioners?
+- **Generalizability Overstated**: Claims findings "extend beyond robotics and benefit adjacent domains (AI/multimodal security)" but provides no evidence. How does action-space anomaly detection generalize to autonomous vehicles or medical AI?
+- **Long-Term Sustainability**: What happens when VLA architectures evolve in 2–3 years? How will benchmarks be maintained/updated? No discussion.
+- **Equity & Access**: Benchmarks require access to VLA models and robot hardware. Does this widen or narrow gap for under-resourced institutions? Not discussed.
 
-**Success Metric:** By proposal revision, include detailed threat model taxonomy (≥3 actor types × ≥4 goals × ≥3 capabilities levels) with explicit in/out-of-scope definitions.
-
----
-
-## 6. Decision & Rating
-
-### Summary Rationale
-
-The proposal tackles an important and timely problem: security of generalist VLA robotic models. The comprehensive threat taxonomy and multi-embodiment evaluation scope are commendable. However, the technical contributions are primarily incremental—adapting known VLM attack methods to robotics without deep algorithmic innovation. The proposed core defense (action-space anomaly detection) lacks any preliminary evidence of effectiveness and appears to be a safety filter rather than a true security mechanism. Evaluation rigor is weak (narrow task scope, missing baselines, no transferability analysis), and the project scope dramatically exceeds what is feasible for a single-PI, 4-year RES grant, especially when accounting for robotics infrastructure demands. The threat model is ambiguous, and trustworthiness claims lack operational grounding.
-
-While the work would likely produce useful datasets and benchmarks, it falls short of the technical rigor and novelty expected for competitive NSF SaTC funding. The proposal reads as an engineering systems integration effort ("apply attacks A1-A12 to models M1-M5 on robots R1-R6") rather than advancing fundamental security science in robotics.
-
-### Rating
-
-**Overall Rating: GOOD (3/5)**
-
-- **Intellectual Merit:** GOOD (3/5) — Timely and comprehensive scope, but limited algorithmic novelty; defenses underdeveloped.
-- **Broader Impacts:** GOOD (3/5) — Educational components strong; dual-use concerns minimized.
-- **SaTC Alignment:** FAIR-TO-GOOD (2.5/5) — Threat model and trust definition need refinement; scope-to-resources misaligned.
-
-### Funding Recommendation
-
-**BORDERLINE / NOT COMPETITIVE for RES at current form**
-
-**Detailed Justification:**
-
-This proposal sits at the boundary. If funded, it would likely produce useful artifacts (benchmarks, datasets, open-source tools) and contribute to nascent VLA security literature. However, it does not rise to **Highly Competitive** or **Competitive** status due to:
-
-1. **Limited Novelty:** Attacks are adaptations of existing methods; defenses are engineering refinements. No breakthrough insight.
-2. **Evaluation Gaps:** Preliminary work is too narrow to support ambitious claims about generalizability.
-3. **Feasibility Risk:** Over-committed scope and single-PI model suggest execution risk; deadline pressure may force shortcuts.
-4. **Clarity Issues:** Threat model, trust definition, and core technical innovation need clearer articulation.
-
-**Funding Level (if favorably reviewed):** If revised to sharpen scope and strengthen preliminary results, could merit funding at **$150K-200K over 3 years** (reduced from typical 4-year RES budget) with explicit co-PI support or partnerships for real-robot access.
+**Verdict**: Broader impacts are well-developed with concrete educational and community outcomes. Could be enhanced with industry engagement, long-term sustainability plans, and clearer responsible disclosure strategy.
 
 ---
 
-## 7. Improvement Pressure Test: What Would Make This Competitive?
+## 9. REVIEWER ATTACKS (Critical Arguments)
 
-### Required Changes for Acceptance
+### Attack 1: "This is primarily engineering integration, not research innovation."
+**Severity: CRITICAL**
 
-1. **Demonstrate Novel Attack Method(s):** Show that VLA-specific attacks (exploiting action tokenization, temporal consistency, kinematic constraints) outperform naive VLM ports by ≥25% in efficiency or success rate. Publish as methods paper.
+The proposal adapts known VLM attack methods (PGD, FGSM, C&W, jailbreak, membership inference) to robotics, implements standard defenses (anomaly detection, adversarial training), and builds a benchmark. This is engineering systems integration—valuable for the community but not advancing fundamental security science in robotics.
 
-2. **Validate Action-Space Anomaly Detector:** Provide preliminary evidence (on ≥100 white-box attacks) that detector catches ≥70% of attacks with ≤5% false-positive rate. Compare to 2-3 baseline defenses.
+**Evidence:**
+- Attacks are from 2014–2017 literature (PGD, FGSM, C&W).
+- Gray/black-box attacks (prompt injection, jailbreak) are standard LLM attacks.
+- TACD is trajectory-level anomaly detection (standard).
+- AGAT is adversarial training with LoRA (standard).
+- Multimodal attacks proposed as "variations of existing attacks" and deferred to Phase 2.
 
-3. **Expand Evaluation Rigor:** Conduct experiments on ≥10 tasks, ≥4 models, ≥4 defenses. Report full transferability matrix. Use task success rate as primary metric; justify all thresholds.
+**Implication:** Proposal should be submitted to a systems/tools venue (e.g., USENIX Security tools track, or a robotics conference) rather than NSF SaTC RES, which expects novel algorithms or theoretical insights.
 
-4. **Scope Reduction:** Explicitly narrow to T1 (vulnerability analysis) and T3 (safety/interpretability). Defer T2 (multimodal attacks) to Phase 2 or postdoc project.
+---
 
-5. **Clarify Threat Model:** Define 3-4 specific threat actors with explicit attack goals. Map each defense to threat(s) it mitigates.
+### Attack 2: "Co-PI TBD makes proposal un-evaluable and creates blocking feasibility risk."
+**Severity: CRITICAL**
 
-6. **Feasibility Plan:** Provide detailed timeline and resource allocation showing how all tasks fit within single-PI 4-year effort. Identify partnerships or co-PI support for real-robot access.
+The proposal lists a Co-PI in the budget (George K. Thiruvathukal) but states "[Co-PI: TBD]" in the text. Robotics foundation models require expertise in manipulation, control, embodiment-specific constraints, and real-robot experimentation. The PI (AI security researcher) does not provide this expertise.
 
-7. **SaTC Alignment:** Explicitly connect findings to SaTC program outcomes (e.g., "This work advances understanding of certification mechanisms for trustworthy AI in cyber-physical systems").
+**Evidence:**
+- Budget includes Co-PI salary but Co-PI identity is unclear.
+- PI publication record focuses on AI security (CCS, IEEE ICDCS, TIFS, IEEE IoT-J), not robotics.
+- Facilities section mentions "SSL lab has robotic equipment" but no robot expert listed.
+- Graduate student alone cannot manage robotics experiments across 6 embodiments.
+
+**Implication:** Without a confirmed roboticist, the project is infeasible. If Co-PI recruitment falls through, team lacks critical expertise.
+
+---
+
+### Attack 3: "Preliminary evaluation does not support feasibility of ambitious full evaluation."
+**Severity: MAJOR**
+
+Preliminary results are on 3 toy simulation tasks + 3 simple real robot tasks. Full scope targets 6 embodiments, 15 datasets, 6 models. No defense evaluation. No comparison to concurrent work (BadVLA, AdvVLA). Statistical rigor is weak (5 runs, no significance tests).
+
+**Evidence:**
+- Scope gap: Preliminary 2 embodiments/4 models vs. full 6 embodiments/6 models.
+- Zero defense evaluation.
+- No comparison to BadVLA, AdvVLA, or other baselines.
+- Figures lack error bars, confidence intervals.
+- Only 5 random seeds per task.
+
+**Implication:** High risk that once full evaluation begins, attacks/defenses will not perform as hypothesized, or execution will be rushed/incomplete.
+
+---
+
+### Attack 4: "ABBP and TTDA are conditionally validated; not established contributions."
+**Severity: MAJOR**
+
+ABBP is "gated by a formal go/no-go check on whether action-space discretization yields a structurally distinct vulnerability." This hedging suggests the PI is uncertain whether the attack works. TTDA "will formalize sufficient conditions for such drift" — formal analysis not yet done.
+
+**Evidence:**
+- Proposal frames ABBP as "research to be conducted, gated by go/no-go check."
+- No formalization of Jacobian constraint or comparison to PGD.
+- TTDA lacks formal analysis of drift conditions.
+- No preliminary evidence of superiority over baselines.
+
+**Implication:** These are not contributions yet; they are proposed research with uncertain feasibility. Proposal should not claim them as core contributions.
+
+---
+
+### Attack 5: "Multimodal attacks (T2), claimed as core, are deferred to Phase 2."
+**Severity: MAJOR**
+
+Proposal lists three main "conceptual ideas," including "investigation of modality-specific vulnerabilities in multimodal robots" (T2). But T2 is repositioned: "We present T2 as a scale-up track in Years 3 and 4 that builds on attack baselines established in T1."
+
+**Evidence:**
+- Intellectual merit section cites (2) investigation of multimodal vulnerabilities as core.
+- T2 section states it is a "scale-up track in Years 3–4."
+- This is a downgrade of scope.
+
+**Implication:** MVP is weaker than claimed. Core contributions (ABBP, TTDA) are incremental; major contribution (multimodal attacks) is deferred.
+
+---
+
+### Attack 6: "Scope far exceeds single-PI capacity over 4 years."
+**Severity: MAJOR**
+
+Targeting 6 embodiments, 15 datasets, 6 models, 3 attack categories, 2 defenses, 1 benchmark with 15 person-months/year is unrealistic. Equivalent to 30–35 person-months/year of work.
+
+**Evidence:**
+- Team FTE: ~15 person-months/year.
+- Scope: T0-T3, 6 robots, 5+ models, 15 datasets, 12+ attack types, multiple defenses.
+- Real-robot logistics (maintenance, data management) not explicitly budgeted.
+
+**Implication:** Proposal will deliver incomplete results or sacrifice depth for breadth.
+
+---
+
+### Attack 7: "Novelty claims are overstated; work is primarily porting and benchmarking."
+**Severity: MAJOR**
+
+Proposal claims "first comprehensive framework" and "first systematic evaluation," but concurrent work (BadVLA, AdvVLA, Robey et al.) is already addressing similar problems. ABBP and TTDA are incremental; VLA-SecBench is benchmarking (infrastructure, not research).
+
+**Evidence:**
+- Attacks are adaptations of existing methods (PGD, jailbreak, membership inference).
+- VLA-SecBench is similar to AttackVLA, ManiparArena (cited).
+- No algorithmic breakthrough in attacks or defenses.
+
+**Implication:** Novelty is below the bar for research funding in a competitive SaTC program.
+
+---
+
+### Attack 8: "Risk mitigation and contingency planning are absent."
+**Severity: MODERATE**
+
+Proposal does not discuss what happens if:
+- ABBP/TTDA fail go/no-go checks (become non-contributions).
+- Proprietary models (RT-2) are unavailable for research.
+- Transferability is zero (benchmark utility reduced).
+- Graduate student leaves (team disrupted).
+- Multimodal coupling proves infeasible.
+
+**Evidence:**
+- Budget includes $[PLACEHOLDER] for proprietary VLA APIs (uncertainty about cost/availability).
+- No backup attacks if ABBP/TTDA fail.
+- No fallback to simulation-only evaluation if real robots unavailable.
+- No contingency for student turnover.
+
+**Implication:** High execution risk. Proposal does not demonstrate preparedness for common obstacles.
+
+---
+
+### Attack 9: "Defenses are underevaluated and appear to be safety filters, not security mechanisms."
+**Severity: MODERATE**
+
+TACD (trajectory-level anomaly detection) and AGAT (adversarial fine-tuning) lack any preliminary evaluation. Zero preliminary results shown. Defenses may not stop attacks that are constrained to be kinematically plausible.
+
+**Evidence:**
+- No preliminary false-positive rates, detection rates, or robustness evaluation for defenses.
+- No comparison to baseline defenses.
+- Action-space anomaly detection may only filter obviously invalid actions, not sophisticated attacks.
+
+**Implication:** Defenses are unvalidated. Proposal claims defense contribution without evidence.
+
+---
+
+### Attack 10: "Threat model and trust definition are ambiguous and lack operational grounding."
+**Severity: MODERATE**
+
+Proposal defines trust circularly ("safe, intended physical actions") and doesn't clearly prioritize threat scenarios. Unclear whether defending against insider white-box attacks vs. external black-box attacks. Multimodal inputs mentioned but priority unclear.
+
+**Evidence:**
+- Trust defined as producing "safe, intended actions" — circular.
+- Threat model spans white/gray/black-box but doesn't prioritize.
+- Doesn't distinguish between open-source models (OpenVLA) vs. commercial APIs.
+
+**Implication:** Without clear threat models, evaluation claims lack grounding. Proposal is addressing too many threats without depth in any.
+
+---
+
+## 10. IMPROVEMENT PRESSURE TEST
+
+### What Would Make This Competitive?
+
+**Required Changes:**
+
+1. **Resolve Co-PI Status (Blocking)**
+   - Identify and confirm robot learning expert as Co-PI with publication record in robotics.
+   - Provide letter of commitment clarifying effort allocation and role.
+   - Update organizational structure and budget accordingly.
+
+2. **Narrow MVP Scope (Critical)**
+   - Focus on 2 embodiments (Xarm7, Google robot) with open-source models (OpenVLA, Octo).
+   - Reduce to 3 key attack categories (white-box, black-box, multimodal).
+   - Defer complex multi-embodiment evaluation and certified defenses to Phase 2.
+   - This makes scope feasible for 1 grad student + 0.5 PI time.
+
+3. **Validate ABBP and TTDA (Critical)**
+   - Perform go/no-go analysis on ABBP before resubmission. Include results in proposal.
+   - Formalize Jacobian constraint and optimization objective for ABBP.
+   - Compare ABBP to PGD on preliminary tasks. Show advantage (lower budget, higher imperceptibility, better transfer).
+   - Formalize sufficient conditions for TTDA drift. Show feasibility with preliminary attacks.
+   - If attacks are not superior to baselines, reposition as "systematic evaluation of existing attacks" rather than novel contributions.
+
+4. **Strengthen Preliminary Evaluation (Critical)**
+   - Add defense results: TACD detection rates (≥70% on attacks), false-positive rates (≤5% on benign).
+   - Evaluate AGAT robustness on toy task.
+   - Compare attacks to BadVLA, AdvVLA methods.
+   - Increase evaluation to 10+ runs with significance testing (Welch's t-test).
+   - Add human evaluation of imperceptibility (informal survey).
+
+5. **Clarify Threat Models and Trust Definition (Major)**
+   - Define 3-4 explicit threat actors: insider white-box, external black-box, supply-chain poisoning, physical sensors.
+   - For each actor, specify attack goals: cause task failure, cause specific harm, extract data, corrupt trajectory.
+   - Define trustworthiness operationally: "Robot is trustworthy if (1) resists attacks with <5% success, (2) recovers within 1 second, (3) logs intrusions, (4) explains decisions."
+   - Map each research task (T0-T3) to trustworthiness criteria.
+
+6. **Detail Risk Mitigation (Major)**
+   - Plan B if ABBP/TTDA don't work: fall back to established attack methods (PGD).
+   - Plan B if models unavailable: use open-source models only (OpenVLA, Octo).
+   - Plan for graduate student turnover: clear documentation, onboarding.
+   - Model availability contingency: specify which models are required vs. optional.
+
+7. **Specify Responsible Disclosure (Major)**
+   - Define gating policy: e.g., "Attack code released under NDA to academic researchers; 6-month embargo before public release."
+   - Approval process: ethics board review? Vendor pre-disclosure?
+   - Timeline: release schedule relative to publication.
+
+8. **Add Industry/Practitioner Engagement (Moderate)**
+   - Plan workshops or webinars for roboticists and vendors.
+   - Identify practitioners who will pilot tools or provide feedback.
+   - Discuss pathways for findings to influence practice (e.g., industry standards, robot safety guidelines).
+
+9. **Improve Evaluation Rigor (Moderate)**
+   - Add more realistic tasks (multi-step manipulation, navigation, reasoning).
+   - Include transfer evaluation: attack trained on one model, tested on another.
+   - Report robustness-compute tradeoff: how much computational cost for defenses?
+
+10. **Clarify Novelty & Positioning (Moderate)**
+    - Explicitly state what is novel relative to BadVLA, AdvVLA, concurrent work.
+    - Reposition from "first comprehensive framework" to "systematic evaluation across embodiments + incremental attacks + open benchmark."
+    - Articulate VLA-specific attack properties that are not present in VLMs.
 
 ### Impact of Changes
 
-If all changes implemented:
+- **Narrowed scope** makes project feasible for team size/budget.
+- **Confirmed Co-PI** eliminates critical risk.
+- **Validated ABBP/TTDA** removes conditional framing; establishes contributions.
+- **Stronger preliminary eval** reduces execution risk.
+- **Clear threat models** address SaTC program alignment.
+- **Risk mitigation** demonstrates preparedness.
 
-- **Rating upgrade:** GOOD → VERY GOOD (4/5)
-- **Funding recommendation upgrade:** BORDERLINE → COMPETITIVE (potentially fundable)
-- **Estimated probability of funding:** 30-40% (with strong reviews from other panelists)
-
----
-
-## 8. Meta-Assessment: Reviewer Sentiment
-
-| Dimension | Level | Comment |
-|-----------|-------|---------|
-| **Enthusiasm** | Medium | Problem is timely; execution concerns dampen enthusiasm. |
-| **Confidence** | Medium-High | Confident in assessment of novelty gaps and feasibility risks; less certain about potential with revisions. |
-| **Funding Likelihood** | Low-to-Medium | 25-35% chance of funding at major NSF program; higher (40-50%) if NSF opens robotics-specific security track. |
+**If all changes implemented:**
+- **Rating upgrade**: REJECT → Borderline or Weak Accept
+- **Funding likelihood upgrade**: 15–20% → 40–50%
+- **Major caveat**: Even with changes, novelty concerns remain. Proposal is primarily "benchmarking + porting," not research breakthrough. This will limit funding enthusiasm.
 
 ---
 
-## 9. Reviewer Questions for Rebuttal
+## 11. COMPARATIVE STANDING
 
-1. **On Technical Novelty:** Can you articulate 2-3 algorithmic innovations specific to VLA security that are not present in prior VLM security work? What is the fundamental difference between attacking a VLM and attacking a VLA?
+If 10 similar SaTC proposals on AI/ML security are submitted, this proposal would rank:
 
-2. **On Anomaly Detector:** What percentage of adversarially crafted actions satisfy your kinematic constraints? If >80%, how is the detector doing more than checking physics feasibility? Early preliminary results (even negative results) would clarify scope.
+**Estimated Ranking: 6th–8th quintile (below average to borderline)**
 
-3. **On Feasibility:** How many person-years of effort does this proposal require? Can you map each task to graduate student chapters or postdoc projects? Where is the co-PI support for real-robot maintenance and management?
+**Why below average:**
+- Important problem (✓) but not uniquely urgent
+- Weak preliminary evaluation (✗)
+- Unresolved Co-PI (✗)
+- Incremental novelty (✗)
+- Feasibility concerns (✗)
 
-4. **On Threat Model:** In your primary threat scenario, does the attacker have white-box, gray-box, or black-box access? Which is the priority for defense investment? (This should drive task weighting.)
+**Why above strong rejects:**
+- VLA-SecBench and open-source tools valuable (✓)
+- Educational components strong (✓)
+- Problem is timely (✓)
 
-5. **On Reproducibility:** What fraction of your evaluation will use open-source models/simulators? For closed-source models (e.g., RT-2), what is your plan to ensure reproducibility after the grant ends?
-
-6. **On Generalization:** You claim findings generalize to "all VLA architectures." How do you ensure generalizability to future architectures (e.g., if models shift to diffusion-based action generation or symbolic reasoning)?
-
----
-
-## 10. Conclusion
-
-This proposal addresses a timely and important problem but falls short of the technical rigor and novelty needed for competitive SaTC funding at the current RES level. The breadth of scope (T0-T3, 6 robots, 5 models) is impressive but infeasible for a single-PI 4-year effort. Core technical contributions—adapted attacks and underevaluated defenses—lack novelty. With substantial revisions focusing on algorithmic innovation, evaluation rigor, and feasibility, this work could become competitive.
-
-**Overall Recommendation:** REJECT, with encouragement to revise and resubmit to a future SaTC solicitation, ideally with explicit robotics security framing and co-PI partnerships.
-
----
-
-## Appendix: Detailed Evaluation Rubric
-
-| Criterion | Score | Evidence |
-|-----------|-------|----------|
-| Intellectual Merit - Novelty | 2.5/5 | Attacks are ported methods; defenses are adaptations. No algorithmic breakthrough. |
-| Intellectual Merit - Impact | 3.5/5 | Multi-embodiment evaluation and benchmarking valuable to community; foundational contribution. |
-| Broader Impacts - Educational | 4/5 | Strong curriculum/student engagement plans; clear mentoring structure. |
-| Broader Impacts - Dual-Use | 2.5/5 | Minimal detail on responsible disclosure and attack tool gating. |
-| SaTC Alignment - Trust Clarity | 2/5 | Definition is circular; operationalization needed. |
-| SaTC Alignment - Threat Model | 3/5 | Taxonomy is detailed; deployment scenarios underspecified. |
-| SaTC Alignment - Generalizability | 3.5/5 | Multi-model/embodiment scope is good; architecture diversity limited. |
-| Evaluation Rigor | 2.5/5 | Preliminary results narrow in scope; missing baselines; weak statistical rigor. |
-| Feasibility | 2/5 | Scope far exceeds single-PI capacity; robotics infrastructure demands underestimated. |
-| Clarity | 3/5 | Well-written; technical framing clear; but threat model and trust definition vague. |
-| **AVERAGE** | **2.9/5** | **GOOD (borderline)** |
+**Competitive landscape:**
+- **Rank 1–2** (Strong Accept): Novel attack method with formal guarantees + certified defense + comprehensive preliminary validation. Full team confirmed.
+- **Rank 3–4** (Accept): Solid contribution + good preliminary eval + feasible scope. This proposal with major revisions might reach this.
+- **Rank 5–6** (Borderline): Important problem but modest novelty. Execution risk. **Current proposal is here.**
+- **Rank 7–8** (Reject): Over-ambitious scope, weak evaluation, unresolved team.
+- **Rank 9–10** (Strong Reject): Fundamental technical flaws or inappropriate for program.
 
 ---
 
-*Panel Review Completed: August 31, 2026*  
-*Reviewer Classification: External Expert, AI Security & Robotics*
+## 12. DECISION SIMULATION
+
+```
+Decision: REJECT
+Recommendation: Require Major Revisions Before Resubmission
+Funding Likelihood (Current Form): 15–20%
+```
+
+### Rationale
+
+The proposal addresses a timely and important problem (VLA security in robotics) and proposes a structured three-task framework. The team has demonstrated preliminary capability in robotic learning and adversarial evaluation. Broader impacts are well-developed.
+
+**However, critical weaknesses prevent funding recommendation:**
+
+1. **Co-PI Status TBD** (Blocking): Robotics expertise is undefined. Feasibility cannot be assessed without confirmed Co-PI.
+
+2. **Preliminary Evaluation Weak**: Only toy tasks; no defense eval; no comparison to concurrent work (BadVLA, AdvVLA). Execution risk is high.
+
+3. **Novelty Incremental**: Much work is porting VLM attacks. ABBP and TTDA are conditional contributions with uncertain feasibility. Multimodal attacks deferred to Phase 2. Below bar for research innovation.
+
+4. **Scope Exceeds Feasibility**: 6 embodiments, 15 datasets, 6 models for 1.3 FTE researchers is 2–2.3× overcommitted.
+
+5. **Threat Model Ambiguous**: Trust definition is circular; threat scenarios underspecified. Unclear which attacks are priority.
+
+With substantial revisions (especially Co-PI confirmation, MVP scope narrowing, and validated ABBP/TTDA), proposal could become competitive. But current form does not meet funding threshold.
+
+---
+
+## 13. META ASSESSMENT
+
+| Dimension | Level | Rationale |
+|-----------|-------|-----------|
+| **Enthusiasm** | Low | Problem is timely; execution concerns dampen enthusiasm significantly. |
+| **Confidence** | Moderate | Confident in assessment of novelty, feasibility, and evaluation gaps. Less certain about potential with major revisions. |
+| **Funding Likelihood** | Low | 15–20% chance at major NSF SaTC program; 30–40% if revised as suggested. |
+
+---
+
+## 14. SUMMARY: TOP 5 MAJOR WEAKNESSES
+
+### 1. **Co-PI TBD (Critical)**
+Robotics expertise is undefined. Blocking feasibility risk.  
+**Location**: Budget, Intellectual Merit section  
+**Fix**: Identify and confirm Co-PI with robot learning expertise.
+
+### 2. **Preliminary Evaluation Weak (Critical)**
+Only toy tasks (3 sim + 3 real); zero defense evaluation; no comparison to concurrent work.  
+**Location**: 02_v2.tex, Preliminary Experiments  
+**Risk**: Execution risk of incomplete full evaluation.  
+**Fix**: Add defense eval, increase task complexity, compare to BadVLA/AdvVLA.
+
+### 3. **Novelty Incremental (Major)**
+ABBP and TTDA conditional; much work is porting VLM attacks. T2 multimodal attacks deferred to Phase 2.  
+**Location**: Overview, T1-1, T1-3, T2 sections  
+**Fix**: Perform go/no-go validation before submission. Reposition as "systematic evaluation + benchmarking."
+
+### 4. **Scope Exceeds Feasibility (Major)**
+6 embodiments, 15 datasets, 6 models for 1.3 FTE is 2–2.3× overcommitted.  
+**Location**: T0-T3, Budget  
+**Fix**: Narrow to 2 embodiments, 3 models; defer scale-up to Phase 2.
+
+### 5. **Threat Model & Trust Ambiguous (Major)**
+Circular trust definition; threat scenarios underspecified; unclear priorities.  
+**Location**: Overview, Background, T1-T3  
+**Fix**: Define explicit threat actors/goals. Operationalize trustworthiness. Map tasks to SaTC criteria.
+
+---
+
+## CONCLUSION
+
+This proposal is a competent engineering effort addressing an important problem, but falls below the threshold for competitive NSF SaTC funding due to critical weaknesses: unresolved Co-PI, weak preliminary evaluation, incremental novelty, scope-feasibility mismatch, and ambiguous threat models.
+
+**Recommendation: REJECT** with encouragement to revise and resubmit.
+
+**Path to Fundability**: (1) Confirm Co-PI, (2) Narrow MVP scope to 2 embodiments/3 models, (3) Validate ABBP/TTDA before resubmission, (4) Strengthen preliminary defense evaluation, (5) Clarify threat models and trustworthiness criteria.
+
+With these changes, proposal could reach **Borderline or Weak Accept** status.
+
+---
+
+**Review Completed**: September 8, 2026  
+**Reviewer Mode**: Academic Reviewer (Skeptical Senior Peer)  
+**Overall Score**: 5.5/10 (Below Funding Threshold)
+

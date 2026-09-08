@@ -1,7 +1,7 @@
 ---
 name: Planner
 description: Transforms validated research opportunities into a structured research program with aims, hypotheses, work packages, milestones, deliverables, evaluation strategies, dependencies, timelines, and risk mitigation plans.
-model: Claude Sonnet 4.6 (copilot)
+model: Claude Sonnet 5 (copilot)
 tools: [vscode/memory, 'vscode', 'execute',read, edit, search/listDirectory, search/textSearch, search/usages, todo]
 ---
 

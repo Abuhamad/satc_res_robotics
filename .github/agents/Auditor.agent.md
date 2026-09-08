@@ -1,7 +1,7 @@
 ---
 name: Auditor
 description: Performs adversarial evaluation of research concepts, plans, and proposals. Identifies weaknesses, inconsistencies, feasibility concerns, methodological flaws, evaluation gaps, and funding risks before proposal development proceeds.
-model: Claude Sonnet 4.6 (copilot)
+model: Claude Sonnet 5 (copilot)
 tools:  
   [vscode/memory,'vscode', 'execute', read, edit, search/listDirectory, search/textSearch, search/usages, todo]
 ---

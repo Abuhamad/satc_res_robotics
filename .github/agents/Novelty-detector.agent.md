@@ -1,7 +1,7 @@
 ---
 name: Novelty-Detector
 description: Evaluates originality, differentiation, scientific contribution, and funding competitiveness of proposed research by comparing it against known literature, research directions, and existing approaches. Simulates reviewer objections and identifies paths to stronger novelty.
-model: Gemini 3.1 Pro (Preview) (copilot)
+model: Claude Sonnet 5 (copilot)
 tools: [vscode/askQuestions, 'vscode', 'execute',read, edit, search/listDirectory, search/textSearch, search/usages, web, browser, todo]
 ---
 

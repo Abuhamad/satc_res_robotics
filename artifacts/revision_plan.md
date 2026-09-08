@@ -1,226 +1,314 @@
-# Revision Plan — NSF SaTC 2.0 RES Proposal (Cycle 2)
+# Revision Plan — NSF SaTC 2.0 RES: "Toward Secure and Robust Generalist Robotic Models"
 
-**Proposal:** "SaTC 2.0: RES: Toward Secure and Robust Generalist Robotic Models" (PI: Abuhamad, Loyola University Chicago)
-**Date:** 2026-08-31
-**Inputs used:** `artifacts/academic_review.md` (panel: GOOD 3/5, Borderline), `artifacts/integrity_review.md` (PASS w/ pre-submission actions), `artifacts/context_report.md`, `artifacts/researcher_report.md`, and current `01_v2.tex` / `02_v2.tex` / `sections/*_v2.tex` for grounding.
-**Note:** `artifacts/auditor_report.md` was requested but does **not** exist in `artifacts/`. Auditor-type findings were recovered from the session record and folded into Category B where relevant, but no auditor file was read.
-
-**Scope of this document:** planning only. **No `.tex` or `.bib` files were edited.** Every dollar figure and reference remains the PI's to compute/verify; nothing is fabricated here.
+**Revision Coach synthesis of four completed reviews**
+**Date:** 2026-09-08
+**Inputs:** `artifacts/academic_review.md`, `artifacts/auditor_feasibility.md`, `artifacts/integrity_review.md`, `artifacts/novelty_assessment.md`
+**Fix sites verified in:** `main_v2.tex`, `01_v2.tex`, `02_v2.tex`, `sections/budgetjustification_v2.tex`, `sections/0_project_summary_v2.tex`
+**Constraint:** Preserve validated research design (aims, T0–T3 structure, ABBP/TTDA/TACD/AGAT, VLA-SecBench). No .tex files edited by this plan.
 
 ---
 
 ## 1. Executive Revision Summary
 
-The panel rates the proposal **GOOD (3/5), Borderline / not competitive as-is**. The integrity gate is **PASS** but lists concrete pre-submission blockers. The gap between the two is instructive: the package is *structurally sound and internally consistent*, but its *research narrative* is judged incremental. Repairs therefore split cleanly into three tracks:
+The four reviews converge on a consistent conclusion: the **underlying research design is sound**, but the submitted document carries a small set of **visible, high-impact defects** (a literal Co-PI placeholder, a budget placeholder, a duplicate section label, count inconsistencies, and un-hedged novelty language) plus a few **substantive gaps** (Co-PI robotics credentials, real budget numbers, preliminary defense evidence, scope-vs-staffing) that require PI decisions and cannot be fabricated.
 
-- **(A) Mechanical / Compliance** — text-level fixes that are safe to apply now and do not touch the science. These close every integrity blocker except numbers/refs.
-- **(B) Research-substance** — the four issues that actually move the score (attack novelty, defense evidence, evaluation rigor, scope). These require **PI decisions and/or real data** and **must not be fabricated**. This plan proposes *options and framing*, not invented results.
-- **(C) Verification** — references, the Project-Summary controlled keyword token, and the 4-year budget recomputation. Facts the PI must confirm against primary sources.
+Every fix below is classified as either:
 
-**Headline judgment:** the compliance track can be finished quickly and is auto-applyable; the score ceiling is set by Category B, which cannot be closed by editing alone. Realistically, lifting GOOD → VERY GOOD requires at least one genuine VLA-specific attack result and a preliminary anomaly-detector evaluation (detection/false-positive numbers) — both PI-executed.
+- **(A) EDITORIAL** — Writer can apply now without changing research design (consistency, hedging, uncommenting, label fixes, repositioning, reconciliation).
+- **(B) SUBSTANTIVE** — requires PI decision or new research; listed as PI action items and **not to be fabricated**.
+
+**Headline:** 11 (A)-type editorial fixes are ready to apply now (2 P0, 6 P1, 3 P2 leading + 1 P2 cleanup). 4 (B)-type items require PI input, of which **2 are P0 submission blockers** (Co-PI identity/credentials; budget placeholder + total recomputation). The proposal cannot be submitted until the two P0 (B) items are resolved by the PI, but all editorial work can proceed in parallel.
 
 ---
 
-## 2. Issue Aggregation (by severity)
+## 2. Issue Aggregation (deduplicated, cross-referenced)
 
-**Critical**
-- C1. Attack methods read as ports of VLM/LLM attacks (PGD/FGSM/C&W, prompt injection, token deletion); no VLA-specific algorithmic novelty. *(academic §1.2 W1, §5 W1)*
-- C2. Action-space anomaly-detection defense has **zero preliminary evidence** (no detection rate, no false-positive rate, no baselines). *(academic §1.2 W2, §5 W2)*
-- C3. Evaluation is narrow: 3 sim + 3 real basic manipulation tasks, no baseline defenses, no transferability data, arbitrary 30% deviation threshold, single-seed/5-run stats. *(academic §1.2 W3, §3.4, §5 W3)*
+Reviewer key: **AC** = Academic, **AU** = Auditor, **IN** = Integrity, **NO** = Novelty.
 
-**Major**
-- M1. Scope exceeds single-PI/4-year feasibility (T0–T3; six robots/six embodiments/15 datasets; 5+ model families; real-robot logistics). *(academic §1.2 W4, §3.6 "Poor", §5 W4)*
-- M2. Threat model and trust definition under-specified / circular; no explicit threat actors; trust reduced to adversarial robustness only. *(academic §1.2 W5, §3.1, §3.2, §5 W5)*
-- M3. Missing required appendices in `main_v2.tex`: Mentoring Plan and Synergistic Activities not `\input`. *(integrity §7, Priority-1)*
-- M4. Budget still computed "over five years" in the v1 source and carries flagged placeholders; must be recomputed for 4 years. *(integrity §3, context §3)*
-- M5. 19 candidate references all flagged NEEDS VERIFICATION (no verified authors/venues/IDs). *(integrity §4)*
-
-**Minor**
-- m1. Project-Summary keyword line present but first token is not the NSF 25-515 controlled class token. *(context §2, integrity notes)*
-- m2. Dual-use / tool-gating governance thin; no explicit release-gating policy. *(academic §2, §3.5)*
-- m3. Reproducibility commitment not pinned (no OSF pre-registration, no "reproducible on OpenVLA/Octo by Year 2" pledge). *(academic §3.4)*
-- m4. Generalizability-beyond-robotics claim asserted without support. *(academic §2)*
-- m5. DMSP terminology alignment + explicit open-source release commitment. *(context §2.4)*
-- m6. Cosmetic: stray backtick in `facilities.tex`; stale commented budget totals. *(context §2)*
+| ID | Issue (deduplicated) | Flagged by | Severity | Class |
+|----|----------------------|-----------|----------|-------|
+| R1 | Duplicate `\newsection{F}` label | IN (C-1) | P0 | A |
+| R2 | `[Co-PI: TBD]` placeholder vs. named Co-PI (Thiruvathukal) whose stated expertise is distributed computing, not robotics | AC (Atk2), AU (C1/§6.2), IN (C-2), NO (§10) | P0 | **B** |
+| R3 | `$[PLACEHOLDER]` in budget (Yr 3–4 cloud/API) while totals stated as final | AC (Atk8), AU (C2/§6.4) | P0 | **B** |
+| R4 | "six robots, six embodiments" vs. 7 embodiment codes (F,G,S,H,U,M,X) in table | AU (H1/§7), IN (M-1) | P1 | A |
+| R5 | Dataset count ambiguity "15 (=14+OXE)" | IN (C-3), AU (§3) | P1 | A |
+| R6 | Novelty overclaim: "first comprehensive," "uncharted," "pioneering" contradicted by own cited 2025–26 work | NO (primary), AC (Atk7), AU (§2) | P1 | A |
+| R7 | Commented-out real-time-inference-vs-cloud reconciliation leaves feasibility contradiction | AU (H3/§10) | P1 | A |
+| R8 | No explicit "Relationship to Concurrent Work" differentiation (BadVLA/AdvVLA/AttackVLA/DRIFT/Trajectory-Redirection/Structure-Aware-FT) | NO (§14), AC (§6) | P1 | A |
+| R9 | Orphaned M0 "NSF ACCESS allocation" milestone with no narrative/budget/fallback | AU (H2/§6.4) | P1 | A (+PI confirm) |
+| R10 | Weak preliminary evaluation: no TACD/AGAT defense results, no BadVLA/AdvVLA comparison | AC (Atk3/§4), AU (§5), NO | P1 | **B** |
+| R11 | Scope exceeds feasibility (6 embodiments × 15 datasets × 6 models for ~1.3 FTE) | AC (Atk6/§7), AU (§6.1), NO | P1 | **B** |
+| R12 | Go/no-go numeric acceptance thresholds exist only in internal planner, not visible text | AU (M1) | P2 | A (+PI confirm) |
+| R13 | Threat model / "trust" definition circular; threat actors not prioritized | AC (Atk10), AU (§4) | P2 | A |
+| R14 | "gated appropriately" vs. "open-source under permissive licenses" dual-use tension | AU (M3/§8) | P2 | A |
+| R15 | T3-2 human-in-the-loop protocol underspecified (raters, N, agreement metric) | AU (M2/§5), AC (§4) | P2 | A |
+| R16 | Leftover `%TODO` / `% VERIFY` editorial comments | AU (L1) | P2 | A |
 
 ---
 
 ## 3. Issue-to-Section Mapping
 
-| ID | Section / File | Severity |
-|----|----------------|----------|
-| C1 | `02_v2.tex` T1-1/T1-3, `01_v2.tex` novelty framing | Critical |
-| C2 | `02_v2.tex` (defense subsection incl. L546 anomaly detector) | Critical |
-| C3 | `02_v2.tex` T3 / evaluation (L263 tasks, L179 metrics) | Critical |
-| M1 | `01_v2.tex` L150–151, `02_v2.tex` L39; timeline/task table | Major |
-| M2 | `01_v2.tex` Overview (trust def), `02_v2.tex` T1 intro | Major |
-| M3 | `main_v2.tex` (appendix wiring) | Major |
-| M4 | `sections/budgetjustification_v2.tex` (L47 + all totals) | Major |
-| M5 | `refs_v2_additions.bib` (19 keys) | Major |
-| m1 | `sections/0_project_summary_v2.tex` L87 | Minor |
-| m2 | `01_v2.tex` responsible-computing close; `sections/impact.tex` | Minor |
-| m3 | `02_v2.tex` eval plan; `sections/datamanagement_v2.tex` | Minor |
-| m4 | `sections/impact.tex` | Minor |
-| m5 | `sections/datamanagement_v2.tex` | Minor |
-| m6 | `sections/facilities.tex`, `budgetjustification_v2.tex` comments | Minor |
-
----
-
-## 4. Category A — MECHANICAL / COMPLIANCE (safe to auto-apply now)
-
-These are text-only, do not change the research design, and close integrity blockers. All are **safe to auto-apply** unless noted. (This plan does not apply them — user requested no `.tex` edits.)
-
-| # | Action | File(s) | Priority | Effort | Auto-apply? |
-|---|--------|---------|----------|--------|-------------|
-| A1 | Add missing appendices: after `\input{sections/datamanagement_v2}` insert `\newpage\newsection{E}\input{sections/mentoring_v2}` and `\newpage\newsection{F}\input{sections/synergy}`; recompile. Resolves M3. | `main_v2.tex` | HIGH | 5 min | **Yes** — but PI must confirm whether Mentoring/Synergy go inline vs. as separate Research.gov supplements |
-| A2 | Delete stale commented budget totals (context §2: L74 MTDC comment, L90 `%…$4,266,251 over five years`); flip residual "over five years"→"over four years" wording (numbers handled in C-track). Resolves M4 wording, m6. | `budgetjustification_v2.tex` | MEDIUM | 5 min | **Yes** (wording only; do not touch figures) |
-| A3 | Remove cosmetic stray backtick artifact after "…2 PB of disk space and growing." | `facilities.tex` | LOW | 2 min | **Yes** |
-| A4 | DMSP alignment: retitle "Data Management Plan"→"Data Management and Sharing Plan (DMSP)" and add explicit open-source/open-science release sentence (code, benchmarks, attack/defense tools) already promised elsewhere. Resolves m5. | `datamanagement_v2.tex` | MEDIUM | 15 min | **Yes** (do NOT change the "after five years" retention clause) |
-| A5 | Add an explicit tool-gating / dual-use governance sentence (e.g., attack code released under institutional-affiliation DUA, delayed public release post-publication) to strengthen responsible-computing framing. Resolves m2. | `01_v2.tex` (IM close) and/or `sections/impact.tex` | MEDIUM | 20 min | **Yes** (framing only; PI should confirm the actual gating policy wording) |
-| A6 | Add a one-line reproducibility pledge ("all experiments reproducible on OpenVLA + Octo on the Simpler benchmark by end of Year 2; protocol pre-registered on OSF"). Resolves m3. | `02_v2.tex` eval plan | LOW | 10 min | **Yes** (PI confirms OSF intent) |
-| A7 | Soften/qualify the "extends beyond robotics" generalizability claim or cut it, per academic §2. Resolves m4. | `sections/impact.tex` | LOW | 10 min | **Yes** |
-
-**Category A net effect:** clears M3, m2, m4, m5, m6 and the wording half of M4. None affect the score-driving Category B.
-
----
-
-## 5. Category B — RESEARCH-SUBSTANCE (PI decisions / data required — DO NOT FABRICATE)
-
-These four items set the funding ceiling. **None can be auto-applied**: they need real PI decisions, real experiments, or design commitments. This plan supplies *framing scaffolds and options only* — no invented success rates, detection numbers, or results.
-
-| # | Issue | Concrete action (PI-owned) | File(s) | Priority | Effort | Auto-apply? |
-|---|-------|----------------------------|---------|----------|--------|-------------|
-| B1 | **C1 — Attack novelty.** | PI must design + justify ≥1 genuinely VLA-specific attack that exploits structure absent in VLMs: action-token adjacency / discretization-bin vulnerability, temporal action-consistency, or kinematic-coordination coupling. Add a formal argument for *why action quantization differs from language tokenization*. Frame current PGD/FGSM/C&W ports explicitly as **baselines**, not contributions. Candidate literature to position against (VERIFY): `puthumanaillam2026trajectory`, `tae2026drift`, `lu2026whenrobots`, `zhou2025badvla`. Target metric (reviewer): ≥20–25% improvement over naive ports. | `02_v2.tex` T1-1/T1-3, `01_v2.tex` contribution list (L212) | HIGH | Weeks (design + a preliminary run) | **No — PI input + data** |
-| B2 | **C2 — Defense evidence.** | Run a preliminary adversarial-robustness eval of the action-space anomaly detector: generate white-box adversarial examples *constrained to the valid action space*, report **detection rate + false-positive rate** and threshold Pareto curve; compare to ≥2 baselines (input smoothing, adversarial training, ensemble). Reviewer bar: ≥70% detection at ≤5% FP on ≥2 models × ≥2 embodiments. Reframe detector honestly as *layered safety+security filter*, not sole defense, and note it does not cover poisoning/privacy. **Report only real measured numbers.** | `02_v2.tex` defense subsection (~L546) | HIGH | Weeks (experiments) | **No — data required** |
-| B3 | **C3 — Evaluation rigor.** | PI decisions: (a) make **task-success-rate under attack** the primary metric and justify/derive the 30% deviation threshold from a physical consequence (or drop it); (b) add a **transferability matrix** (attack trained on M_i, tested on M_j) — even a small real one; (c) add ≥2–3 **baseline defenses**; (d) report **mean ± std over ≥10 runs / multiple seeds** with a significance test. Expand task set toward the reviewer's target only as far as data allows. Position with `li2025attackvla`, `sun2026maniparena` (VERIFY). | `02_v2.tex` T3 / eval (L179, L263, L264) | HIGH | Weeks–months | **No — data + PI design** |
-| B4 | **M1 — Scope narrowing.** | Adopt an explicit staged plan (see §5.1 Option) — a minimum viable core in Years 1–2, remainder deferred to Years 3–4 — OR document co-PI/partnership access for real robots. This is a **design choice**; the plan below is presented as an OPTION, not a unilateral rewrite. | `01_v2.tex` L150–151, `02_v2.tex` L39, timeline/task table | HIGH | Days (rewrite) once PI decides | **No — PI decision** (once decided, rewrite is safe) |
-| B5 | **M2 — Threat model / trust.** | Add explicit threat-actor profiles (white-box insider, black-box API, supply-chain/training-data, physical/sensor) × goals (task failure / specific harmful action / data extraction / trajectory corruption); replace the circular trust definition with an operational vector (robustness, interpretability, recovery time, safety margin). Map each defense to the threat(s) it addresses. Optionally align to NIST AI RMF. Content is largely a **writing** task but needs PI sign-off on which scenarios are in-scope. | `01_v2.tex` Overview trust def; `02_v2.tex` T1 intro | HIGH | Days | **Partial** — draft safely, PI confirms in/out-of-scope |
-
-### 5.1 Scope-Narrowing Recommendation (OPTION for the PI — not applied)
-
-Presented as a decision aid. The research design is **not** rewritten here; the PI chooses whether to adopt, and with which platforms.
-
-**Minimum Viable Core — Years 1–2 (depth over breadth):**
-- **Models:** 2 open, reproducible — **OpenVLA + Octo** (both public; avoids RT-2 55B / proprietary-access reproducibility risk flagged in academic §3.4, §1.2 W3.5).
-- **Embodiments:** 2 — **Xarm7 (real)** + **Google robot (Simpler sim)**, matching the existing preliminary setup at `02_v2.tex` L263 (minimal new infra).
-- **Tasks (T1 core):** the existing 3 sim + 3 real, plus enough additions to support a small transferability matrix.
-- **Attacks:** white-box (PGD/C&W) + black-box token attacks **as baselines**, plus **the one novel VLA-specific attack (B1)**.
-- **Defense:** action-space anomaly detector **with the preliminary eval (B2)** and ≥2 baselines.
-- **Deliverable target:** one methods paper (novel attack) + one defense-evaluation result — directly answers academic §7 items 1–2.
-
-**Staged to Years 3–4 (breadth, once the core lands):**
-- **+Models:** RT-2 (cloud API only, no local reproduction) and/or ACT / RoboCat.
-- **+Embodiments:** Franka and/or Spot (adds bi-manual / quadruped coverage).
-- **T2 multimodal cross-modal attack propagation** — the reviewer's suggested deferral target (academic §5 W4).
-- **T3 full safety-benchmark suite + interpretability** (`schofield2026chain`, `jahangard2025multimodal` — VERIFY) and the **full transferability matrix + certified defenses** (randomized smoothing, `seferis2025randomized` — VERIFY).
-- Bound real-robot time (reviewer suggestion: ≤20–30 hrs/yr per embodiment).
-
-**Trade-off note for the PI:** This preserves all aims and methods (nothing is cut, only *sequenced*), converting the "2–3 person / 6-year" perception (academic §1.2 W4) into a defensible single-PI/4-year plan. If the PI prefers to keep full breadth in Years 1–2, the alternative is to secure documented co-PI/partner platform access (Google Robotics / CMU / UC Berkeley per academic §3.6) and fund explicit PhD/postdoc effort rather than REU-only.
-
----
-
-## 6. Category C — VERIFICATION (facts the PI must confirm; do not invent)
-
-| # | Item | Action | File(s) | Priority | Effort | Auto-apply? |
-|---|------|--------|---------|----------|--------|-------------|
-| C-1 | **Budget recomputation (4-year).** | Recompute every duration-dependent figure for 4 years: PI summer salary (4 mo), grad support (Summer 2026–Spring 2030), undergrad wages, fringe (was $96,927/5yr), conference travel (years 2–4), Total Direct (was $408,435), MTDC, Indirect @45.5% (was $146,736), Total (was $555,171). Keep one-time GPU $12,500. Confirm single-PI, <$600K, under $1.2M RES cap. | `budgetjustification_v2.tex` | HIGH | 30–60 min | **No — PI computes** |
-| C-2 | **SaTC PI-meeting travel placeholder.** | Replace `\$[PLACEHOLDER]` at L47 (1 trip/yr × 4 yrs × per-trip cost) with real per-trip cost; propagate into totals in C-1. | `budgetjustification_v2.tex` L47 | HIGH | 10 min | **No — PI value** |
-| C-3 | **19 candidate references.** | For each key in `refs_v2_additions.bib` (7 cycle-1 models + 12 cycle-2 methods), verify real author list, venue, year, and arXiv ID/DOI; replace all "NEEDS VERIFICATION" markers; **drop any that do not resolve** (several are dated 2026 and may not yet exist). Do not invent IDs/authors. | `refs_v2_additions.bib` | HIGH | 1–2 hrs | **No — PI verifies** |
-| C-4 | **Project-Summary controlled keyword token.** | The keyword line (`0_project_summary_v2.tex` L87) currently starts "trustworthy AI/ML security; …". Prepend the **exact NSF 25-515 controlled class token** (the RES/program-designated first keyword) per the solicitation's Project-Summary instructions. Topical terms may stay. | `0_project_summary_v2.tex` L87 | HIGH | 15 min (after checking 25-515) | **No — verify token, then safe** |
-| C-5 | **Cycle-1 model availability.** | Confirm `gr00tn1`, `geminirobotics2025`, `pi05_2025`, `rdt1b`, `openvla_oft` are released/accessible as of submission; if not, reframe as "anticipated." | `01_v2.tex` emerging-models list; `refs_v2_additions.bib` | MEDIUM | 30 min | **No — PI verifies** |
-| C-6 | **Internal-timeline ↔ budget duration.** | Spot-check the year-by-task figure/table in `02_v2.tex` reads 4 years to match the budget. | `02_v2.tex` | LOW | 10 min | **Yes** (once confirmed) |
-
----
-
-## 7. Consistency Reconciliation
-
-- **No new contradictions introduced.** Category A edits are wording/wiring; Category B reframes existing claims (ports→baselines; detector→layered filter) without changing aims or methods; Category C fixes numbers/refs.
-- **Cross-section checks after edits:** (1) if B4 staging is adopted, update embodiment/model counts consistently in `01_v2.tex` L150–151, `02_v2.tex` L39, and the timeline table; (2) after C-1/C-2, re-verify Total Direct → MTDC → Indirect → Total chain and the mentoring/budget student-count alignment (integrity Priority-3 #5); (3) ensure the Project-Summary keyword token (C-4) and cover title stay consistent.
-- **Integrity blockers status after plan:** M3 (appendices) → A1; M4 wording → A2, figures → C-1/C-2; M5 → C-3; keyword → C-4. All integrity Priority-1/2 items are covered.
-
----
-
-## 8. Revision Traceability Map
-
 ```yaml
-- original_issue: C1 attack novelty (ported methods)
-  fix_applied: B1 (novel VLA-specific attack + baseline reframing)
-  location: 02_v2.tex T1-1/T1-3; 01_v2.tex L212
-  expected_improvement: raises perceived algorithmic novelty; addresses academic §7.1
-- original_issue: C2 anomaly detector unvalidated
-  fix_applied: B2 (preliminary detection/FP eval + baselines + honest reframing)
-  location: 02_v2.tex ~L546
-  expected_improvement: converts "strawman defense" into evidenced contribution (§7.2)
-- original_issue: C3 evaluation gaps
-  fix_applied: B3 (task-success metric, transferability, baselines, stats)
-  location: 02_v2.tex L179/L263/L264
-  expected_improvement: meets rigor/reproducibility bar (§3.4, §7.3)
-- original_issue: M1 over-scope
-  fix_applied: B4 + §5.1 staged option
-  location: 01_v2.tex L150-151; 02_v2.tex L39; timeline table
-  expected_improvement: single-PI/4-year feasibility perception (§3.6)
-- original_issue: M2 threat/trust ambiguity
-  fix_applied: B5 (actor profiles + operational trust vector)
-  location: 01_v2.tex Overview; 02_v2.tex T1 intro
-  expected_improvement: testable threat model; SaTC clarity (§3.1-3.2)
-- original_issue: M3 missing appendices
-  fix_applied: A1
-  location: main_v2.tex
-  expected_improvement: submission-complete (integrity §7)
-- original_issue: M4 budget duration/placeholder
-  fix_applied: A2 (wording) + C-1/C-2 (figures)
-  location: budgetjustification_v2.tex
-  expected_improvement: internal budget consistency, RES compliance
-- original_issue: M5 unverified references
-  fix_applied: C-3
-  location: refs_v2_additions.bib
-  expected_improvement: citation integrity for submission
-- original_issue: m1 keyword token
-  fix_applied: C-4
-  location: 0_project_summary_v2.tex L87
-  expected_improvement: NSF 25-515 Project-Summary compliance
-- original_issue: m2/m3/m4/m5/m6 minor
-  fix_applied: A5/A6/A7/A4/A3
-  location: impact.tex, 02_v2.tex, datamanagement_v2.tex, facilities.tex
-  expected_improvement: broader-impacts, reproducibility, DMSP, cosmetics
+R1:  Section: Document structure       File: main_v2.tex:57
+R2:  Section: Intellectual Merit / Budget  File: 01_v2.tex:214 ; sections/budgetjustification_v2.tex:15
+R3:  Section: Budget Justification     File: sections/budgetjustification_v2.tex:59
+R4:  Section: Overview / Research Plan  File: 01_v2.tex:151 ; 02_v2.tex:39
+R5:  Section: Research Plan (T0 data)   File: 02_v2.tex:39 ; 01_v2.tex:151
+R6:  Section: Overview / Intellectual Merit  File: 01_v2.tex:105, 112, 212
+R7:  Section: Research Plan (prelim/eval)  File: 02_v2.tex:252-260 (commented block)
+R8:  Section: Research Plan (after threat model)  File: 02_v2.tex (new paragraph)
+R9:  Section: Work Plan / T0-T1-1        File: 02_v2.tex:740 (caption) → body text
+R10: Section: Preliminary Studies / Eval Plan  File: 02_v2.tex (new results, PI)
+R11: Section: Staged Scope / Feasibility  File: 01_v2.tex:214 ; 02_v2.tex staged-scope
+R12: Section: T1 / T1-4                   File: 02_v2.tex
+R13: Section: Threat Model               File: 01_v2.tex / 02_v2.tex threat-model
+R14: Section: Intellectual Merit / DMP    File: 01_v2.tex:217 ; sections/datamanagement_v2.tex:20
+R15: Section: T3-2 Interpretability       File: 02_v2.tex:654
+R16: Section: multiple                    File: 01_v2.tex:184,192 ; sections/0_project_summary_v2.tex:87
 ```
 
 ---
 
-## 9. Revision Impact Assessment
+## 4. Prescribed Fixes (ordered: P0 (A) first, then P0 (B), then P1 (A), P1 (B), P2)
+
+> Not yet applied — this plan does not edit .tex sources. Each item gives the exact site, the concrete change, and its (A)/(B) classification.
+
+### P0 — Blockers
+
+**R1 — (A) EDITORIAL — Duplicate section label**
+- File/loc: `main_v2.tex:57`
+- Change: `\newpage\newsection{F}` (the second one, before `\input{sections/synergy}`) → `\newpage\newsection{G}`. Line 54 (Project Summary) stays `F`.
+- Fix type: Consistency (structural).
+
+**R2 — (B) SUBSTANTIVE — Co-PI identity and robotics credentials** *(PI action)*
+- File/loc: `01_v2.tex:214` (`a Co-PI [Co-PI: TBD] contributing robot-learning and real-robot experimentation expertise`) vs. `sections/budgetjustification_v2.tex:15` (George K. Thiruvathukal — "concurrent, parallel, and distributed modeling and analysis").
+- Required PI decision (do NOT fabricate): (a) confirm whether Thiruvathukal is the Co-PI and, if so, **rewrite the Intellectual Merit sentence to match his actual contribution** (e.g., scaled/distributed training + benchmark infrastructure) rather than asserting real-robot experimentation; OR (b) add/confirm a collaborator with genuine robot-learning credentials and update both the narrative and budget consistently.
+- Editorial sub-fix (blocked until PI decides): once resolved, remove the literal `[Co-PI: TBD]` bracket so no placeholder remains, and ensure `01_v2.tex` and `budgetjustification_v2.tex` describe the same person doing the same work.
+- Fix type: Consistency + Evidence (feasibility credibility).
+
+**R3 — (B) SUBSTANTIVE — Budget placeholder + total recomputation** *(PI action)*
+- File/loc: `sections/budgetjustification_v2.tex:59` (`\$[PLACEHOLDER]`, Yr 3–4 cloud/API; existing comment suggests ~$3–5K/yr).
+- Required PI decision (do NOT fabricate): insert the actual cloud/API cost, add it to Other Direct Costs, **recompute indirect costs and the $408,435 / $146,736 / $555,171 totals**, and delete the placeholder. Totals currently presented as final are not reconciled while this line is open.
+- Fix type: Evidence (budget integrity).
+
+### P1 — Major
+
+**R4 — (A) EDITORIAL — Embodiment count consistency**
+- File/loc: `01_v2.tex:151`, `02_v2.tex:39` ("six robots, six embodiments").
+- Change: recount against `\autoref{tab:multi_dataset}` (7 codes: F,G,S,H,U,M,X). Align prose to the table — either state **"seven robot types / embodiments"**, or if six is intended, write **"six primary embodiments (Franka, Google Robot, Spot, Stretch, UR5, Xarm7), plus human/other demonstration data"** so prose and table agree on one number.
+- Fix type: Consistency. (Which count is authoritative is a minor Writer judgment against the table — no new research.)
+
+**R5 — (A) EDITORIAL — Dataset count clarity**
+- File/loc: `02_v2.tex:39` (and `01_v2.tex:151`).
+- Change: replace ambiguous "15 (=14+OXE)" with explicit phrasing, e.g. *"a mixture of 15 dataset sources: 14 explicitly named robotics datasets (Table 1) plus the Open X-Embodiment (OXE) repository, which itself aggregates additional robotic datasets."* Remove the arithmetic ambiguity.
+- Fix type: Clarification.
+
+**R6 — (A) EDITORIAL — De-escalate novelty overclaims**
+- File/loc: `01_v2.tex:105` ("uncharted threat landscape"), `01_v2.tex:112` ("the first comprehensive framework unifying..."), `01_v2.tex:212` ("pioneering contributions... the first comprehensive taxonomy and framework").
+- Change: soften "first comprehensive / uncharted / previously unexplored / pioneering" to claims the citation record supports — **systematic cross-embodiment coverage, physical-consequence grounding, and integration/rigor at scale**. Note: `sections/0_project_summary_v2.tex:91` is **already** softened ("developing a taxonomy and framework"); bring `01_v2.tex` into line with it so the framing sections match the (already-hedged) Research Plan.
+- Fix type: Reframing (no scope change).
+
+**R7 — (A) EDITORIAL — Reinstate real-time-vs-cloud reconciliation**
+- File/loc: `02_v2.tex:252-260` (the `%`-commented "Adoption and Constraints" block).
+- Change: uncomment and lightly edit into 2–4 sentences in T1-4/Evaluation stating that (i) TACD inference overhead must stay within the robot's 3–10 Hz control-loop budget, and (ii) RT-2/OpenVLA-scale models queried via cloud API are treated under the **black-box** threat model for exactly this reason — tying the architecture-scale split to the already-present threat-model split.
+- Fix type: Consistency (resolves a live feasibility contradiction).
+
+**R8 — (A) EDITORIAL — Add "Relationship to Concurrent Work" differentiation**
+- File/loc: `02_v2.tex` (new paragraph/table after the threat-model / before or within the Research Plan).
+- Change: add an explicit comparison of ABBP/TTDA/TACD/AGAT/VLA-SecBench against **BadVLA, AdvVLA, AttackVLA, DRIFT, Trajectory-Level Redirection, Structure-Aware Robust Fine-Tuning, Randomized Smoothing** — stating what is shared and what differs (kinematic/Jacobian constraint, physical-consequence metrics, cross-embodiment scale, single multi-task TACD). Converts implicit citations into a load-bearing positioning argument. **No new research** — repositioning of existing citations only.
+- Fix type: Reframing / positioning.
+
+**R9 — (A) EDITORIAL (+PI confirm) — Narrate the M0/ACCESS compute plan**
+- File/loc: `02_v2.tex:740` (milestone caption) → add body text in T0/T1-1 or Work Plan.
+- Change: add 2–3 sentences stating the NSF ACCESS application plan, approximate allocation, timing, and an explicit **fallback** (e.g., encoder-only white-box scope + LoRA if the allocation is denied/delayed). The narrative and fallback are editorial; the **specific allocation size/timing should be confirmed by the PI** before final compile.
+- Fix type: Evidence Enhancement (feasibility).
+
+**R10 — (B) SUBSTANTIVE — Strengthen preliminary evaluation** *(PI / new research)*
+- File/loc: `02_v2.tex` Preliminary Studies / Evaluation Plan.
+- Required (do NOT fabricate): add real preliminary **defense** results (TACD detection rate + false-positive rate; AGAT clean-vs-robust TSR) and at least one **direct comparison to BadVLA/AdvVLA** on the existing toy tasks, with ≥10 runs and significance testing. If new results cannot be produced pre-submission, reposition affected defense claims as "to be validated" consistent with the existing hedged framing.
+- Fix type: Evidence (cannot be editorial-only).
+
+**R11 — (B) SUBSTANTIVE — Scope vs. staffing** *(PI decision)*
+- File/loc: `01_v2.tex:214` (two-track parallelism claim) + `02_v2.tex` staged-scope paragraph.
+- Required (do NOT fabricate): either (a) narrow the committed MVP to what one graduate student can execute per track-year (e.g., 2 embodiments / 3 models, as the reviews suggest), or (b) document that the Co-PI's lab/students contribute additional robotics-track labor. This is coupled to R2. **Preserve the validated aims**; adjust only committed scope, not the research design.
+- Fix type: Reframing / scope reconciliation (PI-gated).
+
+### P2 — Minor
+
+**R12 — (A) EDITORIAL (+PI confirm) — Surface go/no-go thresholds**
+- File/loc: `02_v2.tex` T1 / T1-4.
+- Change: state at least one quantitative acceptance threshold per major contribution (ABBP-vs-PGD normalized-budget improvement; TACD false-positive ceiling; AGAT max clean-TSR drop) directly in the visible text. Numbers should be confirmed by the PI from the internal planner artifact.
+- Fix type: Clarification (falsifiability).
+
+**R13 — (A) EDITORIAL — Tighten threat model / trust definition**
+- File/loc: `01_v2.tex` / `02_v2.tex` threat-model text.
+- Change: replace the circular "trust = safe, intended actions" with an operational statement, and name/prioritize the threat actors already implied (insider white-box on open encoders; external black-box via API; supply-chain poisoning). No new methodology — clarification of existing scope.
+- Fix type: Clarification.
+
+**R14 — (A) EDITORIAL — Reconcile dual-use vs. open-source language**
+- File/loc: `01_v2.tex:217` ("gated appropriately") vs. `sections/datamanagement_v2.tex:20` ("open source under permissive licenses").
+- Change: state a concrete mechanism reconciling both — e.g., staged/DUA-gated release of offensive attack code with openly released defenses, benchmarks, and datasets.
+- Fix type: Consistency.
+
+**R15 — (A) EDITORIAL — Specify T3-2 human-in-the-loop protocol**
+- File/loc: `02_v2.tex:654`.
+- Change: add one sentence giving number of evaluators, evaluation-task sample size, and an inter-rater agreement metric (e.g., Cohen's κ), to match the rigor of the T1/T2 plan.
+- Fix type: Evidence Enhancement.
+
+**R16 — (A) EDITORIAL — Remove leftover editorial comments**
+- File/loc: `01_v2.tex:184,192` (`%TODO: add more deliverables`); `sections/0_project_summary_v2.tex:87` (`% VERIFY first keyword against NSF 25-515 controlled list`).
+- Change: resolve/remove the TODO and verify the keyword against the NSF 25-515 controlled list, then delete the comments. (Invisible in PDF but indicate an unfinished pass.)
+- Fix type: Cleanup.
+
+---
+
+## 5. Section-Level Revisions (summary by section)
+
+- **Document structure (`main_v2.tex`):** R1 relabel second `F`→`G`.
+- **Overview / Intellectual Merit (`01_v2.tex`):** R6 hedge novelty; R2 Co-PI sentence (PI-gated); R4 embodiment count; R13 threat/trust wording; R14 dual-use wording; R16 remove TODOs.
+- **Research Plan (`02_v2.tex`):** R5 dataset count; R7 reinstate real-time/cloud paragraph; R8 concurrent-work differentiation; R9 ACCESS narrative + fallback; R10 defense/BadVLA evidence (PI); R11 staged-scope (PI); R12 go/no-go thresholds; R15 T3-2 protocol.
+- **Budget (`sections/budgetjustification_v2.tex`):** R3 fill placeholder + recompute (PI); R2 Co-PI role alignment (PI).
+- **Project Summary (`sections/0_project_summary_v2.tex`):** R16 verify keyword; already-softened language is the target register for R6.
+- **Data Management (`sections/datamanagement_v2.tex`):** R14 reconcile with Intellectual Merit.
+
+---
+
+## 6. Consistency Reconciliation
+
+- **Co-PI (R2):** the single most-cited defect — flagged by **all four** reviewers. `01_v2.tex:214` and `budgetjustification_v2.tex:15` must describe the same person and the same work. Resolution is PI-gated; until then the proposal is internally contradictory on team composition.
+- **Counts (R4/R5):** prose ("six/15=14+OXE") must match `tab:multi_dataset` (7 codes; 14 named datasets + OXE). Pick one authoritative count and propagate to both `01_v2.tex` and `02_v2.tex`.
+- **Novelty framing (R6):** `01_v2.tex` framing sections must be brought down to the register already used in the (hedged) Research Plan and Project Summary — removes the self-contradiction the Novelty reviewer names as the top risk.
+- **Real-time/threat-model (R7):** reinstating the commented paragraph closes the gap between the Background 3–10 Hz constraint and the black-box treatment of cloud-hosted models.
+- **Budget totals (R3):** totals cannot be asserted "final" while a placeholder line is open — arithmetic must be reconciled.
+- **Dual-use (R14):** "gated" vs. "permissive open-source" must be reconciled across `01_v2.tex` and the DMP.
+
+---
+
+## 7. Revision Traceability Map
+
+```yaml
+- Original Issue: Duplicate section label
+  Fix Applied: main_v2.tex:57 F -> G
+  Location: Document structure
+  Expected Improvement: Structural integrity; correct cross-refs/index
+
+- Original Issue: Co-PI placeholder + robotics-credential mismatch
+  Fix Applied: PI confirms Co-PI + rewrite 01_v2:214 to match budget:15 (or add roboticist)
+  Location: Intellectual Merit + Budget
+  Expected Improvement: Removes top feasibility blocker; team credibility
+
+- Original Issue: Budget $[PLACEHOLDER] + unreconciled totals
+  Fix Applied: PI inserts real cost, recomputes indirect + totals, removes placeholder
+  Location: Budget Justification
+  Expected Improvement: Budget integrity; submission-readiness
+
+- Original Issue: 6 vs 7 embodiments
+  Fix Applied: Align prose to table (single count)
+  Location: Overview / Research Plan
+  Expected Improvement: Factual precision; reviewer confidence
+
+- Original Issue: "15 (=14+OXE)" ambiguity
+  Fix Applied: Explicit dataset-source phrasing
+  Location: Research Plan T0
+  Expected Improvement: Clarity; removes checkable ambiguity
+
+- Original Issue: Novelty overclaim
+  Fix Applied: Hedge 01_v2:105/112/212 to scale/rigor framing
+  Location: Overview / Intellectual Merit
+  Expected Improvement: Removes self-contradiction vs own citations; perceived novelty honesty
+
+- Original Issue: Commented real-time/cloud reconciliation
+  Fix Applied: Reinstate edited paragraph tying cloud models to black-box model
+  Location: Research Plan / Eval
+  Expected Improvement: Resolves feasibility contradiction
+
+- Original Issue: No concurrent-work differentiation
+  Fix Applied: Add explicit comparison paragraph/table
+  Location: Research Plan
+  Expected Improvement: Load-bearing novelty positioning; pre-empts Reviewer A/B
+
+- Original Issue: Orphaned M0/ACCESS milestone
+  Fix Applied: Narrative + fallback in body text (allocation confirmed by PI)
+  Location: Work Plan / T0-T1-1
+  Expected Improvement: Perceived feasibility of compute plan
+
+- Original Issue: Weak preliminary evaluation
+  Fix Applied: PI adds defense + BadVLA/AdvVLA results, or repositions as to-be-validated
+  Location: Preliminary Studies / Eval
+  Expected Improvement: Reduces execution risk; evaluation strength
+
+- Original Issue: Scope vs staffing
+  Fix Applied: PI narrows committed MVP or documents added robotics labor
+  Location: Staged Scope
+  Expected Improvement: Perceived feasibility
+
+- Original Issue: Hidden go/no-go thresholds
+  Fix Applied: Surface numeric thresholds (PI-confirmed) into text
+  Location: T1 / T1-4
+  Expected Improvement: Falsifiability; methodological rigor
+
+- Original Issue: Circular trust definition
+  Fix Applied: Operationalize trust + name threat actors
+  Location: Threat Model
+  Expected Improvement: Threat-model clarity
+
+- Original Issue: Dual-use vs open-source tension
+  Fix Applied: Concrete staged/DUA release mechanism
+  Location: Intellectual Merit + DMP
+  Expected Improvement: Responsible-disclosure credibility
+
+- Original Issue: T3-2 protocol underspecified
+  Fix Applied: Add raters/N/agreement metric
+  Location: T3-2
+  Expected Improvement: Evaluation consistency
+
+- Original Issue: Leftover TODO/VERIFY comments
+  Fix Applied: Resolve + remove
+  Location: 01_v2 / project summary
+  Expected Improvement: Signals completed review pass
+```
+
+---
+
+## 8. Revision Impact Assessment
 
 ```yaml
 Revision Impact:
-  Clarity Improvement:      HIGH   # B5 threat model + A-track wording remove circularity/ambiguity
-  Feasibility Improvement:  HIGH   # B4/§5.1 staging directly answers the "Poor" scope-vs-investment score
-  Reviewer Score Improvement: CONDITIONAL
-    # Category A + C alone: keeps GOOD (3/5) — compliant but still "incremental" narrative
-    # + B1 + B2 with real data: plausible GOOD -> VERY GOOD (4/5), matching academic §7 upgrade path
-  Alignment Improvement:    MEDIUM-HIGH  # DMSP, keyword token, responsible-computing gating, RES budget
+  Clarity Improvement: High — R4/R5/R6/R7/R13 remove the most reviewer-visible ambiguities and self-contradictions.
+  Feasibility Improvement: High but PI-gated — R2, R3, R9, R10, R11 drive the Feasibility/Reviewer-Readiness scores (Auditor 5/10, Reviewer-Readiness 4/10); the two P0 (B) items are the binding constraints.
+  Reviewer Score Improvement: Moderate — editorial fixes lift Integrity to PASS and remove the Novelty self-contradiction; Novelty (4/10) improves only modestly without R8 + (ideally) R10, since core mechanisms remain incremental by design.
+  Alignment Improvement: Moderate — R14 (dual-use) and R13 (threat model) tighten SaTC responsible-disclosure and trustworthiness alignment.
 ```
 
-**Bottom line:** the mechanical and verification tracks make the proposal *submittable and compliant*; only the Category B experiments make it *competitive*.
+---
+
+## 9. Remaining Weaknesses (after editorial pass, if (B) items unresolved)
+
+- **Core novelty remains incremental** by design (ABBP/TTDA/TACD/AGAT are constrained variants of known families). Editorial reframing (R6/R8) mitigates but does not eliminate this; only R10-type evidence would.
+- **Feasibility stays capped** until R2 (Co-PI credentials), R3 (budget), and R11 (scope) are resolved by the PI.
+- **Preliminary defense evidence (R10)** is absent; without it, defense contributions remain "to be validated."
+
+These are **outside Revision Coach authority** (they need PI decisions / new research) and must not be fabricated.
 
 ---
 
-## 10. Remaining Weaknesses (after this plan, if B-track deferred)
+## 10. Final Readiness Assessment
 
-- If B1/B2 are not executed before submission, the "limited novelty" and "unvalidated defense" critiques persist and the score stays at Borderline GOOD.
-- Real-robot feasibility remains a reviewer concern unless B4 staging is adopted or partnership/co-PI access is documented.
-- 2026-dated references (C-3) carry residual risk: if they cannot be verified, positioning claims that lean on them must be softened.
+**Status: Requires Another Revision Cycle** — gated on PI inputs.
 
----
-
-## 11. Final Readiness Assessment
-
-**Requires Another Revision Cycle.**
-
-- **Compliance readiness:** achievable now via Category A + C (no science needed) — closes all integrity blockers.
-- **Competitiveness readiness:** **blocked on PI-owned Category B data/decisions** (novel attack B1, detector evaluation B2, evaluation rigor B3, scope B4). These cannot be auto-applied or fabricated.
-
-**Recommended order of operations:** A1–A7 and C-1…C-6 first (fast, safe, submission-critical) → PI decision on B4 scope option (§5.1) → B5 threat-model rewrite → B1/B2/B3 experiments as data allows.
+- All **11 (A)-type editorial fixes can be applied now** by the Writer and will move Integrity to PASS and materially improve clarity, consistency, and positioning.
+- **2 P0 (B) blockers (R2 Co-PI, R3 budget)** must be resolved by the PI before the proposal is submission-ready; **2 P1 (B) items (R10, R11)** should be resolved for competitiveness.
+- After the Writer applies the (A) fixes and the PI supplies the (B) inputs, re-validate:
 
 ```text
 RE-ENTER REVIEW LOOP
 ```
-Trigger after B-track data lands: Integrity Reviewer → Academic Reviewer → Revision Coach, to re-validate the novelty/evaluation claims against real results.
+
+→ Integrity Reviewer (re-check R1/R2/R4/R5/R14) → Academic Reviewer (re-score novelty/feasibility after R6/R8/R9/R10/R11) → Revision Coach convergence check.
+
+---
+
+### Routing
+- **To Writer:** apply all (A) items (R1, R4, R5, R6, R7, R8, R9, R12, R13, R14, R15, R16). Do not touch aims, T0–T3, or method definitions.
+- **To PI:** resolve (B) items (R2, R3, R10, R11) — do not fabricate; provide real Co-PI/credentials, real budget numbers, preliminary defense evidence, and a staffing/scope decision.
+- **To Orchestrator:** hold submission until R2 and R3 are closed; then trigger re-review loop.

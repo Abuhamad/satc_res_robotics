@@ -1,3 +1,4 @@
+\newpage
 \section{Research Plan}
 
 This work proposes a novel security framework for end-to-end generalist robots to address the inherent challenges of ensuring robustness, security, and trustworthiness in general-purpose robots across various physical embodiments. 
@@ -35,8 +36,8 @@ Ours & X & 10000 & EEF/joint Position & 5-50 \\
 \end{tabular}}\vspace{-2ex}
 \end{wraptable}
 To conduct research tasks toward assessing and enhancing robustness, trustworthiness, and performance of robotic foundation models, we will build/train/evaluate various models using state-of-the-art techniques and \xot robotic data.\\
-\BfPara{Robotics Data Mixture} We consider multimodal robotics data mixture 
-for six robots, six embodiments (\textit{fewer than the 22 included in the OXE~\cite{9} dataset for multimodality and practical reasons}), and 15 $(=$14$+$OXE) datasets across all experiments, as shown in~\autoref{tab:multi_dataset}.
+\BfPara{Robotics Data Mixture} We consider a multimodal robotics data mixture of
+six robot embodiments (Franka, Google Robot, Spot, Hello Stretch, UR5, and Xarm7; \textit{fewer than the 22 embodiments in the OXE~\cite{9} dataset, for multimodality and practical reasons}) in addition to human demonstration data (see \autoref{tab:multi_dataset}). The mixture draws from 15 dataset sources: 14 robotics datasets (\autoref{tab:multi_dataset}, including our own for Xarm7) and the Open X-Embodiment (OXE)~\cite{9} repository, which itself aggregates 60 further robotic datasets.
 % Freiburg Franka Play~\cite{rosete2022tacorl,mees23hulc2},
 % Maniskill~\cite{gu2023maniskill2},
 % Stanford Robocook~\cite{shi2023robocook},
@@ -63,8 +64,8 @@ for six robots, six embodiments (\textit{fewer than the 22 included in the OXE~\
 % These datasets contain multiple modalities that are used to train RT-1-X and RT-2-X~\cite{9}.
 % RT-1-X is trained on only the robotic data defined above, while RT-2-X is trained by co-fine-tuning (similarly to the original RT-2~\cite{rt-2}), with an approximately one-to-one split of the original VLM data and the robotics data mixture.
 % Note, this data mixture includes data for 9 embodiments which is fewer than the entire OXE dataset (\ie 22) -- the practical reason for this difference is that we have continued to extend the dataset over time, and at the time of the experiments, the dataset above represented all of the data. In the future, 
-Note, we plan to continue training policies on the extended versions (\ie added tasks and episodes) of our dataset as we continue to grow the dataset. 
-Other datasets, \ie for other embodiments, can and will be added to our repository when available to the research community.
+We plan to continue extending our dataset (\ie added tasks and episodes) as we continue in our research and this project. 
+% Other datasets, \ie for other embodiments, can and will be added to our repository when available to the research community.
 
 
 
@@ -259,6 +260,9 @@ The preliminary results are shown in~\autoref{fig:res}.
 % Compromised availability (and/or functionality) of a robot from an attack can cause physical harm, property damage, or operational disruptions.
 % The real-time and/or (network dependence) of these models adds vulnerabilities that can be exploited to disrupt availability, making it imperative to prioritize security and resilience against such attacks.
 
+\BfPara{Adoption and Constraints}
+At inference time, each model must run within the robot's control-loop budget of 3--10~Hz. Small models such as ACT, Octo, and RT-1 can meet this rate locally on the robot, so we study them primarily under the white-box threat model with access to encoder parameters. Larger models such as OpenVLA and RT-2 (7B+ parameters) are hosted on a cloud service and queried over the network, which limits an adversary to inputs and outputs. We therefore treat these cloud-hosted models under the black-box threat model, matching how a real attacker would reach them. Our defenses respect the same budget: the trajectory-level detector TACD must add inference overhead small enough to keep the pipeline within the 3--10~Hz rate, or it is not deployable on the robot.
+
 
 
 
@@ -390,6 +394,10 @@ Depending on the level of the \ul{adversary's capabilities and knowledge} on the
 Several threat models can be defined based on the adversarial specificity/goals, timing of the attack (\eg training or inference), the extent of adversarial capabilities, and the knowledge about the target model/system (\eg model parameters, source code, and/or training data).
 \ul{In this task, we explore many threat models that span different categorizations and targets as shown in}{~\autoref{table:attacks_models}}.
 
+
+
+\BfPara{Relationship to Concurrent Work}
+Concurrent efforts study adversarial and backdoor threats to VLA models, but each targets an isolated model or component. BadVLA~\cite{badvla} inserts backdoors into a single VLA through objective-decoupled optimization. AdvVLA~\cite{advvla} crafts adversarial perturbations against one VLA policy. AttackVLA~\cite{li2025attackvla} benchmarks attacks but fixes the model family and reports no defenses grounded in robot kinematics. DRIFT~\cite{tae2026drift} derails the denoising trajectory of a single flow-matching VLA with an adversarial patch. Our proposal differs on three axes. First, we impose kinematic and Jacobian constraints so attacks and defenses respect the robot's reachable action space rather than pixel-space budgets alone. Second, we measure physical-consequence outcomes across six robot embodiments rather than one platform. Third, we release a unified benchmark, VLA-SecBench, pairing a cross-model transferability matrix with a single multi-task detector (TACD), so attacks, defenses, and interpretability are evaluated under one protocol instead of per-paper settings.
 
 
 \BfPara{Attacking Robotic Foundation Models: Preliminary Study} We have conducted two preliminary experiments to evaluate the effectiveness of adversarial attacks on models trained on Simpler~\cite{li24simpler} benchmark using three tasks. Both experiments were conducted on the same three tasks as in the preliminary experiments, and evaluated using 25 episodes repeated 5 times.

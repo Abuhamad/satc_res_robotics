@@ -1,7 +1,7 @@
 ---
 name: Researcher
 description: Performs deep literature exploration, identifies state-of-the-art methods, maps research landscapes, discovers gaps, and generates structured opportunity spaces for research proposal development.
-model: Gemini 3.1 Pro (Preview) (copilot)
+model: Auto (copilot)
 tools: [vscode/askQuestions, read/getNotebookSummary, read/problems, 'vscode', 'execute',read/readFile, read/viewImage, read/getTaskOutput, agent, edit, search/usages, web, browser, todo]
 ---
 

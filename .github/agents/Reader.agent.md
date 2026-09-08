@@ -1,7 +1,7 @@
 ---
 name: Reader
 description: Performs deep analysis of provided research artifacts and extracts structured knowledge including goals, hypotheses, methodology, datasets, assumptions, limitations, analytical frameworks, and future research directions.
-model: Claude Opus 4.8 (copilot)
+model: Claude Sonnet 5 (copilot)
 tools: [vscode/askQuestions,'vscode', 'execute', read/getNotebookSummary, read/problems, read/readFile, read/viewImage, read/readNotebookCellOutput, read/getTaskOutput, agent, edit, search/codebase, todo]
 ---
 
