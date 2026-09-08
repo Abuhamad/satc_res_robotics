@@ -71,7 +71,7 @@ We plan to continue extending our dataset (\ie added tasks and episodes) as we c
 
 \BfPara{End-to-end Models}
 We identify two main families of end-to-end robotic foundation models: policy prediction models (\eg VLAs) and goal-conditioned models (\eg RoboCat~\cite{bousmalis2023robocat}). VLAs predict the next action based on the current state and instruction, while the second family, goal-conditioned models, predicts the next state based on the current state and goal. VLAs are gaining more traction due to their ability to leverage large pre-trained models and fine-tune them for specific tasks/embodiments (see~\autoref{fig:vla-timeline}).
-{In the following, we describe the main models that we will use in this project. Note that we will continue to expand the list of models as new models are released and/or become available for research use.}
+{In the following, we describe the main models that we will use in this project. We will continue to expand the list of models as new models are released and/or become available for research use.}
 
 \noindent\textbf{\cib{1} RT-1~\cite{rt-1} and RT-1-X~\cite{9}} RT-1 is a 35M parameter network built on a transformer architecture~\cite{vaswani2017attention} and designed for robotic control. %, as {shown} in~\autoref{fig:rtx}. 
 It takes in a history of images (\eg 5 to 15 images) of resolution $300\times300$ along with the natural language instructions. 
@@ -260,9 +260,6 @@ The preliminary results are shown in~\autoref{fig:res}.
 % Compromised availability (and/or functionality) of a robot from an attack can cause physical harm, property damage, or operational disruptions.
 % The real-time and/or (network dependence) of these models adds vulnerabilities that can be exploited to disrupt availability, making it imperative to prioritize security and resilience against such attacks.
 
-\BfPara{Adoption and Constraints}
-At inference time, each model must run within the robot's control-loop budget of 3--10~Hz. Small models such as ACT, Octo, and RT-1 can meet this rate locally on the robot, so we study them primarily under the white-box threat model with access to encoder parameters. Larger models such as OpenVLA and RT-2 (7B+ parameters) are hosted on a cloud service and queried over the network, which limits an adversary to inputs and outputs. We therefore treat these cloud-hosted models under the black-box threat model, matching how a real attacker would reach them. Our defenses respect the same budget: the trajectory-level detector TACD must add inference overhead small enough to keep the pipeline within the 3--10~Hz rate, or it is not deployable on the robot.
-
 
 
 
@@ -331,7 +328,7 @@ The output $\{\bm{a}_{out}\}$ is one or chunks of actions, each is a sequence of
 
 
 
-The attack operation $\mathcal{P} (.)$ is defined as a perturbation function that alters the inputs (one or more 
+The attack operation $\mathcal{P}(.)$ is defined as a perturbation function that alters the inputs (one or more 
 \begin{wraptable}{r}{0.5\textwidth}
 \centering \vspace{-2ex}
 \caption{{\small Stages (Training and Inference), targets (Privacy, Integrity, Availability, and Abuse) and types ( White- (\dd), Gray- (\bb), and Black-box (\vv) ) of common Evasion, Poisoning, and Privacy attacks.}}\vspace{-3.5ex}
@@ -392,12 +389,12 @@ If the attack is designed such that $\mathcal{P}(\bm{x},\bm{t}_{in}) \xrightarro
 Depending on the level of the \ul{adversary's capabilities and knowledge} on the victim model/data/system, adversarial attacks can be categorized into \textbf{white-box}, \textbf{gray-box}, and \textbf{black-box} attacks. 
 % \autoref{table:attacks_models} shows the general adversarial attack on robotic models.
 Several threat models can be defined based on the adversarial specificity/goals, timing of the attack (\eg training or inference), the extent of adversarial capabilities, and the knowledge about the target model/system (\eg model parameters, source code, and/or training data).
-\ul{In this task, we explore many threat models that span different categorizations and targets as shown in}{~\autoref{table:attacks_models}}.
+\ul{This task explores many threat models spanning different categorizations as shown in}{~\autoref{table:attacks_models}}.
 
 
 
-\BfPara{Relationship to Concurrent Work}
-Concurrent efforts study adversarial and backdoor threats to VLA models, but each targets an isolated model or component. BadVLA~\cite{badvla} inserts backdoors into a single VLA through objective-decoupled optimization. AdvVLA~\cite{advvla} crafts adversarial perturbations against one VLA policy. AttackVLA~\cite{li2025attackvla} benchmarks attacks but fixes the model family and reports no defenses grounded in robot kinematics. DRIFT~\cite{tae2026drift} derails the denoising trajectory of a single flow-matching VLA with an adversarial patch. Our proposal differs on three axes. First, we impose kinematic and Jacobian constraints so attacks and defenses respect the robot's reachable action space rather than pixel-space budgets alone. Second, we measure physical-consequence outcomes across six robot embodiments rather than one platform. Third, we release a unified benchmark, VLA-SecBench, pairing a cross-model transferability matrix with a single multi-task detector (TACD), so attacks, defenses, and interpretability are evaluated under one protocol instead of per-paper settings.
+% \BfPara{Related Work}
+% Concurrent efforts study adversarial and backdoor threats to VLA models, but each targets an isolated model or component. BadVLA~\cite{badvla} inserts backdoors into a single VLA through objective-decoupled optimization. AdvVLA~\cite{advvla} crafts adversarial perturbations against one VLA policy. AttackVLA~\cite{li2025attackvla} benchmarks attacks but fixes the model family and reports no defenses grounded in robot kinematics. DRIFT~\cite{tae2026drift} derails the denoising trajectory of a single flow-matching VLA with an adversarial patch. Our proposal differs on three axes. First, we impose kinematic and Jacobian constraints so attacks and defenses respect the robot's reachable action space rather than pixel-space budgets alone. Second, we measure physical-consequence outcomes across six robot embodiments rather than one platform. Third, we release a unified benchmark, VLA-SecBench, pairing a cross-model transferability matrix with a single multi-task detector (TACD), so attacks, defenses, and interpretability are evaluated under one protocol instead of per-paper settings.
 
 
 \BfPara{Attacking Robotic Foundation Models: Preliminary Study} We have conducted two preliminary experiments to evaluate the effectiveness of adversarial attacks on models trained on Simpler~\cite{li24simpler} benchmark using three tasks. Both experiments were conducted on the same three tasks as in the preliminary experiments, and evaluated using 25 episodes repeated 5 times.
