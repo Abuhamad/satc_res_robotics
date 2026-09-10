@@ -6,14 +6,14 @@ End-to-end generalist robot models leverage high-capacity models (\eg ViTs, LLMs
 The core concept relies on the systematic evaluation and discovery of potential vulnerabilities in all layers of the robotic learning stack. This plan describes the research tasks in this project.
 
 
-\subsection{T0: Building Comprehensive Repository for End-to-end Robotic Models and Data}
+\subsection{T0: Ongoing Progress: Comprehensive Repository for Robotic Models and Data}
 % ~\vspace{-3ex}
 \begin{wraptable}{r}{0.5\textwidth}\vspace{-3.5ex}
 % \begin{table}
 \centering
 \caption{{Datasets augmenting OXE~\cite{9} for robots (\textbf{R}), \textbf{F}ranka, \textbf{G}oogle Robot, \textbf{S}pot, \textbf{H}ello Stretch, \textbf{U}R5, Hu\textbf{M}an}, and \textbf{X}arm7, with control frequency (\textbf{Hz}) and \textbf{\#} of episodes.}
 \label{tab:multi_dataset}\vspace{-2ex}
-\resizebox{0.99\linewidth}{!}{%
+\resizebox{0.97\linewidth}{!}{%
 \begin{tabular}{lcclc}
 \toprule
 Dataset                     & \textbf{R}         &\textbf{ \#} & {Action Space}                           & \textbf{Hz}           \\
@@ -35,7 +35,7 @@ Ours & X & 10000 & EEF/joint Position & 5-50 \\
 \bottomrule
 \end{tabular}}\vspace{-2ex}
 \end{wraptable}
-To conduct research tasks toward assessing and enhancing robustness, trustworthiness, and performance of robotic foundation models, we will build/train/evaluate various models using state-of-the-art techniques and \xot robotic data.\\
+To conduct research tasks toward assessing and enhancing robustness, trustworthiness, and performance of robotic foundation models, we are  building/training/evaluating various models using state-of-the-art techniques and \xot data.\\
 \BfPara{Robotics Data Mixture} We consider a multimodal robotics data mixture of
 six robot embodiments (Franka, Google Robot, Spot, Hello Stretch, UR5, and Xarm7; \textit{fewer than the 22 embodiments in the OXE~\cite{9} dataset, for multimodality and practical reasons}) in addition to human demonstration data (see \autoref{tab:multi_dataset}). The mixture draws from 15 dataset sources: 14 robotics datasets (\autoref{tab:multi_dataset}, including our own for Xarm7) and the Open X-Embodiment (OXE)~\cite{9} repository, which itself aggregates 60 further robotic datasets.
 % Freiburg Franka Play~\cite{rosete2022tacorl,mees23hulc2},
@@ -163,11 +163,11 @@ Variants of OpenVLA, \eg  ReVLA~\cite{dey2024revla}, Edge-VLA~\cite{budzianowski
 Similar to RT-2-X, we will adopt various open-source VLMs/components (in \autoref{tab:VLMs}) to build/train [X]-VLA variants.
 
 
-\noindent\textbf{\cib{4} RoboCat~\cite{bousmalis2023robocat}} RoboCat follows a different approach by conditioning the model on visual goal. The architecture is VQ-GAN encoder which is based on the Gato architecture~\cite{esser2021taming} that processes the image (with $128\times128$ resolution) as $8\times8$ tokens and outputs encoded vectors. These vectors are then discretized via a nearest-neighbor lookup in a codebook of embeddings.
-The VQ-GAN encoder is a ResNet~\cite{resnet} with 2 groups of 2 blocks, followed by 3 attention layers. 
-The decoder has 3 attention layers followed by a ResNet with 2 groups of 3 blocks. %The vector quantiser~\citep{van2017neural} uses 64 embeddings of dimension 128. 
-For tokenization of observations and actions, RoboCat follows a similar approach as~\cite{reed2022generalist}.
-The loss is weighted as ($0.25\times\text{discretization\_loss} + \text{l2\_reconstruction\_loss} + 0.1\times\text{log\_laplace\_loss}$) to predict future tokens. The output is the image tokens at time step $k = 5$, as one step can look very similar.
+% \noindent\textbf{\cib{4} RoboCat~\cite{bousmalis2023robocat}} RoboCat follows a different approach by conditioning the model on visual goal. The architecture is VQ-GAN encoder which is based on the Gato architecture~\cite{esser2021taming} that processes the image (with $128\times128$ resolution) as $8\times8$ tokens and outputs encoded vectors. These vectors are then discretized via a nearest-neighbor lookup in a codebook of embeddings.
+% The VQ-GAN encoder is a ResNet~\cite{resnet} with 2 groups of 2 blocks, followed by 3 attention layers. 
+% The decoder has 3 attention layers followed by a ResNet with 2 groups of 3 blocks. %The vector quantiser~\citep{van2017neural} uses 64 embeddings of dimension 128. 
+% For tokenization of observations and actions, RoboCat follows a similar approach as~\cite{reed2022generalist}.
+% The loss is weighted as ($0.25\times\text{discretization\_loss} + \text{l2\_reconstruction\_loss} + 0.1\times\text{log\_laplace\_loss}$) to predict future tokens. The output is the image tokens at time step $k = 5$, as one step can look very similar.
 
 \noindent\textbf{\cib{5} Octo~\cite{team2024octo}} Octo is a (27-93M parameters) transformer-based VLA pre-trained on the OXE~\cite{9} dataset. Unlike RT-X and RoboCat, it can be fine-tuned to new observations and action spaces. This flexibility allows Octo to adapt to various robotic embodiments, a trend that is becoming increasingly important/adopted in robotics.
 Octo architecture consists of three key parts: \textit{input tokenizers} that transform language instructions and observations into tokens, a \textit{transformer backbone} that receives the tokens and generates embeddings, and \textit{readout heads} that produce the desired outputs, \ie actions. Input tokenizers include modality-specific tokenizers, \ie a language (task) tokenizer (\eg T5) and a vision tokenizer (\eg ViT-based or CNN-based). Unavailable modalities are masked (\eg no language instructions are provided), and learnable position embeddings are added to the input tokens before feeding them into the transformer backbone.  Octo also uses a \textit{readout token} analogous to the $\text{[CLS]}$ token in BERT/LLMs.
@@ -177,9 +177,9 @@ Action heads can be added/replaced/fine-tuned during downstream fine-tuning (\eg
 
 \noindent\textbf{\cib{6} ACT~\cite{zhao2023learningFB}} ACT is a VLA model that uses ResNet~\cite{resnet} as the vision encoder and transformer-based
 conditional variational autoencoder (CVAE)~\cite{sohn2015learning} that generates a sequence of actions. The original ACT 
-\begin{wrapfigure}{r}{0.45\textwidth}{\vspace{-2ex}}
+\begin{wrapfigure}{r}{0.4\textwidth}{\vspace{-2ex}}
   \centering
-\begin{minipage}{0.45\textwidth}
+\begin{minipage}{0.4\textwidth}
       \centering
         \begin{minipage}{\linewidth}
           \centering
@@ -213,7 +213,7 @@ conditional variational autoencoder (CVAE)~\cite{sohn2015learning} that generate
         \end{minipage}
     \end{minipage}%
   \hfill
-    \begin{minipage}{0.45\textwidth}
+    \begin{minipage}{0.4\textwidth}
       \centering
       \begin{minipage}{0.45\linewidth}
         \centering
@@ -279,7 +279,7 @@ Since end-to-end robotic models fall into the generative AI category, this task 
 
 
 
-\BfPara{Challenges in Attacking Robotic Models} 
+\BfPara{Challenges in Attacking and Exploring Threat Space in Robotic Models} 
 Attacking robotic models
 presents unique challenges due to their complex architectures, the multimodal nature of their input, restrictions on the output/action space, and the evolving landscape of security measures. 
 Understanding these challenges is crucial for developing effective attack strategies that help
@@ -288,12 +288,12 @@ Main challenges include the following:
 {\cib{1}} \textbf{{Multimodal Complexity}}: Generalist robotic models process/integrate data from multiple modalities, such as sensory/positions data, images, and text, to predict action sequences. We believe that the efforts to build robotic foundation models will continue to grow and other modalities will be incorporated.
     Creating effective attacks requires understanding and manipulating the intricate relationships and interactions among these modalities \cite{radford2021learning}. 
     Consequently, creating adversarial examples that can deceive both the visual and language components is more challenging than focusing on one. %, such as attacks on vision models~\cite{abdukhamidov2023hardening,abdukhamidov2024singleadv} and LLM~\cite{chowdhury2024breaking}, or unimodal attacks VLM \cite{fan2024unbridled}.
-\\{\cib{2}} \textbf{{Model Scale and Complexity}}: Current end-to-end robotic models involve large architectures containing millions to billions of parameters, making them highly complex and computationally expensive to attack.
+{\cib{2}} \textbf{{Model Scale and Complexity}}: Current end-to-end robotic models involve large architectures containing millions to billions of parameters, making them highly complex and computationally expensive to attack.
     Adapting traditional adversarial attacks from downstream tasks to successfully impact such large models necessitates significant computational resources and sophisticated optimization methods.
-\\{\cib{3}} \textbf{{Attack Practicality and Transferability}}: 
+{\cib{3}} \textbf{{Attack Practicality and Transferability}}: 
     Adversarial scenarios against robotics should be practical, \ie scenarios in which robots are likely to face operational tasks. 
 Therefore, attacks must be systematic and guided by practical experience in field robotics to ensure the plausibility and reflection of real-world scenarios. 
-    Moreover, attack methods against similar LLMs/VLMs use white-, gray-, and black-box settings relying on prior knowledge of (exact or similar) models, training data, restrictions/constraints of the system or training a surrogate models. However, robotic applications and commercial vendors often do not share model details \cite{cheng2018query}. In practice, attackers can only query the model and observe the behavior of the robot/output of the model. Developing attacks that exploit multiple vulnerabilities \cite{biggio2018wild} or adapt to various threat vectors is necessary and requires versatile strategies.
+    Moreover, attack methods against similar LLMs/VLMs use white-, gray-, and black-box settings relying on prior knowledge of (exact or similar) models, training data, restrictions/constraints of the system or training a surrogate models. However, robotic applications and commercial vendors often do not share model details \cite{cheng2018query}. In practice, attackers can only query the model and observe the behavior of the robot/output of the model. Developing attacks that exploit multiple vulnerabilities \cite{biggio2018wild} or adapt to various threat vectors is necessary and requires various strategies.
     Moreover, an effective attack should be undetectable/imperceptible by human/robot observer, which requires preserving the semantic traits of the benign sample. 
     This requires well-designed constraints to restrict the type and size of the perturbation. 
     Numerous studies have shown that some attacks inhibit high transferability, \ie attacks on a given model can succeed on other similar models. This phenomenon derived the transfer-based black-box attacks.
@@ -314,23 +314,24 @@ Therefore, attacks must be systematic and guided by practical experience in fiel
 
 
 
-\BfPara{Attacking Robotic Foundation Models}
-~{Let $\mathcal{M}$ represent a robotic foundation model, which takes a tuple of inputs, \eg $(\{\bm{x}\}, \{\bm{t}\}, \{\bm{s}\}, \dots)$ representing input modalities (\ie a set (at least one) of images \{$\bm{x}\} \in \mathcal{X}$, set of text instructions \{$\bm{t}\} \in \mathcal{T}$, set of sensory/position data $\{\bm{s}\}\in \mathcal{S}$, and other available information) and outputs a set of tokenized actions $\mathcal{M}(\{\bm{x}\}, \{\bm{t}\}, \{\bm{s}\}, \dots)=\{\bm{a}_{out}\}$.
-Since robots could have multiple embodiments/tasks (and various action spaces), some inputs could become a placeholder/masked $\oslash$ or nonexistent modified to fit the model.}
+\BfPara{Definitions: Attacking Robotic Foundation Models}
+{Let $\mathcal{F}$ represent a robotic foundation model, which takes a tuple of inputs, \eg $(\{\bm{x}\}, \{\bm{t}\}, \{\bm{s}\}, \dots)$ representing input modalities (\ie a set (at least one) of images \{$\bm{x}\} \in \mathcal{X}$, set of text instructions $\{\bm{t}\} \in \mathcal{T}$, set of sensory/position data $\{\bm{s}\}\in \mathcal{S}$, and other available information) and outputs a set of tokenized actions $\mathcal{F}(\{\bm{x}\}, \{\bm{t}\}, \{\bm{s}\}, \dots)=\{\bm{a}_{out}\}$.
+Since robots could have multiple embodiments/tasks (and various action spaces), some inputs could become a placeholder/masked $\oslash$ or nonexistent input to fit the model.}
 %%{\vspace{-2ex}}
-% Let $\mathcal{M}$ represent a robotic foundation model, which takes a tuple of inputs, \eg $(\{\bm{x}\}, \{\bm{t}\}, \{\bm{s}\}, \dots)$ representing input modalities (\ie a set (at least one) of images \{$\bm{x}\} \in \mathcal{X}$, set of text instructions \{$\bm{t}\} \in \mathcal{T}$, set of sensory/position data $\{\bm{s}\}\in \mathcal{S}$, and other available information) and outputs a set of tokenized actions $\mathcal{M}(\{\bm{x}\}, \{\bm{t}\}, \{\bm{s}\}, \dots)=\{\bm{a}_{out}\}$.
+% Let $\mathcal{F}$ represent a robotic foundation model, which takes a tuple of inputs, \eg $(\{\bm{x}\}, \{\bm{t}\}, \{\bm{s}\}, \dots)$ representing input modalities (\ie a set (at least one) of images \{$\bm{x}\} \in \mathcal{X}$, set of text instructions \{$\bm{t}\} \in \mathcal{T}$, set of sensory/position data $\{\bm{s}\}\in \mathcal{S}$, and other available information) and outputs a set of tokenized actions $\mathcal{F}(\{\bm{x}\}, \{\bm{t}\}, \{\bm{s}\}, \dots)=\{\bm{a}_{out}\}$.
 % Since robots could have multiple embodiments/tasks (and various action spaces), some inputs could become a placeholder/masked $\oslash$ or nonexistent modified to fit the model.
-For example, RT-2 and OpenVLA models receive only images and textual instruction $\mathcal{M}(\{\bm{x}\}, \{\bm{t}\})=\bm{a}_{out}$, 
-%RoboCat and RT-1 receive images and no text, $\mathcal{M}(\{\bm{x}\}, \oslash)=\bm{a}_{out}$, 
-Octo receives images, text, and sensory data $\mathcal{M}(\{\bm{x}\}, \{\bm{t}\}, \{\bm{s}\})=\bm{a}_{out}$, and ACT receives only images and sensory data $\mathcal{M}(\{\bm{x}\}, \{\bm{s}\})=\bm{a}_{out}$.
-If Octo is used for robots/datasets that do not provide text instructions, the model processes available inputs and mask unavailable ones $\mathcal{M}(\{\bm{x}\}, \oslash,\{\bm{s}\})=\bm{a}_{out}$.
+For example, RT-2 and OpenVLA models receive only images and textual instruction $\mathcal{F}(\{\bm{x}\}, \{\bm{t}\})=\{\bm{a}_{out}\}$, 
+%RoboCat and RT-1 receive images and no text, $\mathcal{F}(\{\bm{x}\}, \oslash)=\bm{a}_{out}$, 
+Octo receives images, text, and sensory data $\mathcal{F}(\{\bm{x}\}, \{\bm{t}\}, \{\bm{s}\})=\bm{a}_{out}$, and ACT receives only images and sensory data $\mathcal{F}(\{\bm{x}\}, \{\bm{s}\})=\{\bm{a}_{out}\}$.
+If Octo is used for robots/datasets that do not provide text instructions, the model processes available inputs and mask unavailable ones $\mathcal{F}(\{\bm{x}\}, \oslash,\{\bm{s}\})=\{\bm{a}_{out}\}$.
 The output $\{\bm{a}_{out}\}$ is one or chunks of actions, each is a sequence of tokens representing predicted actions.
 
 
 
-The attack operation $\mathcal{P}(.)$ is defined as a perturbation function that alters the inputs (one or more 
+The attack operation $\mathcal{M}(.)$ is defined as a perturbation function that alters the inputs (one or more 
 \begin{wraptable}{r}{0.5\textwidth}
-\centering \vspace{-2ex}
+\centering 
+% \vspace{-1ex}
 \caption{{\small Stages (Training and Inference), targets (Privacy, Integrity, Availability, and Abuse) and types ( White- (\dd), Gray- (\bb), and Black-box (\vv) ) of common Evasion, Poisoning, and Privacy attacks.}}\vspace{-3.5ex}
 \label{table:attacks_models}
 \small
@@ -378,15 +379,15 @@ rowsep=0pt,
 }{\vspace{-3ex}}
 \end{wraptable}
 modalities, such as images, text, and sensory data) to mislead the model into producing an incorrect/unintended output action.
-% We denote attacks on robotic models as $\mathcal{P} (.)$, which can be applied to one or more input modalities, \eg images, text, and sensory data.
-For example, $\mathcal{P}(\bm{x})$ attacks image inputs $\bm{x}$, $\mathcal{P}(\bm{t}_{in})$ attacks text inputs $\bm{t}_{in}$, and $\mathcal{P}(\bm{x}, \bm{t}_{in})$ attacks both images and instructions.
-\ul{Adversarial specificity} can be either \textbf{targeted} or \textbf{untargeted} against security concepts Integrity, Confidentiality, and Availability.
-For simplicity, we denote attack specificity as $\mathcal{P}(.) \xrightarrow{{}_{\textbf{T}}}  \bm{a}_{out}'$ for targeted and $\mathcal{P}(.) \xrightarrow{{}_{\textbf{U}}}  \bm{a}_{out}'$ for untargeted attacks.
-The \ul{attacks goals} can be categorized into \textbf{evasion}, \textbf{poisoning}, and \textbf{privacy}, and can be \ul{launched} either in \textbf{training} or \textbf{inference} phases.
-For example, $\mathcal{P}(\bm{x},\bm{t}_{in}) \xrightarrow{{}_{\textbf{U}}} \bm{a}_{out}'$ such that $\bm{a}_{out}' \neq \bm{a}_{out}$ is an untargeted evasion attack that alters the input pair $(\bm{x},\bm{t}_{in})$ to cause the model $\mathcal{M}$ to produce an incorrect output $\bm{a}_{out}'$.
-Similarly, $\mathcal{P}(\bm{t}_{in}) \xrightarrow{{}_{\textbf{T}}} \bm{a}_{jailbreak}$ is a targeted jailbreak attack that alters the input instructions $(\bm{t}_{in})$ to cause the model $\mathcal{M}$ to produce a specific (undesired) output $\bm{a}_{jailbreak}$.
-If the attack is designed such that $\mathcal{P}(\bm{x},\bm{t}_{in}) \xrightarrow{{}_{\textbf{U}}} \bm{a}_{out}'$ where $\bm{a}_{out}'$ reveals confidential information, this constitutes a privacy attack.
-Depending on the level of the \ul{adversary's capabilities and knowledge} on the victim model/data/system, adversarial attacks can be categorized into \textbf{white-box}, \textbf{gray-box}, and \textbf{black-box} attacks. 
+% We denote attacks on robotic models as $\mathcal{M} (.)$, which can be applied to one or more input modalities, \eg images, text, and sensory data.
+For example, $\mathcal{M}(\bm{x})$ attacks image inputs $\bm{x}$, $\mathcal{M}(\bm{t})$ attacks text inputs $\bm{t}$, and $\mathcal{M}(\bm{x}, \bm{t})$ attacks both images and instructions.
+\ul{\emph{Adversarial specificity}} can be either \textbf{targeted} or \textbf{untargeted} against security concepts \emph{Integrity}, \emph{Confidentiality}, and \emph{Availability}.
+For simplicity, we denote attack specificity as $\mathcal{M}(.) \xrightarrow{{}_{\textbf{T}}}  \bm{a}_{out}'$ for targeted and $\mathcal{M}(.) \xrightarrow{{}_{\textbf{U}}}  \bm{a}_{out}'$ for untargeted attacks.
+The \ul{\emph{attacks goals}} can be categorized into \textbf{evasion}, \textbf{poisoning}, and \textbf{privacy}, and can be \ul{launched either in \textbf{training} or \textbf{inference} phases}.
+For example, $\mathcal{M}(\bm{x},\bm{t}) \xrightarrow{{}_{\textbf{U}}} \bm{a}_{out}'$ such that $\bm{a}_{out}' \neq \bm{a}_{out}$ is an untargeted evasion attack that alters the input pair $(\bm{x},\bm{t})$ to cause the model $\mathcal{F}$ to produce an incorrect output $\bm{a}_{out}'$.
+Similarly, $\mathcal{M}(\bm{t}) \xrightarrow{{}_{\textbf{T}}} \bm{a}_{jailbreak}$ is a targeted jailbreak attack that alters the input instructions $(\bm{t})$ to cause the model $\mathcal{F}$ to produce a specific (undesired) output $\bm{a}_{jailbreak}$.
+If the attack is designed such that $\mathcal{M}(\bm{x},\bm{t}) \xrightarrow{{}_{\textbf{U}}} \bm{a}_{out}'$ where $\bm{a}_{out}'$ reveals confidential information, this constitutes a privacy attack.
+Depending on the level of the \ul{\emph{adversary's capabilities and knowledge}} on the victim model/data/system, adversarial attacks can be categorized into \textbf{white-box}, \textbf{gray-box}, and \textbf{black-box} attacks. 
 % \autoref{table:attacks_models} shows the general adversarial attack on robotic models.
 Several threat models can be defined based on the adversarial specificity/goals, timing of the attack (\eg training or inference), the extent of adversarial capabilities, and the knowledge about the target model/system (\eg model parameters, source code, and/or training data).
 \ul{This task explores many threat models spanning different categorizations as shown in}{~\autoref{table:attacks_models}}.
@@ -398,16 +399,16 @@ Several threat models can be defined based on the adversarial specificity/goals,
 
 
 \BfPara{Attacking Robotic Foundation Models: Preliminary Study} We have conducted two preliminary experiments to evaluate the effectiveness of adversarial attacks on models trained on Simpler~\cite{li24simpler} benchmark using three tasks. Both experiments were conducted on the same three tasks as in the preliminary experiments, and evaluated using 25 episodes repeated 5 times.
-The first experiment examined untargeted white-box attacks using visual perturbations on robotic models. We implemented three established attack methods: PGD~\cite{madry2017towards}, FGSM~\cite{goodfellow2014explaining}, and C\&W~\cite{carlini2017towards}. This attack scenario assumes the attacker has complete access to the parameters of the model's visual encoder, \ie EfficientNet-B3 (RT-1), Vision Transformer (RT-2), and ResNet (Octo and ACT). Such an assumption is realistic since these robotic models typically incorporate open-source pre-trained visual encoders, making their architecture and parameters readily available to potential attackers.
+\textbf{Experiment 1:} We examined \emph{untargeted white-box} attacks using visual perturbations (\ie on image inputs) against robotic models. We implemented three baseline attack methods: PGD~\cite{madry2017towards}, FGSM~\cite{goodfellow2014explaining}, and C\&W~\cite{carlini2017towards}. This attack scenario assumes the attacker has complete access to the parameters of the model's visual encoder, \ie EfficientNet-B3 (RT-1), Vision Transformer (RT-2), and ResNet (Octo and ACT). Such an assumption is realistic since these robotic models typically incorporate open-source pre-trained visual encoders, making their architecture and parameters readily available to potential attackers.
 We evaluated the success rate of the attacks by measuring the percentage of successful adversarial examples where the generated actions differ from the true ground-truth actions with a threshold of 30\%. \autoref{fig:visual_white_box} shows the success rate of the attacks on various models. % using 25 episodes repeated 5 times.
 
-The second experiment examined black-box attacks using token-based language perturbations against robotic models (except ACT as it does not support language instructions). We assume the attacker has no access to the model's parameters and can only query the model. The attacker can manipulate the language instructions by deleting/replacing/adding tokens to the original instructions.
+\textbf{Experiment 2:} We examined \emph{black-box} attacks using token-based language perturbations (\ie on text inputs) against robotic models (except ACT as it does not support language instructions). We assume the attacker has no access to the model's parameters and can only query the model. The attacker can manipulate the language instructions by deleting/replacing/adding tokens to the original instructions.
 We adopted a similar attack approach to one used in SHIELD~\cite{abuhamad2025shield}, our previous work. %which focused on enhancing the robustness of code attribution models.
 The attack perturbs 20\% of the tokens in the instructions with random tokens from the tokenizer vocabulary, and probes the model with a query limit of 500 queries. The attack terminates if the query limit is reached or if the model's output action differs from the ground-truth action by more than 30\%, in which case the attack is successful.
 The results are shown
 % {\vspace{-2.5ex}}
 \begin{wrapfigure}{r}{0.3\textwidth}
-\vspace{-2.5ex}
+% \vspace{-1ex}
 \centering
 \begin{minipage}{0.3\textwidth}
 \centering
@@ -425,7 +426,8 @@ The results are shown
 \end{wrapfigure}
  in~\autoref{fig:visual_black_box}, where we observe that the success rate of the models drops significantly after the attack, indicating that even simple token-based perturbations can disrupt the model's performance.
 These results demonstrate the potential vulnerabilities of robotic models to adversarial attacks.
-In these preliminary experiments we operationalized attack success as a 30\% action-token deviation proxy. In the full evaluation protocol described below, we replace this proxy with task success rate (TSR) under attack as the primary metric and retain action deviation only as a secondary physical-consequence proxy, for which we provide empirical justification through its mapping to end-effector displacement.
+% In these preliminary experiments we operationalized attack success as a 30\% action-token deviation. 
+% In the full evaluation protocol described below, we use task success rate (TSR) under attack as the primary metric and use action deviation as a secondary physical-consequence metric.
 
 
 
@@ -582,7 +584,7 @@ By understanding and leveraging these interactions, we aim to develop more robus
 We will benchmark various multimodal attacks, measuring their effectiveness across multiple robot embodiments and tasks. As in T1, our primary metric is task success rate (TSR) under attack, with the 30\% action-token deviation retained as a secondary proxy.
 In addition to attack evaluation metrics, such as Attack Success Rate, 
 \textit{Contain} \cite{lu2024test}, \textit{Exactmatch} \cite{luo2024image,lu2024test}, transferability, and imperceptibility, we will use cross-modal benign-adversarial shifting to evaluate the impact of different modality in achieving adversarial objective.
-For example, assess whether the attack can succeed or change behavior when an input to a successful multimodal attack (\ie $\mathcal{M}(\mathcal{P}(\bm{x},\bm{t}_{in}))\rightarrow\bm{a}_{out}'$) is mutated, \eg $\{\mathcal{P}(\bm{x},\bm{t}_{in})\} \rightarrow\{\mathcal{P}(\bm{x}),\bm{t}_{in}\}$ or $\{\bm{x},\mathcal{P}(\bm{t}_{in})\}$.
+For example, assess whether the attack can succeed or change behavior when an input to a successful multimodal attack (\ie $\mathcal{F}(\mathcal{M}(\bm{x},\bm{t}))\rightarrow\bm{a}_{out}'$) is mutated, \eg $\{\mathcal{M}(\bm{x},\bm{t})\} \rightarrow\{\mathcal{M}(\bm{x}),\bm{t}\}$ or $\{\bm{x},\mathcal{M}(\bm{t})\}$.
 The mutation process can be adjusted to alter the extent of shifts required to facilitate behavior change.
 As in T1, we also report maximum end-effector action displacement and safety-zone and force-threshold violation rate, each as mean~$\pm$~std over at least ten runs with significance assessed by Welch's $t$-test, and we contribute the multimodal attacks to the full cross-model transferability matrix.
 We will align this protocol with recent physically-grounded evaluation practice for robot policies~\cite{sun2026maniparena}.
