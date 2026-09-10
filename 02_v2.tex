@@ -466,9 +466,52 @@ In a different study~\cite{cui2023robustness}, manipulating visual contents that
 Gao \textit{et al.} \cite{gao2024inducing} introduce verbose images, creating imperceptible perturbations to make VLMs generate longer output sentences. Such an attack raises energy consumption and latency, which can have serious consequences in robotics.
 In a cross-modal analysis, creating and refining visual perturbations using adaptive prompts can identify numerous prompts that are effective with specific visual perturbations, resulting in high transferability of adversarial samples \cite{luo2024image}.
 % Wu \textit{et al.} \cite{wu2024adversarial} leverage adversarial text sequences to direct gradient-based perturbations on a single trigger image for attacking VLMs.
-\ul{In this sub-task, we will propose new attack, Action-Bin Boundary Perturbation (ABBP), and investigate the cross-modal behavior and impact of various evasion and poisoning attacks on robotics models.}
+\ul{In this task, we propose new attack, Action-Bin Boundary Perturbation (ABBP), and investigate the cross-modal behavior and impact of various evasion and poisoning attacks on robotics models.}
 
-\BfPara{Proposed Attack: ABBP} We propose ABBP, a gradient-based white-box attack designed to exploit the uniform 256-bin discretization of the VLA action space. Because adjacent bins encode physically close but discretely different control signals, ABBP optimizes perturbations to drive predicted action tokens across bin boundaries in a coordinated fashion across all degrees of freedom, subject to a kinematically-consistent Jacobian constraint so the induced action remains reachable. We treat PGD~\cite{madry2017towards}, FGSM~\cite{goodfellow2014explaining}, and C\&W~\cite{carlini2017towards} as baselines rather than contributions. The claimed perturbation-budget advantage over these baselines is not assumed: our formal analysis will compare the required $L_\infty$ budget after normalizing to physical consequence, since a one-bin action shift and a language-token substitution are not directly comparable units. We frame ABBP as research to be conducted, gated by a formal go/no-go check on whether action-space discretization yields a structurally distinct vulnerability.
+\BfPara{Proposed Attack:} We propose ABBP, a gradient-based white-box attack designed to exploit the uniform 256-bin discretization of the VLA action space. Because adjacent bins encode physically close but discretely different control signals, ABBP optimizes perturbations to drive predicted action tokens across bin boundaries in a coordinated fashion across all degrees of freedom, subject to a kinematically-consistent Jacobian constraint so the induced action remains reachable. Considering PGD, FGSM, and C\&W as baselines, our formal analysis will compare the required $L_\infty$ budget after normalizing to physical consequence (\ie action deviation), since a one-bin action shift and a language-token substitution are not directly comparable units. We frame ABBP as research to be conducted, gated by a formal go/no-go check on whether action-space discretization yields a structurally distinct vulnerability.
+
+
+\newpage
+\BfPara{Proposed Attack: Action-Bin Boundary Perturbation (ABBP)} 
+Let $\mathcal{F}$ emit, for each of the $d$ action dimensions, a categorical distribution over $B{=}256$ bins with logits $\bm{z}_j(\bm{x},\bm{t})\in\mathbb{R}^{B}$. The decoded bin and the decoded action are
+\begin{equation}
+b_j=\arg\max_{c\in\{0,\dots,B-1\}} z_{j,c}(\bm{x},\bm{t}),
+\qquad
+\hat a_j=l_j+\bigl(b_j+\tfrac{1}{2}\bigr)\Delta_j,
+\qquad
+\Delta_j=\frac{u_j-l_j}{B},
+\label{eq:abbp-quant}
+\end{equation}
+with $[l_j,u_j]$ the range of dimension $j$ and $\Delta_j$ the physical width of one bin. Uniform binning fixes $\Delta_j$ independently of the local sensitivity of the task, so a single-bin logit flip always carries a bounded but non-zero physical displacement. ABBP exploits this structure in two stages.
+\emph{Stage 1 (target selection).} Given the current configuration $\bm{\theta}$ and manipulator Jacobian $J(\bm{\theta})$, ABBP selects a coordinated bin-shift vector $\bm{s}\in\mathbb{Z}^{d}$ maximizing end-effector displacement under a stealth budget and a kinematic-feasibility constraint,
+\begin{equation}
+\bm{s}^{\star}=\arg\max_{\bm{s}\in\mathbb{Z}^{d}}\bigl\|J(\bm{\theta})\,(\bm{s}\odot\bm{\Delta})\bigr\|_{2}
+\quad\text{s.t.}\quad
+\|\bm{s}\|_{1}\le\beta,
+\qquad
+\hat{\bm{a}}+\bm{s}\odot\bm{\Delta}\in\mathcal{A}(\bm{\theta}),
+\label{eq:abbp-shift}
+\end{equation}
+where $\mathcal{A}(\bm{\theta})$ collects actions respecting joint limits, the reachable workspace, and the per-step velocity bound $\dot a_{\max}\tau$ at control period $\tau$. The budget $\beta$ caps the total number of bin crossings, so the induced action stays reachable and remains within the per-step envelope a kinematic checker accepts.
+\emph{Stage 2 (perturbation synthesis).} With $b_j^{\star}=\mathrm{clip}(b_j+s_j^{\star},0,B{-}1)$, ABBP solves a margin objective over the visual input,
+\begin{equation}
+\min_{\bm{\delta}}\;\sum_{j=1}^{d} w_j
+\Bigl[\max_{c\neq b_j^{\star}} z_{j,c}(\bm{x}+\bm{\delta},\bm{t})-z_{j,b_j^{\star}}(\bm{x}+\bm{\delta},\bm{t})+\kappa\Bigr]_{+}
+\quad\text{s.t.}\quad
+\|\bm{\delta}\|_{\infty}\le\epsilon,\;\;\bm{x}+\bm{\delta}\in[0,1]^{n},
+\label{eq:abbp-obj}
+\end{equation}
+with $[\cdot]_{+}=\max(\cdot,0)$, confidence margin $\kappa$, and weights $w_j=\|J_{:,j}(\bm{\theta})\|_{2}\Delta_j$ so the optimizer allocates perturbation budget to the dimensions with the largest physical effect per bin. We solve \autoref{eq:abbp-obj} by projected gradient descent with step $\alpha$ over $T$ iterations. Setting $w_j{=}1$, $\beta{=}\infty$, and dropping $\mathcal{A}(\bm{\theta})$ recovers an untargeted C\&W-style baseline, which isolates the contribution of the discretization-aware and kinematics-aware terms in an ablation.
+\emph{Comparison protocol.} PGD, FGSM, and C\&W serve as baselines. A one-bin action shift and a language-token substitution are not comparable units, so we compare attacks at matched physical consequence rather than at matched $\epsilon$. For target displacement $d$ we report the minimum budget
+\begin{equation}
+\epsilon^{\star}_{\mathcal{M}}(d)=\min\bigl\{\epsilon:\;\mathbb{E}\bigl[\|\Delta\bm{p}_{\mathcal{M}}\|_{2}\bigr]\ge d\bigr\},
+\qquad
+\Delta\bm{p}_{\mathcal{M}}=J(\bm{\theta})\bigl(\hat{\bm{a}}'-\hat{\bm{a}}\bigr),
+\label{eq:abbp-gate}
+\end{equation}
+where $\hat{\bm{a}}'$ is the action decoded under attack $\mathcal{M}$.
+\emph{Go/no-go gate (M1, M3).} We frame ABBP as research to be conducted. At M3 we declare a structurally distinct vulnerability only if $\epsilon^{\star}_{\text{ABBP}}(d)\le\gamma\,\min_{\mathcal{M}\in\{\text{PGD},\text{FGSM},\text{C\&W}\}}\epsilon^{\star}_{\mathcal{M}}(d)$ with $\gamma=0.7$ at $d=5$\,cm, on at least two of the three Xarm7 tasks, over ten seeds with Welch's $t$-test at $p<0.05$. If the gate fails, we record the negative result, drop the discretization hypothesis, and reallocate the T1-1 effort to TTDA and to the T1-4 defenses.
+
 
 \subsubsection{T1-2: Gray-box Attacks}
 Gray-box attacks exploit partial knowledge of the model, such as its architecture or some aspects of the training pipeline/data. Gray-box attacks provide insights into model vulnerabilities, helping identify and mitigate weaknesses with moderate/limited adversarial knowledge. Multiple evasion and privacy attacks can be conducted under the gray-box scenario (see \autoref{table:attacks_models}).
