@@ -456,7 +456,7 @@ These results demonstrate the potential vulnerabilities of robotic models to adv
 White-box attacks exploit full access to the model's architecture, parameters, and gradients.
 White-box attacks provide deep insights into model vulnerabilities, enabling precise identification and mitigation of weaknesses. This understanding improves the robustness and security of models, ensuring reliable and safe performance in real-world applications.
 While the literature is rich in methods for white-box attacks against various models, the closest model families to generalist robot foundation models are VLMs.
-Most evasion attacks against VLM \cite{schlarmann2023adversarial, bailey2023image,gao2024adversarial,wang2024stop,tan2024wolf} typically use gradient-based approaches, \eg PGD~\cite{madry2017towards}, FGSM~\cite{goodfellow2014explaining}, and CW \cite{carlini2017towards}, to generate/optimize perturbation for adversarial samples.
+Most evasion attacks against VLM \cite{schlarmann2023adversarial, bailey2023image,gao2024adversarial,wang2024stop,tan2024wolf} typically use gradient-based approaches, \eg PGD~\cite{madry2017towards}, FGSM~\cite{goodfellow2014explaining}, and C\&W \cite{carlini2017towards}, to generate/optimize perturbation for adversarial samples.
 Recent work has begun to move beyond static, single-frame formulations toward trajectory-level redirection and architecture-specific attacks tailored to flow-matching robot policies, which we will build on and compare against~\cite{puthumanaillam2026trajectory,tae2026drift}.
 As shown in \autoref{table:attacks_models}, gradient-based attacks can be performed in both the training and inference stages. During training, such attacks manipulate the model's learning process, leading to vulnerabilities such as various poisoning attacks, including recent objective-decoupled backdoor formulations tailored to VLA policies that we will study~\cite{zhou2025badvla}. At the inference stage, they generate adversarial examples by exploiting the model's gradients to deceive the model into making incorrect predictions. 
 % \textit{Targeted} attacks seek to drive the model to produce a specific result or action, whereas \textit{untargeted} attacks focus on reducing the overall accuracy of the output.
@@ -468,50 +468,66 @@ In a cross-modal analysis, creating and refining visual perturbations using adap
 % Wu \textit{et al.} \cite{wu2024adversarial} leverage adversarial text sequences to direct gradient-based perturbations on a single trigger image for attacking VLMs.
 \ul{In this task, we propose new attack, Action-Bin Boundary Perturbation (ABBP), and investigate the cross-modal behavior and impact of various evasion and poisoning attacks on robotics models.}
 
-\BfPara{Proposed Attack:} We propose ABBP, a gradient-based white-box attack designed to exploit the uniform 256-bin discretization of the VLA action space. Because adjacent bins encode physically close but discretely different control signals, ABBP optimizes perturbations to drive predicted action tokens across bin boundaries in a coordinated fashion across all degrees of freedom, subject to a kinematically-consistent Jacobian constraint so the induced action remains reachable. Considering PGD, FGSM, and C\&W as baselines, our formal analysis will compare the required $L_\infty$ budget after normalizing to physical consequence (\ie action deviation), since a one-bin action shift and a language-token substitution are not directly comparable units. We frame ABBP as research to be conducted, gated by a formal go/no-go check on whether action-space discretization yields a structurally distinct vulnerability.
-
 
 \newpage
-\BfPara{Proposed Attack: Action-Bin Boundary Perturbation (ABBP)} 
-Let $\mathcal{F}$ emit, for each of the $d$ action dimensions, a categorical distribution over $B{=}256$ bins with logits $\bm{z}_j(\bm{x},\bm{t})\in\mathbb{R}^{B}$. The decoded bin and the decoded action are
+\BfPara{Proposed Attack:} 
+We propose ABBP, a gradient-based white-box attack designed to exploit the uniform 256-bin discretization of the VLA action space. Because adjacent bins encode physically close but discretely different control signals, ABBP optimizes perturbations to drive predicted action tokens across bin boundaries.
+Let $\mathcal{F}$ emit, for each of the $d$ action dimensions, a categorical distribution over $B{=}256$ bins with logits $\bm{z}_j(\bm{x},\bm{t})\in\mathbb{R}^{B}$. The decoded bin and the decoded action are:
 \begin{equation}
-b_j=\arg\max_{c\in\{0,\dots,B-1\}} z_{j,c}(\bm{x},\bm{t}),
+  \small
+b_j=\argmax_{c\in\{0,\dots,B-1\}} z_{j,c}(\bm{x},\bm{t}),
 \qquad
 \hat a_j=l_j+\bigl(b_j+\tfrac{1}{2}\bigr)\Delta_j,
 \qquad
 \Delta_j=\frac{u_j-l_j}{B},
 \label{eq:abbp-quant}
 \end{equation}
-with $[l_j,u_j]$ the range of dimension $j$ and $\Delta_j$ the physical width of one bin. Uniform binning fixes $\Delta_j$ independently of the local sensitivity of the task, so a single-bin logit flip always carries a bounded but non-zero physical displacement. ABBP exploits this structure in two stages.
-\emph{Stage 1 (target selection).} Given the current configuration $\bm{\theta}$ and manipulator Jacobian $J(\bm{\theta})$, ABBP selects a coordinated bin-shift vector $\bm{s}\in\mathbb{Z}^{d}$ maximizing end-effector displacement under a stealth budget and a kinematic-feasibility constraint,
+with $[l_j,u_j]$ the range of dimension $j$ and $\Delta_j$ the width of one bin. 
+Let $\bm{\Delta}=[\Delta_1,\dots,\Delta_d]^{\top}$ denote the vector of bin widths.
+niform binning fixes $\Delta_j$ independently of the local sensitivity of the task, so a single-bin logit flip always carries a bounded but non-zero physical displacement. ABBP exploits this structure in two stages.
+\cib{1} \emph{Kinematic map:} Let $\mathcal{J}$ index the continuous action dimensions driving the arm, excluding the gripper aperture, the base dimensions, and the discrete arm/base/terminate mode, so $|\mathcal{J}|{=}6$ for end-effector action spaces and $|\mathcal{J}|{=}n$ for an $n$-joint arm in joint space. For an action increment $\bm{u}$ supported on $\mathcal{J}$, the induced end-effector displacement over one control period $\tau$ is $G(\bm{\theta})\bm{u}\in\mathbb{R}^{6}$ with $G(\bm{\theta})\in\mathbb{R}^{6\times|\mathcal{J}|}$, where $G(\bm{\theta})=I_{6}$ for end-effector position action spaces ({\eg} RT-1, RT-2, OpenVLA, and most of \autoref{tab:multi_dataset}), $G(\bm{\theta})=\tau I_{6}$ for end-effector velocity action spaces ({\eg} ConqHose, FMB), and $G(\bm{\theta})=J(\bm{\theta})$ for joint-space action spaces ({\eg} ACT, RoboSet, SPOC), the last being the first-order approximation valid for the small increments considered here. The formulation therefore covers the three continuous action-space families in our scope. %VIMA's primitive-skill space carries no uniform binning and falls outside ABBP.
+Because a twist mixes length and angle units, we measure displacement as $\|W G(\bm{\theta})\bm{u}\|_{2}$ with $W=\mathrm{diag}(1,1,1,\ell,\ell,\ell)$ and $\ell$ a characteristic lever arm of the embodiment.
+
+$G(\bm{\theta})$ enters the one-step target selection below. The gate metric instead measures the executed trajectory through forward kinematics, so it needs no linearization and applies unchanged to position and velocity action spaces.
+
+\emph{Stage 1 (target selection).} Given the current configuration $\bm{\theta}$, ABBP selects a coordinated bin-shift vector $\bm{s}\in\mathbb{Z}^{d}$ maximizing end-effector displacement under a stealth budget and a kinematic-feasibility constraint,
 \begin{equation}
-\bm{s}^{\star}=\arg\max_{\bm{s}\in\mathbb{Z}^{d}}\bigl\|J(\bm{\theta})\,(\bm{s}\odot\bm{\Delta})\bigr\|_{2}
-\quad\text{s.t.}\quad
-\|\bm{s}\|_{1}\le\beta,
-\qquad
-\hat{\bm{a}}+\bm{s}\odot\bm{\Delta}\in\mathcal{A}(\bm{\theta}),
+\bm{s}^{\star}=\argmax_{\substack{\bm{s}\in\mathbb{Z}^{d},\; s_j=0\;\forall j\notin\mathcal{J}}}
+\bigl\|W G(\bm{\theta})\,(\bm{s}\odot\bm{\Delta})\bigr\|_{2}
+\;\;\text{s.t.}\;\;
+\|\bm{s}\|_{1}\le\beta,\;\;
+\|\bm{s}\|_{\infty}\le\sigma,\;\;
+0\le b_j+s_j\le B-1,
 \label{eq:abbp-shift}
 \end{equation}
-where $\mathcal{A}(\bm{\theta})$ collects actions respecting joint limits, the reachable workspace, and the per-step velocity bound $\dot a_{\max}\tau$ at control period $\tau$. The budget $\beta$ caps the total number of bin crossings, so the induced action stays reachable and remains within the per-step envelope a kinematic checker accepts.
-\emph{Stage 2 (perturbation synthesis).} With $b_j^{\star}=\mathrm{clip}(b_j+s_j^{\star},0,B{-}1)$, ABBP solves a margin objective over the visual input,
+subject to $\hat{\bm{a}}+\bm{s}\odot\bm{\Delta}\in\mathcal{A}(\bm{\theta})$, where $\mathcal{A}(\bm{\theta})$ contains the actions $\bm{a}$ whose executed configuration $\Psi(\bm{\theta},\bm{a})$ after one control period $\tau$ respects the joint limits $\Theta$ and the reachable workspace $\mathcal{W}$, and which satisfy the per-step velocity bound $\|\bm{a}-\hat{\bm{a}}\|_{\infty}\le\dot a_{\max}\tau$. The objective is convex in $\bm{s}$, so the $\ell_1$ budget $\beta$ alone would concentrate the whole shift in the single dimension of largest physical gain. The per-dimension cap $\sigma<\beta$ forces the shift across several degrees of freedom, and the bin bounds keep $b_j+s_j^{\star}$ decodable without post-hoc clipping.
+\emph{Stage 2 (perturbation synthesis).} With $b_j^{\star}=b_j+s_j^{\star}$, ABBP solves a margin objective over the visual input,
 \begin{equation}
-\min_{\bm{\delta}}\;\sum_{j=1}^{d} w_j
+\min_{\bm{\delta}}\;\sum_{j\in\mathcal{J}} w_j
 \Bigl[\max_{c\neq b_j^{\star}} z_{j,c}(\bm{x}+\bm{\delta},\bm{t})-z_{j,b_j^{\star}}(\bm{x}+\bm{\delta},\bm{t})+\kappa\Bigr]_{+}
 \quad\text{s.t.}\quad
 \|\bm{\delta}\|_{\infty}\le\epsilon,\;\;\bm{x}+\bm{\delta}\in[0,1]^{n},
 \label{eq:abbp-obj}
 \end{equation}
-with $[\cdot]_{+}=\max(\cdot,0)$, confidence margin $\kappa$, and weights $w_j=\|J_{:,j}(\bm{\theta})\|_{2}\Delta_j$ so the optimizer allocates perturbation budget to the dimensions with the largest physical effect per bin. We solve \autoref{eq:abbp-obj} by projected gradient descent with step $\alpha$ over $T$ iterations. Setting $w_j{=}1$, $\beta{=}\infty$, and dropping $\mathcal{A}(\bm{\theta})$ recovers an untargeted C\&W-style baseline, which isolates the contribution of the discretization-aware and kinematics-aware terms in an ablation.
-\emph{Comparison protocol.} PGD, FGSM, and C\&W serve as baselines. A one-bin action shift and a language-token substitution are not comparable units, so we compare attacks at matched physical consequence rather than at matched $\epsilon$. For target displacement $d$ we report the minimum budget
+with $[\cdot]_{+}=\max(\cdot,0)$, confidence margin $\kappa$, box constraint in raw pixel space before encoder normalization, and weights $w_j=\|(WG(\bm{\theta}))_{:,j}\|_{2}\Delta_j$ so the optimizer allocates perturbation budget to the dimensions with the largest physical effect per bin. \autoref{eq:abbp-obj} treats the $d$ logit vectors as conditionally independent, which holds for parallel readout heads ({\eg} RT-1, Octo). For autoregressive action decoders ({\eg} RT-2, OpenVLA), the action tokens form a sequence and $\bm{z}_j$ depends on the preceding tokens, so we evaluate each margin under teacher forcing on the target prefix $b^{\star}_{<j}$. We solve \autoref{eq:abbp-obj} by projected gradient descent with step $\alpha$ over $T$ iterations. Setting $w_j{=}1$ and $\sigma{=}1$ while retaining $\mathcal{A}(\bm{\theta})$ yields a discretization-agnostic variant, isolating the contribution of the physical-effect weighting in an ablation.
+
+\emph{Comparison protocol.} PGD, FGSM, and C\&W serve as baselines, applied per step under the same budget. A one-bin action shift and a language-token substitution are not comparable units, so we compare attacks at matched physical consequence rather than at matched $\epsilon$. A single bin crossing displaces the end effector by a fraction of a millimetre, which no task-level metric resolves, so we measure consequence as the cumulative deviation of a closed-loop rollout rather than a one-step displacement. From a common initial state and instruction, we roll out the policy for $H$ steps twice, once on clean observations and once with the attack re-optimized at every step, and compare the two end-effector poses $(\bm{p}_k,R_k)$ and $(\bm{p}'_k,R'_k)$ obtained by forward kinematics,
 \begin{equation}
-\epsilon^{\star}_{\mathcal{M}}(d)=\min\bigl\{\epsilon:\;\mathbb{E}\bigl[\|\Delta\bm{p}_{\mathcal{M}}\|_{2}\bigr]\ge d\bigr\},
+\bm{e}_{k}=\begin{bmatrix}\bm{p}'_{k}-\bm{p}_{k}\\[2pt]\mathrm{Log}\bigl(R_{k}^{\top}R'_{k}\bigr)\end{bmatrix},
 \qquad
-\Delta\bm{p}_{\mathcal{M}}=J(\bm{\theta})\bigl(\hat{\bm{a}}'-\hat{\bm{a}}\bigr),
+D_{\mathcal{M}}(H)=\bigl\|W\bm{e}_{H}\bigr\|_{2},
+\qquad
+\epsilon^{\star}_{\mathcal{M}}(\rho)=\min\Bigl\{\epsilon\in E:\;
+\widehat{\mathbb{E}}\bigl[D_{\mathcal{M}}(H)\bigr]\ge\rho\Bigr\},
 \label{eq:abbp-gate}
 \end{equation}
-where $\hat{\bm{a}}'$ is the action decoded under attack $\mathcal{M}$.
-\emph{Go/no-go gate (M1, M3).} We frame ABBP as research to be conducted. At M3 we declare a structurally distinct vulnerability only if $\epsilon^{\star}_{\text{ABBP}}(d)\le\gamma\,\min_{\mathcal{M}\in\{\text{PGD},\text{FGSM},\text{C\&W}\}}\epsilon^{\star}_{\mathcal{M}}(d)$ with $\gamma=0.7$ at $d=5$\,cm, on at least two of the three Xarm7 tasks, over ten seeds with Welch's $t$-test at $p<0.05$. If the gate fails, we record the negative result, drop the discretization hypothesis, and reallocate the T1-1 effort to TTDA and to the T1-4 defenses.
+where $\mathrm{Log}$ is the rotation-vector map of the relative rotation, $E$ is a fixed geometric grid of budgets capped at $\epsilon_{\max}$, $\epsilon^{\star}_{\mathcal{M}}(\rho)=\epsilon_{\max}$ when no grid point reaches $\rho$, and the expectation runs over evaluation episodes. The grid avoids assuming that deviation grows monotonically in $\epsilon$, which no baseline guarantees. Cumulative measurement separates ABBP from TTDA by construction. ABBP re-solves \autoref{eq:abbp-shift} greedily at each step under a fixed per-step cap and lets deviation accumulate through the closed loop, whereas TTDA optimizes the accumulation jointly across a predicted action chunk in order to evade a sequence-level check. Whether closed-loop compounding is superlinear, and therefore whether a per-step cap of a few bins reaches a task-relevant $\rho$, is the empirical question the gate settles.
 
+\emph{Go/no-go gate (M1, M3).} We frame ABBP as research to be conducted. We fix $H{=}20$ steps, roughly one quarter of the median Xarm7 episode, and calibrate $(\sigma,\rho)$ against the open-loop reachability bound $\rho\le H\sqrt{|\mathcal{J}|}\,\sigma\max_{j\in\mathcal{J}}\|(WG(\bm{\theta}))_{:,j}\|_{2}\Delta_{j}$ implied by \autoref{eq:abbp-quant} and \autoref{eq:abbp-shift}, so the target remains reachable in principle before any experiment runs. We estimate $\epsilon^{\star}$ independently for each of ten seeds. At M3 we declare a structurally distinct vulnerability only if $\epsilon^{\star}_{\text{ABBP}}(\rho)\le\gamma\,\min_{\mathcal{M}\in\{\text{PGD},\text{FGSM},\text{C\&W}\}}\epsilon^{\star}_{\mathcal{M}}(\rho)$ with $\gamma=0.7$ at $\rho=5$\,cm, on at least two of the three Xarm7 tasks, under a one-sided Wilcoxon signed-rank test at $p<0.05$ on the paired per-seed ratios. We use a rank test because $\epsilon^{\star}$ takes values on the finite grid $E$ and is not approximately normal at ten seeds. If the gate fails, we record the negative result, drop the discretization hypothesis, and reallocate the T1-1 effort to TTDA and to the T1-4 defenses.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsubsection{T1-2: Gray-box Attacks}
 Gray-box attacks exploit partial knowledge of the model, such as its architecture or some aspects of the training pipeline/data. Gray-box attacks provide insights into model vulnerabilities, helping identify and mitigate weaknesses with moderate/limited adversarial knowledge. Multiple evasion and privacy attacks can be conducted under the gray-box scenario (see \autoref{table:attacks_models}).
