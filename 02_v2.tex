@@ -455,24 +455,24 @@ These results demonstrate the potential vulnerabilities of robotic models to adv
 
 White-box attacks exploit full access to the model's architecture, parameters, and gradients.
 White-box attacks provide deep insights into model vulnerabilities, enabling precise identification and mitigation of weaknesses. This understanding improves the robustness and security of models, ensuring reliable and safe performance in real-world applications.
-While the literature is rich in methods for white-box attacks against various models, the closest model families to generalist robot foundation models are VLMs.
-Most evasion attacks against VLM \cite{schlarmann2023adversarial, bailey2023image,gao2024adversarial,wang2024stop,tan2024wolf} typically use gradient-based approaches, \eg PGD~\cite{madry2017towards}, FGSM~\cite{goodfellow2014explaining}, and C\&W \cite{carlini2017towards}, to generate/optimize perturbation for adversarial samples.
-Recent work has begun to move beyond static, single-frame formulations toward trajectory-level redirection and architecture-specific attacks tailored to flow-matching robot policies, which we will build on and compare against~\cite{puthumanaillam2026trajectory,tae2026drift}.
-As shown in \autoref{table:attacks_models}, gradient-based attacks can be performed in both the training and inference stages. During training, such attacks manipulate the model's learning process, leading to vulnerabilities such as various poisoning attacks, including recent objective-decoupled backdoor formulations tailored to VLA policies that we will study~\cite{zhou2025badvla}. At the inference stage, they generate adversarial examples by exploiting the model's gradients to deceive the model into making incorrect predictions. 
-% \textit{Targeted} attacks seek to drive the model to produce a specific result or action, whereas \textit{untargeted} attacks focus on reducing the overall accuracy of the output.
+\\
+\BfPara{Related Work} While the literature is rich in methods for white-box attacks against various models, the closest model families to generalist robot foundation models are VLMs.
+Most evasion attacks against VLM \cite{schlarmann2023adversarial, bailey2023image,gao2024adversarial,wang2024stop,tan2024wolf} typically use gradient-based approaches, \eg PGD and C\&W, to generate/optimize perturbation for adversarial samples.
+Recent work has begun to move beyond static, single-frame formulations toward trajectory-level redirection and architecture-specific attacks designed to flow-matching robot policies, which we will build on and compare against~\cite{puthumanaillam2026trajectory,tae2026drift}.
+As shown in \autoref{table:attacks_models}, gradient-based attacks can be performed in both the training and inference stages. During training, such attacks manipulate the model's learning process, leading to vulnerabilities such as various poisoning attacks, including recent objective-decoupled backdoor formulations against  VLA~\cite{zhou2025badvla}. At the inference stage, they generate adversarial examples by exploiting the model's gradients to deceive the model into making incorrect predictions. 
 A recent study \cite{fu2023misusing} shows that seemingly harmless images with trojan-like characteristics can manipulate VLMs to call attacker-specific  third-party tools or external APIs. 
 In a different study~\cite{cui2023robustness}, manipulating visual contents that are different from the VLM-specific domain is less effective in deceiving the model. 
-%The authorsproposed a context-augmented image classification scheme that demonstrates a significant increase. 
-Gao \textit{et al.} \cite{gao2024inducing} introduce verbose images, creating imperceptible perturbations to make VLMs generate longer output sentences. Such an attack raises energy consumption and latency, which can have serious consequences in robotics.
+Gao \etal \cite{gao2024inducing} introduce verbose images, creating imperceptible perturbations to make VLMs generate longer output sentences. Such an attack raises energy consumption and latency, which can have serious consequences in robotics.
 In a cross-modal analysis, creating and refining visual perturbations using adaptive prompts can identify numerous prompts that are effective with specific visual perturbations, resulting in high transferability of adversarial samples \cite{luo2024image}.
-% Wu \textit{et al.} \cite{wu2024adversarial} leverage adversarial text sequences to direct gradient-based perturbations on a single trigger image for attacking VLMs.
-\ul{In this task, we propose new attack, Action-Bin Boundary Perturbation (ABBP), and investigate the cross-modal behavior and impact of various evasion and poisoning attacks on robotics models.}
+% Wu \etal \cite{wu2024adversarial} leverage adversarial text sequences to direct gradient-based perturbations on a single trigger image for attacking VLMs.
+\ul{In this task, we propose new attack family, Action-Bin Boundary Perturbation (ABBP), and investigate the cross-modal behavior in evasion and poisoning scenarios against robotics models.}
 
 
 \newpage
-\BfPara{Proposed Attack:} 
+\BfPara{Proposed Attack} 
 We propose ABBP, a gradient-based white-box attack designed to exploit the uniform 256-bin discretization of the VLA action space. Because adjacent bins encode physically close but discretely different control signals, ABBP optimizes perturbations to drive predicted action tokens across bin boundaries.
-Let the action vector carry $d$ dimensions, of which the continuous ones, indexed by $\mathcal{C}\subseteq\{1,\dots,d\}$, are uniformly quantized into $B{=}256$ bins. For $j\in\mathcal{C}$ the model $\mathcal{F}$ emits logits $\bm{z}_j(\bm{x},\bm{t})\in\mathbb{R}^{B}$, and the decoded bin and the decoded action are:
+Let the action vector $\mathcal{C}\subseteq\{1,\dots,d\}$ carry $d$ dimensions of continuous values (discrete dimensions are excluded)
+ that are uniformly quantized into $B{=}256$ bins. For $j\in\mathcal{C}$, the model $\mathcal{F}$ outputs logits $\bm{z}_j(\bm{x},\bm{t})\in\mathbb{R}^{B}$, and the decoded bin and the decoded action are:
 \begin{equation}
   \small
 b_j=\argmax_{c\in\{0,\dots,B-1\}} z_{j,c}(\bm{x},\bm{t}),
@@ -483,14 +483,16 @@ b_j=\argmax_{c\in\{0,\dots,B-1\}} z_{j,c}(\bm{x},\bm{t}),
 \label{eq:abbp-quant}
 \end{equation}
 with $z_{j,c}$ the logit of bin $c$, $[l_j,u_j]$ the range of dimension $j$, and $\Delta_j$ the width of one bin. We write $\hat{\bm{a}}=[\hat a_1,\dots,\hat a_d]^{\top}$ for the decoded action vector. The remaining dimensions are natively discrete and carry no bin width, {\eg} RT-1's three-way arm/base/terminate mode, so we set $\Delta_j{=}0$ for $j\notin\mathcal{C}$ and write $\bm{\Delta}=[\Delta_1,\dots,\Delta_d]^{\top}\in\mathbb{R}^{d}$ for the resulting vector of bin widths. 
-Uniform binning fixes $\Delta_j$ independently of the local sensitivity of the task, so a single-bin logit flip always carries a bounded but non-zero physical displacement. ABBP exploits this structure in two stages.
-\cib{1} \emph{Kinematic map:} Let $\bm{\theta}$ denote the current joint configuration and $J(\bm{\theta})$ the manipulator Jacobian. Let $\mathcal{J}$ index the continuous action dimensions driving the arm, excluding the gripper aperture, the base dimensions, and the discrete arm/base/terminate mode, so $|\mathcal{J}|{=}6$ for end-effector action spaces and $|\mathcal{J}|{=}n$ for an $n$-joint arm in joint space. For an action increment $\bm{u}$ supported on $\mathcal{J}$, the induced end-effector displacement over one control period $\tau$ is $G(\bm{\theta})\bm{u}\in\mathbb{R}^{6}$ with $G(\bm{\theta})\in\mathbb{R}^{6\times|\mathcal{J}|}$, where $G(\bm{\theta})=I_{6}$ for end-effector position action spaces ({\eg} RT-1, RT-2, OpenVLA, and most of \autoref{tab:multi_dataset}), $G(\bm{\theta})=\tau I_{6}$ for end-effector velocity action spaces ({\eg} ConqHose, FMB), and $G(\bm{\theta})=J(\bm{\theta})$ for joint-space action spaces ({\eg} ACT, RoboSet, SPOC), the last being the first-order approximation valid for the small increments considered here. The formulation therefore covers the three continuous action-space families in our scope. %VIMA's primitive-skill space carries no uniform binning and falls outside ABBP.
+Uniform binning fixes $\Delta_j$ independently of the local sensitivity of the task, so a single-bin logit flip always carries a bounded but non-zero physical displacement. 
+\emph{Kinematic map:} Let $\bm{\theta}$ denote the current joint configuration and $J(\bm{\theta})$ the manipulator Jacobian. Let $\mathcal{J}$ index the continuous action dimensions driving the arm, excluding the gripper aperture, the base dimensions, and the discrete arm/base/terminate mode, so $|\mathcal{J}|{=}6$ for end-effector action spaces and $|\mathcal{J}|{=}n$ for an $n$-joint arm in joint space. For an action increment $\bm{u}$ supported on $\mathcal{J}$, the induced end-effector displacement over one control period $\tau$ is $G(\bm{\theta})\bm{u}\in\mathbb{R}^{6}$ with $G(\bm{\theta})\in\mathbb{R}^{6\times|\mathcal{J}|}$, where $G(\bm{\theta})=I_{6}$ for end-effector position action spaces ({\eg} RT-1, RT-2, OpenVLA, and most of \autoref{tab:multi_dataset}), $G(\bm{\theta})=\tau I_{6}$ for end-effector velocity action spaces ({\eg} ConqHose, FMB), and $G(\bm{\theta})=J(\bm{\theta})$ for joint-space action spaces ({\eg} ACT, RoboSet, SPOC), the last being the first-order approximation valid for the small increments considered here. This covers the three continuous action-space families in \autoref{tab:multi_dataset}. %VIMA's primitive-skill space carries no uniform binning and falls outside ABBP.
 Because a twist mixes length and angle units, we measure displacement as $\|W G(\bm{\theta})\bm{u}\|_{2}$ with $W=\mathrm{diag}(1,1,1,\ell,\ell,\ell)$ and $\ell$ a characteristic lever arm of the embodiment.
 
-$G(\bm{\theta})$ enters the one-step target selection below. The gate metric instead measures the executed trajectory through forward kinematics, so it needs no linearization and applies unchanged to position and velocity action spaces.
+% $G(\bm{\theta})$ enters the one-step target selection below. The gate metric instead measures the executed trajectory through forward kinematics, so it needs no linearization and applies unchanged to position and velocity action spaces.
 
-\emph{Stage 1 (target selection).} ABBP selects a coordinated bin-shift vector $\bm{s}\in\mathbb{Z}^{d}$ maximizing end-effector displacement under a stealth budget and a kinematic-feasibility constraint,
+ABBP exploits this structure in two stages.
+\cib{1} \emph{target selection.} ABBP selects a coordinated bin-shift vector $\bm{s}\in\mathbb{Z}^{d}$ maximizing end-effector displacement under  budget and kinematic-feasibility constraints,
 \begin{equation}
+  \small
 \bm{s}^{*}=\argmax_{\substack{\bm{s}\in\mathbb{Z}^{d},\; s_j=0\;\forall j\notin\mathcal{J}}}
 \bigl\|W G(\bm{\theta})\,(\bm{s}\odot\bm{\Delta})\bigr\|_{2}
 \;\;\text{s.t.}\;\;
@@ -500,8 +502,9 @@ $G(\bm{\theta})$ enters the one-step target selection below. The gate metric ins
 \label{eq:abbp-shift}
 \end{equation}
 subject to $\hat{\bm{a}}+\bm{s}\odot\bm{\Delta}\in\mathcal{A}(\bm{\theta})$, where $\odot$ is the elementwise product, $\dot a_{\max}$ the per-dimension action-rate limit, and $\mathcal{A}(\bm{\theta})$ contains the actions $\bm{a}$ whose executed configuration $\Psi(\bm{\theta},\bm{a})$ after one control period $\tau$ respects the joint limits $\Theta$ and the reachable workspace $\mathcal{W}$, and which satisfy the per-step velocity bound $\|\bm{a}-\hat{\bm{a}}\|_{\infty}\le\dot a_{\max}\tau$. The objective is convex in $\bm{s}$, so the $\ell_1$ budget $\beta$ alone would concentrate the whole shift in the single dimension of largest physical gain. The per-dimension cap $\sigma<\beta$ forces the shift across several degrees of freedom, and the bin bounds keep $b_j+s_j^{*}$ decodable without post-hoc clipping.
-\emph{Stage 2 (perturbation synthesis).} With $b_j^{*}=b_j+s_j^{*}$, ABBP solves a margin objective over the visual input,
+\cib{2} \emph{perturbation synthesis.} With $b_j^{*}=b_j+s_j^{*}$, ABBP solves a margin objective over the visual input,
 \begin{equation}
+  \small
 \min_{\bm{\delta}}\;\sum_{j=1}^{d} w_j
 \Bigl[\max_{c\neq b_j^{*}} z_{j,c}(\bm{x}+\bm{\delta},\bm{t})-z_{j,b_j^{*}}(\bm{x}+\bm{\delta},\bm{t})+\kappa\Bigr]_{+}
 \quad\text{s.t.}\quad
@@ -544,17 +547,17 @@ Given their more plausible and real-world-applicable threat assumptions and adve
 Although numerous studies have explored and proposed various methods for such attacks on vision models~\cite{guo2019simple,hallyburton2022security,abdukhamidov2022black, juraev2024attack,abdukhamidov2023microbial} and LLMs~\cite{li2023deepinception,yao2024fuzzllm,ding-etal-2024-wolf,wei2023jailbreak,deng2024pandora}, there is limited research on these threats to VLMs~\cite{zhang2024avibench,dong2023robust} and only nascent, isolated studies targeting robotic foundation models, such as jailbreaking and backdoor attacks~\cite{badvla,advvla}, motivating the systematic study we propose here.
 The lesson learned from black-box attacks against LLMs is that even with the advanced safety alignment techniques in commercial LLMs, attackers still create sophisticated methods that bypass model defenses against harmful content. 
 % The incorporation of vision models and LLMs into robotic learning is receiving more attention~\cite{rt-1,rt-2,bousmalis2023robocat}, which makes it crucial to study whether inherited vulnerabilities can impact the end-to-end robotic model.
-% Tan \textit{et al.} \cite{tan2024wolf} explore the indirect propagation of malicious content by subtly influencing a single 'wolf' agent to compel other 'sheep' agents in the society to produce malicious content.
+% Tan \etal \cite{tan2024wolf} explore the indirect propagation of malicious content by subtly influencing a single 'wolf' agent to compel other 'sheep' agents in the society to produce malicious content.
 % They find that this form of threat can be achieved through the indirect nature of manipulation on the input, without requiring in-depth access to the model's parameters.
 A recent study~\cite{zhang2024avibench} showed that VLMs can be vulnerable to decision-based black-box visual instructions.
 Moreover, Dong \etal~\cite{dong2023robust} shows that transfer-based attacks can succeed against well-defended VLMs.
 Recent work has begun to construct universal, transferable adversarial patches that carry across robot policies in physical settings, which we will build on and compare against~\cite{lu2026whenrobots}.
-% Wang \textit{et al.} \cite{wang2024stop} evaluate the adversarial robustness of MLLMs employing chain of thought (CoT) reasoning, finding that models using CoT generally exhibit significantly higher robustness under both answer and rationale attacks compared to models without CoT.
+% Wang \etal \cite{wang2024stop} evaluate the adversarial robustness of MLLMs employing chain of thought (CoT) reasoning, finding that models using CoT generally exhibit significantly higher robustness under both answer and rationale attacks compared to models without CoT.
 % Based on these findings, they introduce a novel stop-reasoning attack technique that effectively circumvents the robustness enhancements induced by CoT.
-% Guo \textit{et al.} \cite{guo2024efficiently} utilize diffusion models to generate natural, unrestricted adversarial examples.
+% Guo \etal \cite{guo2024efficiently} utilize diffusion models to generate natural, unrestricted adversarial examples.
 % They employ Adaptive Ensemble Gradient Estimation to ensure the adversarial examples produced contain natural adversarial semantics, thus enhancing their transferability.
 % Furthermore, they use the GradCAM-guided Mask method to disperse adversarial semantics throughout the image, rather than concentrating them in a specific area, thereby improving the quality of the adversarial examples.
-% Dong \textit{et al.} \cite{dong2023robust} investigate the adversarial robustness of Google's Bard as a representative of VLMs through transfer-based attacks, demonstrating that these adversarial images are highly transferable and effective at deceiving other VLMs.
+% Dong \etal \cite{dong2023robust} investigate the adversarial robustness of Google's Bard as a representative of VLMs through transfer-based attacks, demonstrating that these adversarial images are highly transferable and effective at deceiving other VLMs.
 % Additionally, they identify two of Bard’s defense mechanisms—face detection and toxicity detection in images—and successfully target these features in their attacks.
 \ul{In this sub-task, we will explore various black-box evasion and privacy ({\eg} data reconstruction and prompt stealing) attacks against robotic models.} Language-based attacks such as prompt stealing apply only to language-conditioned models and exclude vision-only models such as ACT.
 
@@ -632,7 +635,7 @@ Multimodal prompt injection attacks simultaneously alter both textual and visual
 Recent studies \cite{qi2024visual,shayegani2023jailbreak} show that adversarial perturbations of visual and textual modalities can jointly succeed in creating malicious injections.
 Recent work has begun to explore physical attention-hijacking and patch attacks that target the vision-language grounding of robot policies, which we will build on and compare against~\cite{zhang2026structure,yin2026vlaguard}.
 By understanding and leveraging these interactions, we aim to develop more robust defense mechanisms that can protect against sophisticated multimodal adversarial attacks. We will also assess robustness techniques such as CleanCLIP~\cite{bansal2023cleanclip}, which retrains multimodal representations to reduce cross-modal misalignment, as a complementary defense against these attacks.
-%Besides, Chen \textit{et al.} \cite{chen2023can} proposes a multimodal benchmark designed to protect specific categories of personal information in a simulated scenario. In their work, they construct textual and visual prompt injection attacks through adversarial prefixes and by rendering misinformed text onto the image, thereby inducing the model to disclose protected personal information.
+%Besides, Chen \etal \cite{chen2023can} proposes a multimodal benchmark designed to protect specific categories of personal information in a simulated scenario. In their work, they construct textual and visual prompt injection attacks through adversarial prefixes and by rendering misinformed text onto the image, thereby inducing the model to disclose protected personal information.
 \ul{In this task, variations of attacks by}~{\cite{qi2024visual,walmer2022dual}} \ul{will be implemented against robotic models.}
 
 
