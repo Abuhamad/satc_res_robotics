@@ -329,10 +329,10 @@ The output $\{\bm{a}_{out}\}$ is one or chunks of actions, each is a sequence of
 
 
 The attack operation $\mathcal{M}(.)$ is defined as a perturbation function that alters the inputs (one or more 
-\begin{wraptable}{r}{0.5\textwidth}
+\begin{wraptable}{r}{0.45\textwidth}
 \centering 
 % \vspace{-1ex}
-\caption{{\small Stages (Training and Inference), targets (Privacy, Integrity, Availability, and Abuse) and types ( White- (\dd), Gray- (\bb), and Black-box (\vv) ) of common Evasion, Poisoning, and Privacy attacks.}}\vspace{-3.5ex}
+\caption{{\small Stages (Training and Inference), targets (Privacy, Integrity, Availability, and Abuse) and types ( White- (\dd), Gray- (\bb), and Black-box (\vv) ) of common Evasion, Poisoning, and Privacy attacks.}}\vspace{-2ex}
 \label{table:attacks_models}
 \small
 \resizebox{0.98\linewidth}{!}{%
@@ -376,7 +376,7 @@ rowsep=0pt,
                                                   & Attribute Inference            & \ee                                       & \checkmark                                         & \checkmark                                       & \ee                                        & \ee                                           & \ee                                    & \bb                           \\
                                                   & Prompt and Context Stealing    & \ee                                       & \checkmark                                         & \checkmark                                       & \ee                                        & \ee                                           & \ee                                    & \vv                          
 \end{tblr}
-}{\vspace{-3ex}}
+}{\vspace{-4ex}}
 \end{wraptable}
 modalities, such as images, text, and sensory data) to mislead the model into producing an incorrect/unintended output action.
 % We denote attacks on robotic models as $\mathcal{M} (.)$, which can be applied to one or more input modalities, \eg images, text, and sensory data.
@@ -398,7 +398,26 @@ Several threat models can be defined based on the adversarial specificity/goals,
 % Concurrent efforts study adversarial and backdoor threats to VLA models, but each targets an isolated model or component. BadVLA~\cite{badvla} inserts backdoors into a single VLA through objective-decoupled optimization. AdvVLA~\cite{advvla} crafts adversarial perturbations against one VLA policy. AttackVLA~\cite{li2025attackvla} benchmarks attacks but fixes the model family and reports no defenses grounded in robot kinematics. DRIFT~\cite{tae2026drift} derails the denoising trajectory of a single flow-matching VLA with an adversarial patch. Our proposal differs on three axes. First, we impose kinematic and Jacobian constraints so attacks and defenses respect the robot's reachable action space rather than pixel-space budgets alone. Second, we measure physical-consequence outcomes across six robot embodiments rather than one platform. Third, we release a unified benchmark, VLA-SecBench, pairing a cross-model transferability matrix with a single multi-task detector (TACD), so attacks, defenses, and interpretability are evaluated under one protocol instead of per-paper settings.
 
 
-\BfPara{Attacking Robotic Foundation Models: Preliminary Study} We have conducted two preliminary experiments to evaluate the effectiveness of adversarial attacks on models trained on Simpler~\cite{li24simpler} benchmark using three tasks. Both experiments were conducted on the same three tasks as in the preliminary experiments, and evaluated using 25 episodes repeated 5 times.
+\BfPara{Attacking Robotic Foundation Models: Preliminary Study}
+We have conducted two preliminary experiments
+\begin{wrapfigure}{r}{0.26\textwidth}
+\vspace{-2ex}
+\centering
+\begin{minipage}{0.26\textwidth}
+\centering
+\includegraphics[width=0.81\textwidth]{figures/results/visual_white_box.pdf}\vspace{-2ex}
+\caption{\small Success rate of white-box attacks on robotic models using visual perturbations.}
+\label{fig:visual_white_box}
+\end{minipage}
+\begin{minipage}{0.26\textwidth}
+  \centering
+  \includegraphics[width=0.74\textwidth]{figures/results/lang_white_box.pdf}\vspace{-2ex}
+\caption{\small Task success rate of models before and after black-box token-based perturbations.}
+  \label{fig:visual_black_box}
+\end{minipage}
+\vspace{-3ex}
+\end{wrapfigure} 
+ to evaluate the effectiveness of adversarial attacks on models trained on Simpler~\cite{li24simpler} benchmark using three tasks. Both experiments were conducted on the same three tasks as in the preliminary experiments, and evaluated using 25 episodes repeated 5 times.
 \textbf{Experiment 1:} We examined \emph{untargeted white-box} attacks using visual perturbations (\ie on image inputs) against robotic models. We implemented three baseline attack methods: PGD~\cite{madry2017towards}, FGSM~\cite{goodfellow2014explaining}, and CW~\cite{carlini2017towards}. This attack scenario assumes the attacker has complete access to the parameters of the model's visual encoder, \ie EfficientNet-B3 (RT-1), Vision Transformer (RT-2), and ResNet (Octo and ACT). Such an assumption is realistic since these robotic models typically incorporate open-source pre-trained visual encoders, making their architecture and parameters readily available to potential attackers.
 We evaluated the success rate of the attacks by measuring the percentage of successful adversarial examples where the generated actions differ from the true ground-truth actions with a threshold of 30\%. \autoref{fig:visual_white_box} shows the success rate of the attacks on various models. % using 25 episodes repeated 5 times.
 
@@ -407,23 +426,6 @@ We adopted a similar attack approach to one used in SHIELD~\cite{abuhamad2025shi
 The attack perturbs 20\% of the tokens in the instructions with random tokens from the tokenizer vocabulary, and probes the model with a query limit of 500 queries. The attack terminates if the query limit is reached or if the model's output action differs from the ground-truth action by more than 30\%, in which case the attack is successful.
 The results are shown
 % {\vspace{-2.5ex}}
-\begin{wrapfigure}{r}{0.3\textwidth}
-% \vspace{-1ex}
-\centering
-\begin{minipage}{0.3\textwidth}
-\centering
-\includegraphics[width=\textwidth]{figures/results/visual_white_box.pdf}\vspace{-2ex}
-\caption{Success rate of white-box attacks on robotic models using visual perturbations.}
-\label{fig:visual_white_box}
-\end{minipage}
-\begin{minipage}{0.3\textwidth}
-  \centering
-  \includegraphics[width=0.9\textwidth]{figures/results/lang_white_box.pdf}\vspace{-2ex}
-\caption{Task success rate of models before and after black-box token-based language perturbations.}
-  \label{fig:visual_black_box}
-\end{minipage}
-\vspace{-5ex}
-\end{wrapfigure}
  in~\autoref{fig:visual_black_box}, where we observe that the success rate of the models drops significantly after the attack, indicating that even simple token-based perturbations can disrupt the model's performance.
 These results demonstrate the potential vulnerabilities of robotic models to adversarial attacks.
 % In these preliminary experiments we operationalized attack success as a 30\% action-token deviation. 
@@ -473,7 +475,7 @@ In a cross-modal analysis, creating and refining visual perturbations using adap
 We propose ABBP, a gradient-based white-box attack designed to exploit the uniform 256-bin discretization of the VLA action space. Because adjacent bins encode physically close but discretely different control signals, ABBP optimizes perturbations to drive predicted action tokens across bin boundaries.
 Let the action vector $\mathcal{C}\subseteq\{1,\dots,d\}$ carry $d$ dimensions of continuous values (discrete dimensions are excluded)
  that are uniformly quantized into $B{=}256$ bins. For $j\in\mathcal{C}$, the model $\mathcal{F}$ outputs logits $\bm{z}_j(\bm{x},\bm{t})\in\mathbb{R}^{B}$, and the decoded bin and the decoded action are:
-\begin{equation}
+\vspace{-1ex}\begin{equation}
   \small
 b_j=\argmax_{c\in\{0,\dots,B-1\}} z_{j,c}(\bm{x},\bm{t}),
 \qquad
@@ -491,7 +493,7 @@ Because a twist mixes length and angle units, we measure displacement as $\|W G(
 
 ABBP exploits this structure in two stages.
 \cib{1} \emph{target selection.} ABBP selects a coordinated bin-shift vector $\bm{s}\in\mathbb{Z}^{d}$ maximizing end-effector displacement under  budget and kinematic-feasibility constraints,
-\begin{equation}
+\vspace{-1ex}\begin{equation}
   \small
 \bm{s}^{*}=\argmax_{\substack{\bm{s}\in\mathbb{Z}^{d},\; s_j=0\;\forall j\notin\mathcal{J}}}
 \bigl\|W G(\bm{\theta})\,(\bm{s}\odot\bm{\Delta})\bigr\|_{2}
@@ -503,7 +505,7 @@ ABBP exploits this structure in two stages.
 \vspace{-1.5ex}\end{equation}
 subject to $\hat{\bm{a}}+\bm{s}\odot\bm{\Delta}\in\mathcal{A}(\bm{\theta})$, where $\odot$ is the elementwise product, $\dot a_{\max}$ the per-dimension action-rate limit, and $\mathcal{A}(\bm{\theta})$ contains the actions $\bm{a}$ whose executed configuration $\psi(\bm{\theta},\bm{a})$ after one control period $\tau$ respects the joint limits $\Theta$ and the reachable workspace $\mathcal{W}$, and which satisfy the per-step velocity bound $\|\bm{a}-\hat{\bm{a}}\|_{\infty}\le\dot a_{\max}\tau$. The objective is convex in $\bm{s}$, so the $\ell_1$ budget $\beta$ alone would concentrate the whole shift in the single dimension of largest physical gain. The per-dimension cap $\sigma<\beta$ forces the shift across several degrees of freedom, and the bin bounds keep $b_j+s_j^{*}$ decodable without post-hoc clipping.
 \cib{2} \emph{perturbation synthesis.} With $b_j^{*}=b_j+s_j^{*}$, ABBP solves a margin objective over the visual input,
-\begin{equation}
+\vspace{-1ex}\begin{equation}
   \small
 \min_{\bm{\delta}}\;\sum_{j=1}^{d} w_j
 \Bigl[\max_{c\neq b_j^{*}} z_{j,c}(\bm{x}+\bm{\delta},\bm{t})-z_{j,b_j^{*}}(\bm{x}+\bm{\delta},\bm{t})+\kappa\Bigr]_{+}
@@ -523,7 +525,8 @@ because VLA action labels are bin indices, \emph{label flipping} reduces to sett
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \BfPara{Evaluation Protocol} All T1 attack families are evaluated under one physical-consequence protocol. A single bin crossing displaces the end-effector by a fraction of a millimetre, which no task-level metric resolves, so we measure consequence as the cumulative deviation of a run. From an initial state, we run the policy for $H$ steps twice, once on clean observations and once with the attack re-optimized at every step, and compare the two end-effector poses $(\bm{p}_k,R_k)$ and $(\bm{p}'_k,R'_k)$ at each step $k=0,\dots,H$ obtained by forward kinematics,
-\begin{equation}
+\vspace{-1ex}\begin{equation}
+  \small
 \bm{e}_{k}=\begin{bmatrix}\bm{p}'_{k}-\bm{p}_{k}\\[2pt]{rv}\bigl(R_{k}^{\top}R'_{k}\bigr)\end{bmatrix},
 \qquad
 D_{\mathcal{M}}(H)=\bigl\|W\bm{e}_{H}\bigr\|_{2},
@@ -558,7 +561,7 @@ The attacker constructs a surrogate policy $\mathcal{F}'$ by fine-tuning the sam
 STAP realizes an untargeted evasion attack $\mathcal{M}(\bm{x},\bm{t})\xrightarrow{{}_{\textbf{U}}}\bm{a}_{out}'$ with $\mathcal{M}(\bm{x},\bm{t})=(\bm{x}+\bm{\delta}^{*},\bm{t})$. The perturbation $\bm{\delta}^{*}$ solves the ABBP objective on the surrogate, \ie the attacker runs target selection (\autoref{eq:abbp-shift}) with the surrogate kinematics $G'(\bm{\theta}')$ and perturbation synthesis (\autoref{eq:abbp-obj}) with the surrogate logits $\bm{z}'_j(\bm{x}+\bm{\delta},\bm{t})$, then applies $\bm{\delta}^{*}$ to the victim without re-optimization. 
 For same-embodiment pairs $G'=G(\bm{\theta})$. For cross-embodiment pairs, stage 1 keeps the surrogate kinematics and the perturbation transfers as is, since the embodiment of the victim is observable. To improve transfer, we optimize the margin over an ensemble of $K$ surrogates with input diversity and momentum, and we ablate $K\in\{1,3\}$ in the evaluation. Because we control the surrogate backbone, training data, and embodiment head, we vary each factor independently and measure how surrogate-victim mismatch degrades $\epsilon^{*}(\rho)$, a study not possible with fixed public surrogates. This study identifies which factor dominates transfer degradation and forms a deliverable of the attack framework. Language-modality attacks (\eg \emph{prompt injection} and \emph{jailbreak} through surrogate text embeddings) apply only to language-conditioned models (\ie RT-1, RT-2, OpenVLA, and Octo) and exclude vision-only models such as ACT.
 
-\BfPara{STAP in Privacy Attacks} The privacy attacks query the victim through its public interface and record the predicted actions $\{\bm{a}_{out}\}$, so they apply to every model in scope, including ACT. For \emph{membership inference}, the attacker draws candidate episodes from the public corpora of \autoref{tab:multi_dataset} without knowledge of inclusion in the victim's fine-tuning data, queries the victim on the episode observations, and scores each episode $e$ of length $H_e$ by the action agreement $r(e)=\frac{1}{H_e}\sum_{k=1}^{H_e}\mathbb{1}\bigl[\,|a_{k,j}-a^{(e)}_{k,j}|\le\Delta_j\;\;\forall j\in\mathcal{C}\bigr]$, \ie the fraction of steps at which the predicted action $\bm{a}_k$ matches the recorded action $\bm{a}^{(e)}_k$ within a one-bin tolerance on every continuous dimension. Shadow surrogates fine-tuned on disjoint halves of the corpora provide member and non-member score distributions and calibrate the decision threshold without any victim query. Victim queries then proceed under a budget of 500 queries. For \emph{attribute} and \emph{property inference}, we train a probe on surrogate action traces to recover attributes of the victim, \eg embodiment and task composition, from predicted actions.
+\BfPara{STAP in Privacy Attacks} The privacy attacks query the victim through its public interface and record the predicted actions $\{\bm{a}_{out}\}$, so they apply to every model in scope, including ACT. For \emph{membership inference}, the attacker draws candidate episodes from the public corpora of \autoref{tab:multi_dataset} without knowledge of inclusion in the victim's fine-tuning data, queries the victim on the episode observations, and scores each episode $e$ of length $H_e$ by the action agreement $r(e)=\frac{1}{H_e}\sum_{k=1}^{H_e}\mathbb{1}[\,|a_{k,j}-a^{(e)}_{k,j}|\le\Delta_j\;\;\forall j\in\mathcal{C}]$, \ie the fraction of steps at which the predicted action $\bm{a}_k$ matches the recorded action $\bm{a}^{(e)}_k$ within a one-bin tolerance on every continuous dimension. Shadow surrogates fine-tuned on disjoint halves of the corpora provide member and non-member score distributions and calibrate the decision threshold without any victim query. Victim queries then proceed under a budget of 500 queries. For \emph{attribute} and \emph{property inference}, we train a probe on surrogate action traces to recover attributes of the victim, \eg embodiment and task composition, from predicted actions.
 
 
 
@@ -573,14 +576,14 @@ Black-box attacks operate without access to the model's architecture, parameters
 
 \BfPara{Proposed Attack} While we continue to invistegate language-based attacks (\eg SHIELD \autoref{fig:visual_black_box}), we propose vision-based attack, TTDA.
 TTDA is a query-based black-box attack against chunking policies, \ie policies predicting a sequence of $c$ actions per inference (\eg Octo, ACT). Unlike per-step attacks, TTDA optimizes a sequence of perturbations $\bm{\delta}_{0:H}$ so each step satisfies the per-step kinematic limits of \autoref{eq:abbp-shift} and evades anomaly checks, while the executed trajectory drifts toward a task-failing state. TTDA solves:
-\begin{equation}
+\vspace{-1ex}\begin{equation}
 \max_{\bm{\delta}_{0:H}}\; D_{\mathcal{M}}(H)
 \quad\text{s.t.}\quad
 \|\bm{\delta}_k\|_{\infty}\le\epsilon,\;\;
 \|\bm{\delta}_k-\bm{\delta}_{k-1}\|_{\infty}\le\nu,\;\;
 \|W G(\bm{\theta}_k)\bm{u}_k\|_{2}\le\eta,
 \label{eq:ttda-obj}
-\end{equation}
+\vspace{-1.5ex}\end{equation}
 where $D_{\mathcal{M}}(H)$ is the terminal deviation of \autoref{eq:abbp-gate}, $\nu$ bounds the per-step change of the perturbation so drift accumulates slowly, and $\eta$ keeps each step below the displacement threshold of the per-step detector in \autoref{sec:t1_4}. The adversary has no gradients, so we optimize \autoref{eq:ttda-obj} with zeroth-order estimation under a query budget of $Q{=}500$. Because TTDA perturbs vision observations, it is applicable to most VLAs and most effictive against vision-focused models such as ACT. 
 A surrogate-based black-box variant can benefit from STAP framework. 
 We will formalize sufficient conditions for drift and characterize how chunk length $c$ affects feasibility. %, and we will extend TTDA to flow-matching policies (\eg pi-0), whose denoising trajectory provides an analogous sequence structure.
@@ -591,32 +594,34 @@ We will formalize sufficient conditions for drift and characterize how chunk len
 \BfPara{Evaluation} We evaluate TTDA under the shared protocol of \autoref{sec:t1_1} with the black-box factor $\gamma_{b}{=}0.9$ against three black-box baselines, \ie random query perturbation, sparse query-based search adapted to the action objective, and the token-perturbation attack of Experiment~2. 
 We additionally report the query-efficiency curve (episodes reaching $\rho$ versus queries used) and the privacy metrics of \autoref{sec:t1_2}.
 
+
+
+% \subsubsection{T1-4: Defense Strategies} \label{sec:t1_4}
+% Several existing defenses (shown in~\autoref{tab:defense}) designed originally for VLMs will be examined against robotic models.
+% These defenses can be applied in the inference and training stages of the model development.
+% Inference-based defenses include anonymous detection~\cite{zhang2023mutation,gou2024eyes,pi2024mllm} and prompt engineering~\cite{wu2023jailbreaking,wang2024adashield,chen2023can} methods.% that design and optimize the prompt to enhance the defense mechanism of the model. 
+% JailGuard \cite{zhang2023mutation} and ECSO \cite{gou2024eyes} are designed to identify multimodal jailbreaking attacks during inference.
+% MLLM-Protector~\cite{pi2024mllm} proposes an inference-time detection of harmful inputs and correct (detoxify) the output responses. InferAligner~\cite{wang2024inferaligner} proposes an inference time safety alignment method for VLM. 
+% Alignment methods align model behaviors with expected values and intentions. The main techniques are Instruction Tuning and Reinforcement Learning from Human Feedback.
+% Regarding training-time VLM defenses, most work \cite{chen2023dress,zhang2023adversarial,li2024one} constructs robust natural language feedback or robust text prompts in VLM to defend against potential attacks, while \cite{li2024red,yang2024robust} proposes to train robust VLM by further fine-tuning or contrastive learning.
+% Recent work has begun to develop VLA-specific defenses, including structure-aware robust fine-tuning, randomized smoothing for certified robustness, and backdoor token reconstruction~\cite{zhang2026structure,seferis2025randomized,li2026whenattention}.
+% {\ul{In this sub-task, we propose and explore various defenses and their effectiveness against attacks on robotic models.}}
+% % {\vspace{-1ex}}
+
+
+% \BfPara{Proposed Defense: Temporal Action Consistency Detector (TACD)} Beyond porting inference- and training-time VLM defenses, we propose 
+% a robotics-specific action-space anomaly detector, TACD, operating on predicted actions rather than inputs. 
+% TACD flags out-of-distribution and kinematically-implausible actions, such as predictions violating the reachable taskspace, joint limits, and/or defined safety zones, independent of the input modality under attack. Because TACD inspects the action output directly, this defense complements input-side defenses and remains effective when the compromised modality is unknown. %We will characterize the detection rate and false-positive trade-off across embodiments and attack types.
+% TACD operates at the per-step level and the sequence level to detect TTDA-style drift. TACD uses a multi-task trajectory-forecasting model conditioned on a task embedding, trained jointly on the benign demonstrations of all tasks to avoid per-task model proliferation, with a per-task threshold calibrated on held-out benign episodes.
+
+
+% \BfPara{Proposed Defense: Action-Grounded Adversarial Fine-Tuning (AGAT)} 
+% We complement detection with AGAT, which augments fine-tuning with kinematically-constrained ABBP-style perturbations. To remain compute-feasible on the available hardware, AGAT is implemented with LoRA rank-16 adaptation (roughly 25M trainable parameters) rather than full-model backpropagation. We will evaluate TACD and AGAT against three baseline defenses (input smoothing, VLM-ported adversarial training, and ensemble voting), reporting detection-rate versus false-positive Pareto curves across attacks, models, and embodiments.
+
+
+
+
 \subsubsection{T1-4: Defense Strategies} \label{sec:t1_4}
-
-
-
- Several existing defenses (shown in~\autoref{tab:defense}) designed originally for VLMs will be examined against robotic models.
-These defenses can be applied in the inference and training stages of the model development.
-Inference-based defenses include anonymous detection~\cite{zhang2023mutation,gou2024eyes,pi2024mllm} and prompt engineering~\cite{wu2023jailbreaking,wang2024adashield,chen2023can} methods.% that design and optimize the prompt to enhance the defense mechanism of the model. 
-JailGuard \cite{zhang2023mutation} and ECSO \cite{gou2024eyes} are designed to identify multimodal jailbreaking attacks during inference.
-MLLM-Protector~\cite{pi2024mllm} proposes an inference-time detection of harmful inputs and correct (detoxify) the output responses. InferAligner~\cite{wang2024inferaligner} proposes an inference time safety alignment method for VLM. 
-Alignment methods align model behaviors with expected values and intentions. The main techniques are Instruction Tuning and Reinforcement Learning from Human Feedback.
-Regarding training-time VLM defenses, most work \cite{chen2023dress,zhang2023adversarial,li2024one} constructs robust natural language feedback or robust text prompts in VLM to defend against potential attacks, while \cite{li2024red,yang2024robust} proposes to train robust VLM by further fine-tuning or contrastive learning.
-Recent work has begun to develop VLA-specific defenses, including structure-aware robust fine-tuning, randomized smoothing for certified robustness, and backdoor token reconstruction~\cite{zhang2026structure,seferis2025randomized,li2026whenattention}.
-{\ul{In this sub-task, we propose and explore various defenses and their effectiveness against attacks on robotic models.}}
-% {\vspace{-1ex}}
-
-
-\BfPara{Proposed Defense: Temporal Action Consistency Detector (TACD)} Beyond porting inference- and training-time VLM defenses, we propose 
-a robotics-specific action-space anomaly detector, TACD, operating on predicted actions rather than inputs. 
-TACD flags out-of-distribution and kinematically-implausible actions, such as predictions violating the reachable taskspace, joint limits, and/or defined safety zones, independent of the input modality under attack. Because TACD inspects the action output directly, this defense complements input-side defenses and remains effective when the compromised modality is unknown. %We will characterize the detection rate and false-positive trade-off across embodiments and attack types.
-TACD operates at the per-step level and the sequence level to detect TTDA-style drift. TACD uses a multi-task trajectory-forecasting model conditioned on a task embedding, trained jointly on the benign demonstrations of all tasks to avoid per-task model proliferation, with a per-task threshold calibrated on held-out benign episodes.
-
-
-\BfPara{Proposed Defense: Action-Grounded Adversarial Fine-Tuning (AGAT)} 
-We complement detection with AGAT, which augments fine-tuning with kinematically-constrained ABBP-style perturbations. To remain compute-feasible on the available hardware, AGAT is implemented with LoRA rank-16 adaptation (roughly 25M trainable parameters) rather than full-model backpropagation. We will evaluate TACD and AGAT against three baseline defenses (input smoothing, VLM-ported adversarial training, and ensemble voting), reporting detection-rate versus false-positive Pareto curves across attacks, models, and embodiments.
-
-\subsubsection{Evaluation Plan and Deliverables} \label{sec:t1_evaluation}
 \begin{wraptable}{r}{0.36\textwidth}{\vspace{-3ex}}
 \centering
 \caption{(\textbf{T})raining \& (\textbf{I})nference defenses.}\vspace{-2ex}
@@ -624,9 +629,9 @@ We complement detection with AGAT, which augments fine-tuning with kinematically
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{l}
 \toprule
-\cite{zhang2023mutation}  ~\textbf{I}$\rightarrow$  Anonymous detection \\ 
-\cite{gou2024eyes}   ~\textbf{I}$\rightarrow$   Anonymous detection \\ 
-\cite{pi2024mllm} ~\textbf{I}$\rightarrow$   Anonymous detection \\ 
+\cite{zhang2023mutation}  ~\textbf{I}$\rightarrow$  Anomaly detection \\ 
+\cite{gou2024eyes}   ~\textbf{I}$\rightarrow$   Anomaly detection \\ 
+\cite{pi2024mllm} ~\textbf{I}$\rightarrow$   Anomaly detection \\ 
 \cite{wu2023jailbreaking}   ~\textbf{I}$\rightarrow$   Prompt engineering \\
 \cite{wang2024adashield}   ~\textbf{I}$\rightarrow$   Prompt engineering \\ 
 \cite{chen2023can}   ~\textbf{I}$\rightarrow$   Prompt engineering \\
@@ -640,11 +645,29 @@ We complement detection with AGAT, which augments fine-tuning with kinematically
 \end{tabular}
 }\vspace{-2ex}
 \end{wraptable}
-We will benchmark various attacks (\autoref{table:attacks_models}) and defenses (\autoref{tab:defense}) against state-of-the-art robotic models using comprehensive datasets. Our primary metric is task success rate (TSR) under attack, a binary task-completion judgment using the two-point scoring system of our preliminary experiments. We retain the 30\% action-token deviation as a secondary physical-consequence proxy, alongside Attack Success Rate, \textit{Contain} \cite{lu2024test} (presence of attacker-specific action tokens), \textit{Exactmatch} \cite{luo2024image,lu2024test} (perfect match with attacker-specific tokens), transferability, and perturbation imperceptibility. 
-To further ground these token-level metrics in physical consequences, we report maximum end-effector action displacement and the rate of safety-zone and force-threshold violations. We evaluate our proposed defenses against at least three baseline defenses, and we construct a full model~$\times$~model~$\times$~attack transferability matrix across the model families and embodiments in our scope. We report all metrics as mean~$\pm$~std over at least ten runs with multiple seeds, and assess significance with Welch's $t$-test.
-We will align this protocol with recent physically-grounded evaluation practice for robot policies~\cite{sun2026maniparena}.
+Defense strategies detect and/or mitigate attacks at inference time or during training. Inference-time defenses (\eg anomaly detection, pre- and post-proccessing methods) address evasion and abuse attacks, while training-time defenses (robust fine-tuning, alignment) harden the model against evasion and poisoning.% (\autoref{table:attacks_models}).
+\\
+\BfPara{Related Work} Several existing defenses (\autoref{tab:defense}) were designed for VLMs.% and will be adapted to robotic models. 
+JailGuard~\cite{zhang2023mutation} and ECSO~\cite{gou2024eyes} identify multimodal jailbreaking attacks during inference. MLLM-Protector~\cite{pi2024mllm} detects harmful inputs and detoxifies output responses. InferAligner~\cite{wang2024inferaligner} performs inference-time safety alignment. %Alignment methods, mainly Instruction Tuning and Reinforcement Learning from Human Feedback, align model behavior with expected values and intentions. 
+Prompt-engineering defenses~\cite{wu2023jailbreaking,wang2024adashield,chen2023can} optimize the prompt to harden the model. Training-time VLM defenses construct robust feedback or prompts~\cite{chen2023dress,zhang2023adversarial,li2024one}, or train robust VLMs by fine-tuning or contrastive learning~\cite{li2024red,yang2024robust}. Recent work has begun to develop VLA-specific defenses, including structure-aware robust fine-tuning, randomized smoothing for certified robustness, and backdoor token reconstruction~\cite{zhang2026structure,seferis2025randomized,li2026whenattention}. These defenses operate on the input or the model parameters, and none inspects the physical plausibility of the predicted actions.
+{\ul{In this sub-task, we propose two robotics-specific defenses, the Temporal Action Consistency Detector (TACD) and Action-Grounded Adversarial Fine-Tuning (AGAT), and benchmark them against various defenses.}}
+
+\BfPara{Proposed Defense 1} We propose TACD, an action-space anomaly detector operating on predicted actions rather than inputs. Because TACD inspects the action output directly, it complements input-side defenses and remains effective when the compromised modality is unknown. TACD operates at two levels. At the per-step level, it flags actions violating the kinematic bounds of \autoref{eq:abbp-shift}, \ie joint limits, the reachable workspace, and the per-step velocity bound. At the sequence level, a multi-task trajectory-forecasting model conditioned on a task embedding, trained jointly on the benign demonstrations of all tasks, forecasts $\hat{\bm{a}}_{k:k+c}$ from the action history $\bm{a}_{k-c:k}$, and flags an anomaly when
+$
+{\sf{max}}_{k'\in[k,k+c)} \bigl\|W\bigl(\bm{a}_{k'}-\hat{\bm{a}}_{k'}\bigr)\bigr\|_{2} > \xi_t,
+$
+where $\bm{a}_{k'}$ is the action the policy predicts at step $k'$ and $\xi_t$ is a per-task threshold calibrated on held-out benign episodes to a 1\% false-positive rate. The sequence-level check catches TTDA-style drift (\autoref{eq:ttda-obj}) that satisfies every per-step bound, since the cumulative deviation diverges from the forecast even when each individual action is kinematically feasible.
+
+\BfPara{Proposed Defense 2} We complement detection with AGAT, which augments fine-tuning with kinematically-constrained ABBP-style perturbations sampled from \autoref{eq:abbp-obj}. The training distribution mixes on-manifold bin-adjacent shifts ($\sigma{=}1$) with occasional larger boundary crossings ($\sigma{>}1$), so the model learns to resist various threat models. AGAT applies LoRA rank-16 adaptation to the action head and the final transformer blocks ($\sim$25M parameters) rather than full-model tuning, keeping the defense compute-feasible and efficient.
+
+% \BfPara{Evaluation} We evaluate TACD and AGAT under the shared protocol of \autoref{sec:t1_1} against three baseline defenses: input smoothing, VLM-ported adversarial training, and ensemble voting. For detection, we report TACD as effective if its true-positive rate on ABBP, STAP, and TTDA exceeds 90\% at the calibrated 1\% false-positive rate on benign episodes, on at least two of the three tasks. For robustness, we report AGAT as effective if it raises the attack cost by at least $2\times$, \ie $\epsilon^{*}_{\mathcal{M}}(\rho)$ on the defended model is at least twice $\epsilon^{*}_{\mathcal{M}}(\rho)$ on the undefended model for each attack $\mathcal{M}$, or if it degrades each attack to the level of the best baseline defense. We report detection-rate versus false-positive Pareto curves across attacks, models, and embodiments, each as mean~$\pm$~std over multiple runs.
+
+\subsubsection{Deliverables} \label{sec:t1_evaluation}
+% We will benchmark various attacks (\autoref{table:attacks_models}) and defenses (\autoref{tab:defense}) against state-of-the-art robotic models using comprehensive datasets. Our primary metric is task success rate (TSR) under attack, a binary task-completion judgment using the two-point scoring system of our preliminary experiments. We retain the 30\% action-token deviation as a secondary physical-consequence proxy, alongside Attack Success Rate, \textit{Contain} \cite{lu2024test} (presence of attacker-specific action tokens), \textit{Exactmatch} \cite{luo2024image,lu2024test} (perfect match with attacker-specific tokens), transferability, and perturbation imperceptibility. 
+% To further ground these token-level metrics in physical consequences, we report maximum end-effector action displacement and the rate of safety-zone and force-threshold violations. We evaluate our proposed defenses against at least three baseline defenses, and we construct a full model~$\times$~model~$\times$~attack transferability matrix across the model families and embodiments in our scope. We report all metrics as mean~$\pm$~std over at least ten runs with multiple seeds, and assess significance with Welch's $t$-test.
+% We will align this protocol with recent physically-grounded evaluation practice for robot policies~\cite{sun2026maniparena}.
 Deliverables include: \cib{1} a comprehensive framework of attack vectors (and defenses) specific to robotic models
-with target modalities, tasks, and embodiments, \cib{2} open-source implementation includes datasets, developed attacks, defenses, and evaluations, and \cib{3} academic publications/reports/labs on findings and methodologies.
+with target modalities, tasks, and embodiments, \cib{2} open-source implementation includes datasets, developed attacks, defenses, and evaluations, and \cib{3} publications/reports/labs on findings and methodologies.
 
 
 
@@ -757,97 +780,6 @@ There will be human-in-the-loop evaluations that include reviewing and interpret
 Deliverables include: \cib{1} benchmarks for safety and interpretability of robotic foundation models, \cib{2} open-source implementations of developed safety and interpretability methods, and \cib{3} academic publications/reports/labs on findings and methodologies.
 
 
-\subsection{Work Plan, Timeline, and Team} \label{sec:workplan}
-
-\BfPara{Staged Scope} We stage the program into Phase 1 (Years~1 and~2) and a Phase 2 (Years~3 and~4). Phase 1 targets open and architecturally complementary models on two embodiments (Xarm7 and the Google robot), and develops ABBP and TTDA with ported baselines together with the TACD and AGAT defenses and their baselines. 
-The Phase 2 adds emerging models, multimodal analysis, certified-robustness defenses, and the full public release of VLA-SecBench. 
-\autoref{fig:workplan_timeline} summarizes the schedule of the research-plan tasks under the calendar aligned to the budget period.
-
-\begin{figure*}[t]
-\centering
-\resizebox{\textwidth}{!}{%
-\begin{tikzpicture}[font=\scriptsize\sffamily,
-  bar/.style={fill=gray!40, draw=black!70, rounded corners=2pt},
-  ]
-  %%% phase (MVP / Scale-up) background shading %%%
-  \fill[gray!7]  (0,-3.4) rectangle (8,1.4);
-  \fill[gray!14] (8,-3.4) rectangle (16,1.4);
-
-  %%% horizontal row separators %%%
-  \foreach \hy in {0.80,0.20,-0.40,-1.00,-1.60,-2.20,-2.80}
-    \draw[very thin, gray!25] (0,\hy) -- (16,\hy);
-
-  %%% vertical quarter gridlines %%%
-  \foreach \gx in {1,2,3,5,6,7,9,10,11,13,14,15}
-    \draw[very thin, gray!25] (\gx,-3.4) -- (\gx,1.4);
-  %%% year boundary lines %%%
-  \foreach \gx in {4,8,12}
-    \draw[thin, black!40] (\gx,-3.4) -- (\gx,1.4);
-  %%% outer chart border %%%
-  \draw[black!60, rounded corners=1pt] (0,-3.4) rectangle (16,1.4);
-
-  %%% year header band %%%
-  \fill[gray!15, draw=black!40, rounded corners=2pt] (0,1.9) rectangle (16,2.5);
-  \foreach \gx in {4,8,12} \draw[black!30] (\gx,1.9) -- (\gx,2.5);
-  \node[font=\scriptsize\bfseries\sffamily] at (2,2.2)  {Year 1};
-  \node[font=\scriptsize\bfseries\sffamily] at (6,2.2)  {Year 2};
-  \node[font=\scriptsize\bfseries\sffamily] at (10,2.2) {Year 3};
-  \node[font=\scriptsize\bfseries\sffamily] at (14,2.2) {Year 4};
-
-  %%% quarter tick numbers %%%
-  \foreach \g in {1,...,16} {
-    \pgfmathtruncatemacro{\qn}{mod(\g-1,4)+1}
-    \node[font=\tiny\sffamily, text=black!70] at (\g-0.5,1.65) {\qn};
-  }
-
-  %%% left-hand labels %%%
-  \node[anchor=east, font=\scriptsize\bfseries\sffamily] at (-0.3,2.2)  {Research task};
-  \node[anchor=east] at (-0.3,1.10)  {T0 Repository, models \& data};
-  \node[anchor=east] at (-0.3,0.50)  {T1-1 White-box attacks (ABBP)};
-  \node[anchor=east] at (-0.3,-0.10) {T1-2 Gray-box attacks};
-  \node[anchor=east] at (-0.3,-0.70) {T1-3 Black-box attacks (TTDA)};
-  \node[anchor=east] at (-0.3,-1.30) {T1-4 Defenses (TACD, AGAT)};
-  \node[anchor=east] at (-0.3,-1.90) {T2 Multimodal attacks};
-  \node[anchor=east] at (-0.3,-2.50) {T3-1 Safety \& benchmarks (VLA-SecBench)};
-  \node[anchor=east] at (-0.3,-3.10) {T3-2 Interpretability};
-
-  %%% research-task bars (active quarters) %%%
-  \fill[bar] (0,0.88)   rectangle (3,1.32);   % T0
-  \fill[bar] (8,0.88)   rectangle (9,1.32);   % T0 (refresh)
-  \fill[bar] (1,0.28)   rectangle (6,0.72);   % T1-1
-  \fill[bar] (2,-0.32)  rectangle (7,0.12);   % T1-2
-  \fill[bar] (2,-0.92)  rectangle (8,-0.48);  % T1-3
-  \fill[bar] (8,-0.92)  rectangle (10,-0.48); % T1-3 (extend)
-  \fill[bar] (3,-1.52)  rectangle (8,-1.08);  % T1-4
-  \fill[bar] (9,-1.52)  rectangle (12,-1.08); % T1-4 (certified)
-  \fill[bar] (8,-2.12)  rectangle (12,-1.68); % T2
-  \fill[bar] (7,-2.72)  rectangle (16,-2.28); % T3-1
-  \fill[bar] (10,-3.32) rectangle (14,-2.88); % T3-2
-
-  %%% milestone diamonds along the bottom axis %%%
-  \foreach \mx/\ml in {0.5/M0, 1.5/M1, 2.5/M2, 4.5/M3, 5.5/M4a, 6.5/M4, 7.5/M5, 9.5/M6, 13.5/M7} {
-    \draw[very thin, gray!45] (\mx,-3.4) -- (\mx,-3.53);
-    \fill[black, draw=black] (\mx,-3.63) -- (\mx-0.11,-3.73) -- (\mx,-3.83) -- (\mx+0.11,-3.73) -- cycle;
-    \node[font=\tiny\sffamily, anchor=north, inner sep=1pt] at (\mx,-3.9) {\ml};
-  }
-
-  %%% phase captions %%%
-  \node[font=\tiny\itshape\sffamily, text=black!60] at (4,-4.25)  {MVP phase (Years 1--2)};
-  \node[font=\tiny\itshape\sffamily, text=black!60] at (12,-4.25) {Scale-up phase (Years 3--4)};
-\end{tikzpicture}%
-}
-\caption{Gantt-style work-plan timeline. Calendar aligned to the anticipated award start (May~2027): Year~1 = May~2027--Apr~2028, \ldots, Year~4 = May~2030--Apr~2031; quarters Q1~(May--Jul), Q2~(Aug--Oct), Q3~(Nov--Jan), Q4~(Feb--Apr). Bars indicate active quarters; diamonds mark milestones (M0--M7). {\footnotesize\textbf{Milestones:} \textbf{M0} compute/NSF ACCESS allocation secured; \textbf{M1} ABBP formal specification; \textbf{M2} MVP model zoo operational; \textbf{M3} ABBP vs.\ PGD comparison; \textbf{M4a} preliminary TACD false-positive check; \textbf{M4} formal TACD detection gate; \textbf{M5} VLA-SecBench v0.5 \& pi-0 availability; \textbf{M6} multimodal coupling benefit shown; \textbf{M7} VLA-SecBench v1.0 release.}}
-\label{fig:workplan_timeline}
-\end{figure*}
 
 
-
-
-% \subsection{Task Implementation and Timeline}
-
-% \begin{figure*}[h]
-%   \centering\vspace{-2ex}
-%   \includegraphics[width=0.63\textwidth]{figures/grant1_1.pdf}\vspace{-2ex}
-%   \caption{Proposed work plan and timeline.}
-%   \label{fig:timeline}
-% \end{figure*}
+\input{sections/timeline.tex}
