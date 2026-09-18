@@ -546,6 +546,129 @@ Weaker adversarial knowledge relaxes $\gamma$ ($\gamma{=}0.7$, $0.8$, $0.9$ for 
 
 \BfPara{Evaluation} We evaluate ABBP under the shared protocol (\autoref{eq:abbp-gate}) with $\gamma{=}0.7$ and baselines PGD, FGSM, and CW. We calibrate $(\sigma,\rho)$ against the open-loop reachability bound $\rho\le H\sqrt{|\mathcal{J}|}\,\sigma\max_{j\in\mathcal{J}}\|(WG(\bm{\theta}))_{:,j}\|_{2}\Delta_{j}$ implied by \autoref{eq:abbp-quant} and \autoref{eq:abbp-shift}, so the target remains reachable before any experiment runs. We also report the discretization-agnostic ablation ($w_j{=}1$, $\sigma{=}1$) to isolate the contribution of the physical-effect weighting.
 
+\BfPara{Evaluation Protocol} All T1 attack families are evaluated under one protocol with
+three metrics computed from a single episode. 
+Let $\mathcal{E}$ be the evaluation episodes of a task
+($|\mathcal{E}|{=}25$) and $\mathcal{I}$ the independent seeds ($|\mathcal{I}|{=}10$). Each
+episode $e\in\mathcal{E}$ is run twice from a common initial state, once on clean observations
+and once with $\mathcal{M}$ active at budget $\epsilon$, re-optimized at every step. For
+inference-time attacks $\epsilon$ is the $\ell_{\infty}$ bound of \autoref{eq:abbp-obj}; for
+training-time attacks it is the poison rate. In both cases $\epsilon$ is drawn from a fixed
+geometric grid $E$ capped at $\epsilon_{\max}$. A run returns a task score
+$v_{\mathcal{M}}(e,\epsilon)\in[0,1]$ under the two-point scoring of \autoref{sec:t0}, the
+end-effector poses $(\bm{p}_{k},R_{k})$ and $(\bm{p}'_{k},R'_{k})$ for $k=0,\dots,H$ from
+forward kinematics, and the decoded bins $b_{j,k}$ and $b'_{j,k}$ of \autoref{eq:abbp-quant}.
+We write $v_{0}(e)=v_{\mathcal{M}}(e,0)$ and
+$\mathcal{E}_{0}=\{e\in\mathcal{E}:v_{0}(e)=1\}$ for the episodes the undefended policy
+completes. We fix $H$ at one quarter of the median episode of the embodiment.
+
+\emph{Physical consequence.} Comparing the two pose sequences step by step,
+\vspace{-1ex}\begin{equation}
+  \small
+\bm{e}_{k}=\begin{bmatrix}\bm{p}'_{k}-\bm{p}_{k}\\[2pt] rv\bigl(R_{k}^{\top}R'_{k}\bigr)\end{bmatrix},
+\qquad
+D^{e}_{\mathcal{M}}(H)=\bigl\|W\bm{e}_{H}\bigr\|_{2},
+\qquad
+\bar{D}^{e}_{\mathcal{M}}(H)=\max_{0\le k\le H}\bigl\|W\bm{e}_{k}\bigr\|_{2},
+\label{eq:abbp-gate}
+\vspace{-1.5ex}\end{equation}
+where $rv$ is the rotation-vector map of the relative rotation and $W=\mathrm{diag}(1,1,1,
+\ell,\ell,\ell)$ weights rotational displacement by the characteristic lever arm $\ell$ of the
+embodiment, so that $D$ and $\bar{D}$ carry units of length. $D^{e}_{\mathcal{M}}(H)$ is the
+terminal deviation, written $D_{\mathcal{M}}(H)$ when the episode is implicit
+(\autoref{eq:ttda-obj}); the peak deviation $\bar{D}^{e}_{\mathcal{M}}(H)$ is reported
+alongside it so that an excursion followed by a return is not scored as harmless. The
+threshold $\rho$ is calibrated per task as the smaller of the gripper-aperture clearance and
+the footprint of the manipulated object, giving $\rho{=}5$\,cm on our three tasks.
+
+\emph{Task and attack success.} From the same runs,
+\vspace{-1ex}\begin{equation}
+  \small
+\mathrm{TSR}_{\mathcal{M}}(\epsilon)=\frac{1}{|\mathcal{E}|}\sum_{e\in\mathcal{E}}
+v_{\mathcal{M}}(e,\epsilon),
+\quad
+\mathrm{ASR}^{\mathrm{task}}_{\mathcal{M}}(\epsilon)=\frac{1}{|\mathcal{E}_{0}|}
+\sum_{e\in\mathcal{E}_{0}}\mathbb{1}\bigl[v_{\mathcal{M}}(e,\epsilon)<1\bigr],
+\quad
+\mathrm{ASR}^{\mathrm{phys}}_{\mathcal{M}}(\epsilon)=\frac{1}{|\mathcal{E}|}
+\sum_{e\in\mathcal{E}}\mathbb{1}\bigl[D^{e}_{\mathcal{M}}(H)\ge\rho\bigr],
+\label{eq:metric-stack}
+\vspace{-1.5ex}\end{equation}
+and, at the token level,
+$\mathrm{ASR}^{\mathrm{tok}}_{\mathcal{M}}(\epsilon)=(|\mathcal{E}|H)^{-1}\sum_{e,k}
+\mathbb{1}[\exists j\in\mathcal{J}:b'_{j,k}\neq b_{j,k}]$ for untargeted attacks, replaced by
+$\mathbb{1}[\exists j:b'_{j,k}{=}b^{*}_{j,k}]$ and $\mathbb{1}[b'_{j,k}{=}b^{*}_{j,k}\,\forall
+j\in\mathcal{J}]$ for the targeted \textit{Contain} and \textit{Exactmatch} criteria
+\cite{lu2024test,luo2024image}, with $b^{*}_{j}$ the target bin of \autoref{eq:abbp-shift}.
+Conditioning $\mathrm{ASR}^{\mathrm{task}}$ on $\mathcal{E}_{0}$ prevents baseline policy
+failures from inflating it. A token flip is necessary but not sufficient for displacement,
+which is necessary but not sufficient for task failure, so we expect
+$\mathrm{ASR}^{\mathrm{task}}\le\mathrm{ASR}^{\mathrm{phys}}\le\mathrm{ASR}^{\mathrm{tok}}$ and
+report departures from this ordering as diagnostics: a task failure without displacement
+localizes the attack to the gripper or the arm/base/terminate mode rather than to the arm
+trajectory.
+
+\emph{Attack cost and comparison.} For an effect functional $\Phi$ and threshold
+$\rho_{\Phi}$,
+\vspace{-1ex}\begin{equation}
+  \small
+\epsilon^{*}_{\mathcal{M}}(\Phi,\rho_{\Phi})=\min\bigl\{\epsilon\in E:\;
+\widehat{\mathbb{E}}\bigl[\Phi_{\mathcal{M}}(\epsilon)\bigr]\ge\rho_{\Phi}\bigr\},
+\qquad
+\hat{\gamma}^{\,i}_{\mathcal{M}_{b}}=
+\frac{\epsilon^{*,i}_{\mathcal{M}_{b}}(\Phi,\rho_{\Phi})}
+{\min_{\mathcal{M}\in\{\mathcal{M}_{1},\dots,\mathcal{M}_{m}\}}
+\epsilon^{*,i}_{\mathcal{M}}(\Phi,\rho_{\Phi})},
+\label{eq:budget-operator}
+\vspace{-1.5ex}\end{equation}
+with $\epsilon^{*}_{\mathcal{M}}=\epsilon_{\max}$ when no grid point reaches $\rho_{\Phi}$, the
+expectation taken over $\mathcal{E}$, and $\epsilon^{*,i}$ the value estimated on seed
+$i\in\mathcal{I}$. We instantiate $\Phi$ three ways: the task instantiation
+$\epsilon^{*}_{\mathrm{TSR}}=\epsilon^{*}\bigl(1-\mathrm{TSR}_{\mathcal{M}}(\epsilon)/
+\mathrm{TSR}_{\mathcal{M}}(0),\,\rho_{\mathrm{TSR}}\bigr)$ with $\rho_{\mathrm{TSR}}{=}0.5$,
+the budget that halves task success, which is our primary metric; the physical instantiation
+$\epsilon^{*}_{\mathrm{phys}}=\epsilon^{*}(D_{\mathcal{M}}(H),\rho)$, which resolves attacks
+whose displacement has not yet crossed a task boundary; and the token instantiation
+$\epsilon^{*}_{\mathrm{tok}}=\epsilon^{*}(\mathrm{ASR}^{\mathrm{tok}}_{\mathcal{M}},0.5)$,
+which requires forward passes only. We report $\mathcal{M}_{b}$ as a distinct vulnerability
+over $\mathcal{M}_{1},\dots,\mathcal{M}_{m}$ when the median of $\hat{\gamma}^{\,i}_{
+\mathcal{M}_{b}}$ over $\mathcal{I}$ satisfies $\hat{\gamma}_{\mathcal{M}_{b}}\le\gamma$ on
+$\epsilon^{*}_{\mathrm{TSR}}$ for at least two of three tasks. Weaker adversarial knowledge
+relaxes $\gamma$ ($\gamma{=}0.7$ white-box \autoref{sec:t1_1}, $\gamma_{g}{=}0.8$ gray-box
+\autoref{sec:t1_2}, $\gamma_{b}{=}0.9$ black-box \autoref{sec:t1_3}).
+
+\emph{Defenses.} Under the same protocol, for each attack $\mathcal{M}$,
+\vspace{-1ex}\begin{equation}
+  \small
+\Gamma_{\mathcal{M}}=\frac{\epsilon^{*}_{\mathcal{M}}(\Phi,\rho_{\Phi})\big|_{\mathrm{def}}}
+{\epsilon^{*}_{\mathcal{M}}(\Phi,\rho_{\Phi})\big|_{\mathrm{undef}}},
+\qquad
+\Lambda=\mathrm{TSR}^{\mathrm{def}}(0)-\mathrm{TSR}(0),
+\qquad
+\mathrm{TPR}_{\mathcal{M}}\ \text{at}\ \mathrm{FPR}\le0.01,
+\label{eq:defense-metrics}
+\vspace{-1.5ex}\end{equation}
+where $\Gamma_{\mathcal{M}}$ is the multiplicative attack-cost increase, $\Lambda$ the clean-task
+cost of the defense, and $\mathrm{TPR}_{\mathcal{M}}$ the TACD detection rate at the threshold
+$\xi_{t}$ calibrated on held-out benign episodes. TACD is effective when
+$\mathrm{TPR}_{\mathcal{M}}\ge0.9$ for ABBP, STAP, and TTDA on at least two of three tasks,
+including against an adaptive adversary that knows $\xi_{t}$ and the forecaster. AGAT is
+effective when $\Gamma_{\mathcal{M}}\ge2$ for every attack with $\Lambda\ge-0.05$, or when it
+degrades each attack to the level of the best baseline defense (input smoothing, VLM-ported
+adversarial training, ensemble voting).
+
+\emph{Estimation and statistics.} Episodes are clustered within seeds, so all quantities are
+aggregated to one value per seed and compared on the $|\mathcal{I}|$ paired per-seed values with
+a one-sided Wilcoxon signed-rank test at $p<0.05$, Holm-corrected across tasks. Uncertainty is
+reported as a cluster-bootstrap 95\% confidence interval resampling seeds and then episodes
+within seed, and as mean~$\pm$~std. Privacy attacks carry no task notion and fall outside
+\autoref{eq:metric-stack}: membership inference reports true-positive rate at a 1\%
+false-positive rate over the score $r(e)$ of \autoref{sec:t1_2}, and model extraction reports
+action-agreement fidelity. Full episode run is required only for $\mathrm{TSR}$ and
+$\mathrm{ASR}^{\mathrm{phys}}$, so we populate the full model~$\times$~model~$\times$~attack
+transferability matrix with $\mathrm{ASR}^{\mathrm{tok}}$, run full episodes on a stratified calibration subset, 
+and report Kendall's $\tau_{b}$ between $\mathrm{ASR}^{\mathrm{tok}}$ and
+$\epsilon^{*}_{\mathrm{TSR}}$ to establish whether the token-level screen is a valid proxy.
 
 \subsubsection{T1-2: Gray-box Attacks} \label{sec:t1_2}
 Gray-box attacks exploit partial knowledge of the victim model, \eg the architecture and training data, to expose vulnerabilities under moderate adversarial capabilities. For example, existing gray-box attacks against VLMs use open-source vision or language encoders as surrogates to launch the attack.
