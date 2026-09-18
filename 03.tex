@@ -110,7 +110,7 @@ $'',
 could be: ``\textit{1 128 91 241 5 101 127}''.
 To ensure that RT-2 outputs valid action tokens during decoding, the output vocabulary is
 constrained to only sampling valid action tokens when the model is prompted with a robot-action task.
-We note that the model, \ie the orginal VLM, can still output the full range of language tokens on standard vision-language tasks.
+We note that the model, \ie the original VLM, can still output the full range of language tokens on standard vision-language tasks.
 Our implementation focuses on the RT-2-PaLI-X variants~\cite{chen2023palix} built on the backbone of ViT~\cite{dosovitskiy2021image} visual model and UL2~\cite{tay2023ul2} language model, and pre-trained on WebLI~\cite{chen2023palix} dataset. %Variations of RT-2 will be implemented as RT-2-X designs for \xod training.
 
 \begin{wraptable}{r}{0.5\textwidth}
@@ -169,13 +169,13 @@ Similar to RT-2-X, we will adopt various open-source VLMs/components (in \autore
 % For tokenization of observations and actions, RoboCat follows a similar approach as~\cite{reed2022generalist}.
 % The loss is weighted as ($0.25\times\text{discretization\_loss} + \text{l2\_reconstruction\_loss} + 0.1\times\text{log\_laplace\_loss}$) to predict future tokens. The output is the image tokens at time step $k = 5$, as one step can look very similar.
 
-\noindent\textbf{\cib{5} Octo~\cite{team2024octo}} Octo is a (27-93M parameters) transformer-based VLA pre-trained on the OXE~\cite{9} dataset. Unlike RT-X and RoboCat, it can be fine-tuned to new observations and action spaces. This flexibility allows Octo to adapt to various robotic embodiments, a trend that is becoming increasingly important/adopted in robotics.
+\noindent\textbf{\cib{4} Octo~\cite{team2024octo}} Octo is a (27-93M parameters) transformer-based VLA pre-trained on the OXE~\cite{9} dataset. Unlike RT-X, it can be fine-tuned to new observations and action spaces. This flexibility allows Octo to adapt to various robotic embodiments, a trend that is becoming increasingly important/adopted in robotics.
 Octo architecture consists of three key parts: \textit{input tokenizers} that transform language instructions and observations into tokens, a \textit{transformer backbone} that receives the tokens and generates embeddings, and \textit{readout heads} that produce the desired outputs, \ie actions. Input tokenizers include modality-specific tokenizers, \ie a language (task) tokenizer (\eg T5) and a vision tokenizer (\eg ViT-based or CNN-based). Unavailable modalities are masked (\eg no language instructions are provided), and learnable position embeddings are added to the input tokens before feeding them into the transformer backbone.  Octo also uses a \textit{readout token} analogous to the $\text{[CLS]}$ token in BERT/LLMs.
 The transformer backbone processes the input tokens through block-wise masked attention patterns (\ie see to tokens from the same or earlier time steps), which are then passed to the readout heads. The readout ``\textit{action}'' head predicts a ``\textit{chunk}'' of several consecutive actions.
 Action heads can be added/replaced/fine-tuned during downstream fine-tuning (\eg adoption of new embodiments).
 
 
-\noindent\textbf{\cib{6} ACT~\cite{zhao2023learningFB}} ACT is a VLA model that uses ResNet~\cite{resnet} as the vision encoder and transformer-based
+\noindent\textbf{\cib{5} ACT~\cite{zhao2023learningFB}} ACT is a VLA model that uses ResNet~\cite{resnet} as the vision encoder and transformer-based
 conditional variational autoencoder (CVAE)~\cite{sohn2015learning} that generates a sequence of actions. The original ACT 
 \begin{wrapfigure}{r}{0.4\textwidth}{\vspace{-2ex}}
   \centering
@@ -296,7 +296,7 @@ Therefore, attacks must be systematic and guided by practical experience in fiel
     Moreover, attack methods against similar LLMs/VLMs use white-, gray-, and black-box settings relying on prior knowledge of (exact or similar) models, training data, restrictions/constraints of the system or training a surrogate models. However, robotic applications and commercial vendors often do not share model details \cite{cheng2018query}. In practice, attackers can only query the model and observe the behavior of the robot/output of the model. Developing attacks that exploit multiple vulnerabilities \cite{biggio2018wild} or adapt to various threat vectors is necessary and requires various strategies.
     Moreover, an effective attack should be undetectable/imperceptible by human/robot observer, which requires preserving the semantic traits of the benign sample. 
     This requires well-designed constraints to restrict the type and size of the perturbation. 
-    Numerous studies have shown that some attacks inhibit high transferability, \ie attacks on a given model can succeed on other similar models. This phenomenon derived the transfer-based black-box attacks.
+    Numerous studies have shown that some attacks exhibit high transferability, \ie attacks on a given model can succeed on other similar models. This phenomenon derived the transfer-based black-box attacks.
     Nevertheless, attacks designed for similar LLMs/VLMs models might not always work effectively on other models, even if they share similar architectures. 
     Ensuring adversarial examples are transferable \cite{liu2016delving} across models and tasks requires understanding model-specific vulnerabilities and generalizable attack methods.
 
@@ -323,7 +323,7 @@ Since robots could have multiple embodiments/tasks (and various action spaces), 
 For example, RT-2 and OpenVLA models receive only images and textual instruction $\mathcal{F}(\{\bm{x}\}, \{\bm{t}\})=\{\bm{a}_{out}\}$, 
 %RoboCat and RT-1 receive images and no text, $\mathcal{F}(\{\bm{x}\}, \oslash)=\bm{a}_{out}$, 
 Octo receives images, text, and sensory data $\mathcal{F}(\{\bm{x}\}, \{\bm{t}\}, \{\bm{s}\})=\bm{a}_{out}$, and ACT receives only images and sensory data $\mathcal{F}(\{\bm{x}\}, \{\bm{s}\})=\{\bm{a}_{out}\}$.
-If Octo is used for robots/datasets that do not provide text instructions, the model processes available inputs and mask unavailable ones $\mathcal{F}(\{\bm{x}\}, \oslash,\{\bm{s}\})=\{\bm{a}_{out}\}$.
+If Octo is used for robots/datasets that do not provide text instructions, the model processes available inputs and masks unavailable ones $\mathcal{F}(\{\bm{x}\}, \oslash,\{\bm{s}\})=\{\bm{a}_{out}\}$.
 The output $\{\bm{a}_{out}\}$ is one or chunks of actions, each is a sequence of tokens representing predicted actions.
 
 
@@ -345,7 +345,7 @@ rowsep=0pt,
   column{7} = {c},
   column{8} = {c},
   column{9} = {c},
-  cell{2}{1} = {r=7}{},
+  cell{2}{1} = {r=8}{},
   cell{10}{1} = {r=10}{},
   cell{20}{1} = {r=6}{},
   hline{2,10,20,26} = {-}{},
@@ -361,14 +361,14 @@ rowsep=0pt,
                                                   & Jailbreak           & \ee                                       & \checkmark                                         & \ee                                      & \ee                                        & \ee                                           & \checkmark                                     & \bb                           \\
 \begin{sideways}Poisoning         ~\end{sideways} & Data Poisoning                 & \checkmark                                        & \ee                                        & \ee                                      & \checkmark                                         & \checkmark                                            & \ee                                    & \dd                          \\
                                                   & Model Poisoning                & \checkmark                                        & \ee                                        & \ee                                      & \checkmark                                         & \checkmark                                            & \ee                                    & \dd                          \\
-                                                  & Backdoor Poisoning             & \checkmark                                        & \checkmark                                         & \checkmark                                       & \ee                                        & \ee                                           & \checkmark                                     & \dd                          \\
+                                                  & Backdoor Poisoning             & \checkmark                                        & \checkmark                                 & \checkmark                                 & \checkmark                                        & \ee                                           & \checkmark                                     & \dd                          \\
                                                   & Label Flipping                 & \checkmark                                        & \ee                                        & \ee                                      & \checkmark                                         & \checkmark                                            & \ee                                    & \dd                          \\
-                                                  & Clean-label Poisoning          & \checkmark                                        & \ee                                        & \ee                                      & \ee                                        & \ee                                           & \ee                                    & \dd                          \\
-                                                  & Targeted Poisoning             & \checkmark                                        & \ee                                        & \ee                                      & \ee                                        & \ee                                           & \ee                                    & \dd                          \\
-                                                  & Subpopulation Poisoning        & \checkmark                                        & \ee                                        & \ee                                      & \ee                                        & \ee                                           & \ee                                    & \dd                          \\
-                                                  & Model Replacement              & \checkmark                                        & \ee                                        & \ee                                      & \ee                                        & \ee                                           & \ee                                    & \dd                          \\
-                                                  & Model Boosting                 & \checkmark                                        & \ee                                        & \ee                                      & \ee                                        & \ee                                           & \ee                                    & \dd                          \\
-                                                  & Functional Attacks             & \checkmark                                        & \ee                                        & \ee                                      & \ee                                        & \ee                                           & \ee                                    & \dd                          \\
+                                                  & Clean-label Poisoning          & \checkmark                                        & \ee                                        & \ee                                      & \checkmark                                       & \ee                                           & \ee                                    & \dd                          \\
+                                                  & Targeted Poisoning             & \checkmark                                        & \ee                                        & \ee                                      & \checkmark                                        & \ee                                           & \ee                                    & \dd                          \\
+                                                  & Subpopulation Poisoning        & \checkmark                                        & \ee                                        & \ee                                      & \checkmark                                       & \ee                                           & \ee                                    & \dd                          \\
+                                                  & Model Replacement              & \checkmark                                        & \ee                                        & \ee                                      & \checkmark                                        & \ee                                           & \ee                                    & \dd                          \\
+                                                  & Model Boosting                 & \checkmark                                        & \ee                                        & \ee                                      & \checkmark                                        & \ee                                           & \ee                                    & \dd                          \\
+                                                  & Functional Attacks             & \checkmark                                        & \ee                                        & \ee                                      & \checkmark                                        & \ee                                           & \ee                                    & \dd                          \\
 \begin{sideways}Privacy\end{sideways}             & Data Reconstruction            & \ee                                       & \checkmark                                         & \checkmark                                       & \ee                                        & \ee                                           & \ee                                    & \vv                          \\
                                                   & Membership Inference           & \ee                                       & \checkmark                                         & \checkmark                                       & \ee                                        & \ee                                           & \ee                                    & \bb                           \\
                                                   & Model Extraction               & \ee                                       & \checkmark                                         & \checkmark                                       & \ee                                        & \ee                                           & \ee                                    & \vv                          \\
@@ -411,9 +411,9 @@ We have conducted two preliminary experiments
 \end{minipage}
 \begin{minipage}{0.26\textwidth}
   \centering
-  \includegraphics[width=0.74\textwidth]{figures/results/lang_white_box.pdf}\vspace{-2ex}
+  \includegraphics[width=0.74\textwidth]{figures/results/lang_black_box.pdf}\vspace{-2ex}
 \caption{\small Task success rate of models before and after black-box token-based perturbations.}
-  \label{fig:visual_black_box}
+  \label{fig:lang_black_box}
 \end{minipage}
 \vspace{-3ex}
 \end{wrapfigure} 
@@ -426,7 +426,7 @@ We adopted a similar attack approach to one used in SHIELD~\cite{abuhamad2025shi
 The attack perturbs 20\% of the tokens in the instructions with random tokens from the tokenizer vocabulary, and probes the model with a query limit of 500 queries. The attack terminates if the query limit is reached or if the model's output action differs from the ground-truth action by more than 30\%, in which case the attack is successful.
 The results are shown
 % {\vspace{-2.5ex}}
- in~\autoref{fig:visual_black_box}, where we observe that the success rate of the models drops significantly after the attack, indicating that even simple token-based perturbations can disrupt the model's performance.
+ in~\autoref{fig:lang_black_box}, where we observe that the success rate of the models drops significantly after the attack, indicating that even simple token-based perturbations can disrupt the model's performance.
 These results demonstrate the potential vulnerabilities of robotic models to adversarial attacks.
 % In these preliminary experiments we operationalized attack success as a 30\% action-token deviation. 
 % In the full evaluation protocol described below, we use task success rate (TSR) under attack as the primary metric and use action deviation as a secondary physical-consequence metric.
@@ -524,7 +524,7 @@ because VLA action labels are bin indices, \emph{label flipping} reduces to sett
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\BfPara{Evaluation Protocol} All T1 attack families are evaluated under one physical-consequence protocol. A single bin crossing displaces the end-effector by a fraction of a millimetre, which no task-level metric resolves, so we measure consequence as the cumulative deviation of a run. From an initial state, we run the policy for $H$ steps twice, once on clean observations and once with the attack re-optimized at every step, and compare the two end-effector poses $(\bm{p}_k,R_k)$ and $(\bm{p}'_k,R'_k)$ at each step $k=0,\dots,H$ obtained by forward kinematics,
+\BfPara{Evaluation Protocol} All T1 attack families are evaluated under one physical-consequence protocol. A single bin crossing displaces the end-effector by a fraction of a millimeter, which no task-level metric resolves, so we measure consequence as the cumulative deviation of a run. From an initial state, we run the policy for $H$ steps twice, once on clean observations and once with the attack re-optimized at every step, and compare the two end-effector poses $(\bm{p}_k,R_k)$ and $(\bm{p}'_k,R'_k)$ at each step $k=0,\dots,H$ obtained by forward kinematics,
 \vspace{-1ex}\begin{equation}
   \small
 \bm{e}_{k}=\begin{bmatrix}\bm{p}'_{k}-\bm{p}_{k}\\[2pt]{rv}\bigl(R_{k}^{\top}R'_{k}\bigr)\end{bmatrix},
@@ -535,14 +535,14 @@ D_{\mathcal{M}}(H)=\bigl\|W\bm{e}_{H}\bigr\|_{2},
 \widehat{\mathbb{E}}\bigl[D_{\mathcal{M}}(H)\bigr]\ge\rho\Bigr\},
 \label{eq:abbp-gate}
 \vspace{-1.5ex}\end{equation}
-where where $\mathcal{M}$ ranges over the attacks under comparison, ${rv}$ is the rotation-vector map of the relative rotation, 
+where $\mathcal{M}$ ranges over the attacks under comparison, ${rv}$ is the rotation-vector map of the relative rotation, 
 $D_{\mathcal{M}}(H)$ is the consequence at the final step $H$ with displacement of $\bm{e}_{H}$ weighted by $W$, 
 $E$ is a fixed geometric grid of budgets capped at $\epsilon_{\max}$, $\epsilon^{*}_{\mathcal{M}}(\rho)=\epsilon_{\max}$ when no grid point reaches $\rho$, and the expectation runs over evaluation episodes. 
 % where $W=\mathrm{diag}(1,1,1,\ell,\ell,\ell)$ weights rotational displacement by the characteristic lever arm $\ell$, $E$ is a fixed geometric grid of budgets capped at $\epsilon_{\max}$, and the expectation runs over evaluation episodes. 
-We fix $H$ steps at one quarter of the median robot episode, and estimate $\epsilon^{*}$ independently for each of ten seeds. We report an attack as a distinct vulnerability at (\eg $\rho{=}5$\,cm the cumulative deviation threshold in our experiments) when its $\epsilon^{*}(\rho)$ improves over the best baseline by a threat-tier factor on at least two of three tasks, under a one-sided Wilcoxon signed-rank test at $p<0.05$ on the paired per-seed ratios. 
-The $\epsilon^{*}_{\mathcal{M}}(\rho)=\min\{\epsilon\in E:\;\widehat{\mathbb{E}}[D_{\mathcal{M}}(H)]\ge\rho\}$ defines the smallest budget $\epsilon$ on grid $E$ at which attack $\mathcal{M}$ achieves a consequence meeting or exceeding $\rho$.
-We consider a proposed attack $\mathcal{M}_b$ as a distinct vulnerability over attacks (\eg $\mathcal{M}_1,\dots,\mathcal{M}_m$) if $\epsilon^{*}_{{\mathcal{M}_b}}(\rho)\le\gamma\,\min_{\mathcal{M}\in\{\mathcal{M}_1,\dots,\mathcal{M}_m\}}\epsilon^{*}_{\mathcal{M}}(\rho)$.
-As adversarial knowledge weakens, $\gamma$ relaxes: $\gamma{=}0.7$ (white-box, \autoref{sec:t1_1}), $\gamma_{g}{=}0.8$ (gray-box, \autoref{sec:t1_2}), $\gamma_{b}{=}0.9$ (black-box, \autoref{sec:t1_3}). Training-time attacks use the poison rate as budget. Metrics are reported as mean~$\pm$~std across runs. 
+We fix $H$ steps at one quarter of the median robot episode, and estimate $\epsilon^{*}$ independently for each of ten seeds. We report an attack as a distinct vulnerability at (\eg $\rho{=}5$\,cm the cumulative deviation threshold in our experiments) when its $\epsilon^{*}(\rho)$ improves over the best baseline by a threat-tier factor on at least two of three tasks, under a one-sided Wilcoxon signed-rank test at $p<0.05$ on the paired per-seed ratios.
+The $\epsilon^{*}_{\mathcal{M}}(\rho)$ defines the smallest budget $\epsilon$ on grid $E$ at which attack $\mathcal{M}$ achieves a consequence meeting or exceeding $\rho$.
+So, an attack $\mathcal{M}_b$ is distinct over attacks (\eg $\mathcal{M}_1,\dots,\mathcal{M}_m$) if $\epsilon^{*}_{{\mathcal{M}_b}}(\rho)\le\gamma\,\min_{\mathcal{M}\in\{\mathcal{M}_1,\dots,\mathcal{M}_m\}}\epsilon^{*}_{\mathcal{M}}(\rho)$.
+Weaker adversarial knowledge relaxes $\gamma$ ($\gamma{=}0.7$, $0.8$, $0.9$ for white-, gray-\autoref{sec:t1_2}, and black-box \autoref{sec:t1_3}, respectively). Training-time attacks use the poison rate as budget. Metrics are reported as mean~$\pm$~std across runs. 
 
 \BfPara{Evaluation} We evaluate ABBP under the shared protocol (\autoref{eq:abbp-gate}) with $\gamma{=}0.7$ and baselines PGD, FGSM, and CW. We calibrate $(\sigma,\rho)$ against the open-loop reachability bound $\rho\le H\sqrt{|\mathcal{J}|}\,\sigma\max_{j\in\mathcal{J}}\|(WG(\bm{\theta}))_{:,j}\|_{2}\Delta_{j}$ implied by \autoref{eq:abbp-quant} and \autoref{eq:abbp-shift}, so the target remains reachable before any experiment runs. We also report the discretization-agnostic ablation ($w_j{=}1$, $\sigma{=}1$) to isolate the contribution of the physical-effect weighting.
 
@@ -574,7 +574,7 @@ Black-box attacks operate without access to the model's architecture, parameters
 \BfPara{Related Work} Query-based and transfer-based attacks are well studied for vision models~\cite{guo2019simple,hallyburton2022security,abdukhamidov2022black,juraev2024attack,abdukhamidov2023microbial} and LLMs~\cite{li2023deepinception,yao2024fuzzllm,ding-etal-2024-wolf,wei2023jailbreak,deng2024pandora}. For VLMs, Zhang \etal~\cite{zhang2024avibench} show vulnerability to decision-based black-box visual instructions, and Dong \etal~\cite{dong2023robust} show transfer attacks succeed against defended VLMs. Work on robotic foundation models remains limited to isolated jailbreak and backdoor studies~\cite{badvla,advvla}. Lu \etal~\cite{lu2026whenrobots} construct universal adversarial patches which transfer across robot policies in physical settings. Our preliminary experiments show token-level instruction perturbations degrade task success under a 500-query budget.
 \ul{In this sub-task, we propose a new query-based attack, Temporal Trajectory Drift Attack (TTDA), and we study black-box privacy attacks (\eg \emph{data reconstruction} and \emph{prompt stealing}) against robotic models.}
 
-\BfPara{Proposed Attack} While we continue to invistegate language-based attacks (\eg SHIELD \autoref{fig:visual_black_box}), we propose vision-based attack, TTDA.
+\BfPara{Proposed Attack} While we continue to investigate language-based attacks (\eg SHIELD \autoref{fig:visual_black_box}), we propose vision-based attack, TTDA.
 TTDA is a query-based black-box attack against chunking policies, \ie policies predicting a sequence of $c$ actions per inference (\eg Octo, ACT). Unlike per-step attacks, TTDA optimizes a sequence of perturbations $\bm{\delta}_{0:H}$ so each step satisfies the per-step kinematic limits of \autoref{eq:abbp-shift} and evades anomaly checks, while the executed trajectory drifts toward a task-failing state. TTDA solves:
 \vspace{-1ex}\begin{equation}
 \max_{\bm{\delta}_{0:H}}\; D_{\mathcal{M}}(H)
@@ -584,7 +584,7 @@ TTDA is a query-based black-box attack against chunking policies, \ie policies p
 \|W G(\bm{\theta}_k)\bm{u}_k\|_{2}\le\eta,
 \label{eq:ttda-obj}
 \vspace{-1.5ex}\end{equation}
-where $D_{\mathcal{M}}(H)$ is the terminal deviation of \autoref{eq:abbp-gate}, $\nu$ bounds the per-step change of the perturbation so drift accumulates slowly, and $\eta$ keeps each step below the displacement threshold of the per-step detector in \autoref{sec:t1_4}. The adversary has no gradients, so we optimize \autoref{eq:ttda-obj} with zeroth-order estimation under a query budget of $Q{=}500$. Because TTDA perturbs vision observations, it is applicable to most VLAs and most effictive against vision-focused models such as ACT. 
+where $D_{\mathcal{M}}(H)$ is the terminal deviation of \autoref{eq:abbp-gate}, $\nu$ bounds the per-step change of the perturbation so drift accumulates slowly, and $\eta$ keeps each step below the displacement threshold of the per-step detector in \autoref{sec:t1_4}. The adversary has no gradients, so we optimize \autoref{eq:ttda-obj} with zeroth-order estimation under a query budget of $Q{=}500$. Because TTDA perturbs vision observations, it is applicable to most VLAs and most effective against vision-focused models such as ACT. 
 A surrogate-based black-box variant can benefit from STAP framework. 
 We will formalize sufficient conditions for drift and characterize how chunk length $c$ affects feasibility. %, and we will extend TTDA to flow-matching policies (\eg pi-0), whose denoising trajectory provides an analogous sequence structure.
 
@@ -743,7 +743,7 @@ Gradient-based methods typically leverage inter- and intra-modality interactions
 
 
 \BfPara{Gradient-based Interpretation Methods} 
-Robotic models are mostly incorporate transformer-based components, which can use
+Robotic models mostly incorporate transformer-based components, which can use
 attention maps for interpretation. 
 Variants of these methods have been discussed in the literature, such as the Attention Rollout \cite{abnar2020quantifying}, which integrates layers to produce an average attention map. %The work by~\cite{voita-etal-2019-analyzing} specifically adapted the LRP method for transformers, addressing computational challenges.
 A recent study \cite{DBLP:journals/corr/abs-2106-12620} proposes $\text{IA-RED}^2$, enhancing transformer efficiency with human-understandable architecture.
