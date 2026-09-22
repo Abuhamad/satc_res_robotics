@@ -177,11 +177,12 @@ This task aims to establish comprehensive benchmarks and open-source tools for e
 
 
 
+
 \subsection{Intellectual Merit}
-The proposed work initiates, prioritizes, and provides a systematic approach to enhance the security and robustness of large foundation models in robotics through three main contributions: \cib{1} developing a systematic taxonomy and unified framework of threat vectors specific to multimodal robotic systems across diverse embodiments and tasks, \cib{2} establishing methodologies to analyze cross-modal attack propagation that surface under-studied vulnerabilities in vision-language-action integration, and \cib{3} creating standardized benchmarks and evaluation frameworks for robotic security, safety, and interpretability that bridge the gap between AI, cybersecurity, and robotics.
-The project will produce practical outcomes, such as security-enhanced versions of foundational robotics models along with open-source attack, defense, and interpretability tools and datasets, allowing the community to replicate and build upon our findings. 
-This research will deliver transformative resources for the robotics community, including a comprehensive attack taxonomy,  assessment methodologies for different robotic embodiments, and evaluation benchmarks that will advance secure robotic systems.
-
-
-
-
+Robotic foundation models carry an attack surface absent from vision and language models. Action heads quantize continuous control into 256 uniform bins, policies emit chunks of consecutive actions, and every predicted token maps to a physical displacement bounded by joint limits and the reachable workspace. Prior security work adapts pixel-space attacks from VLMs and scores success in token space, leaving physical consequence unmeasured. This project grounds attacks, defenses, and measurement in the action space of the robot, delivering \cib{1} a threat taxonomy for multimodal robotic systems across embodiments and tasks, \cib{2} methods for analyzing cross-modal attack propagation, and \cib{3} standardized benchmarks for robotic security, safety, and interpretability. Five artifacts realize these contributions.
+\cibx{1} Three attack families exploit structure specific to VLAs. Action-Bin Boundary Perturbation (ABBP) drives action tokens across quantization boundaries under Jacobian-weighted feasibility constraints. Surrogate-Transfer Action Perturbation (STAP) transfers perturbations from surrogates under controlled backbone, data, and embodiment mismatch. The Temporal Trajectory Drift Attack (TTDA) accumulates trajectory drift under a query budget while every step stays kinematically plausible. Poisoning and privacy variants extend these families across the NIST Trustworthy and Responsible AI attack taxonomy.
+\cibx{2} Two defenses operate on predicted actions rather than inputs, the Temporal Action Consistency Detector (TACD) and Action-Grounded Adversarial Fine-Tuning (AGAT), so both hold when the compromised modality is unknown. 
+\cibx{3} One evaluation protocol reports task success under attack, end-effector deviation, and the perturbation budget needed to halve task success, replacing the sole reliance on action-token-deviation.
+\cibx{4} Two interpretability methods explain robot behavior under attack, modality attribution isolating each modality contribution to an adversarial objective by selective reversion, and Spatial-Action Attribution (SAA) tracing a predicted action to image regions and instruction tokens.
+\cibx{5} VLA-SecBench releases the model zoo, hardened checkpoints, attacks, defenses, a cross-model transferability matrix, and the interpretability tools across various robot embodiments and datasets.
+% Preliminary results on RT-1, RT-2, Octo, and ACT in simulation and on a real Xarm7 show both visual and language perturbations degrade task success (\autoref{sec:t0}).

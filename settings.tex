@@ -53,6 +53,8 @@
 
 \newcommand*\cib[1]{\tikz[baseline=(char.base)]{
                 \node[shape=circle,fill=black,text=white,draw,inner sep=0.3pt] (char) {#1};}}
+\newcommand*\cibx[1]{\tikz[baseline=(char.base)]{
+                \node[shape=rectangle,fill=white,text=black,draw,inner sep=1.3pt,rounded corners=1pt] (char) {{\small #1}};}}
 
 \hypersetup{colorlinks=true,citecolor=blue,linkcolor=blue,urlcolor=blue}
 \newcommand{\etal}{{\em et al.}\xspace}
