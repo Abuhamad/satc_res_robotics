@@ -133,7 +133,7 @@ Although many studies focus on adversarial attacks against single modalities, li
 \begin{figure*}[t]
   \centering
   \vspace{-1.5ex}
-  \includegraphics[width=\textwidth]{figures/pipeline_6.pdf}\vspace{-2ex}
+  \includegraphics[width=\textwidth]{figures/pipeline_7.pdf}\vspace{-2ex}
   \caption{\textbf{Toward Secure, Trustworthy, End-to-End Robotic Models.} Gaps, Challenges, and Proposed Work.}
   \vspace{-4ex}
   \label{fig:pipeline}
@@ -145,36 +145,11 @@ Although many studies focus on adversarial attacks against single modalities, li
 
 
 
-% The work in this proposal revolves around the development of a secure and trustworthy end-to-end robotic ecosystem.
 Building a secure and trustworthy end-to-end robotic learning paradigm is an interconnected approach that redefines core concepts in the context of robotics. An overview of our approach and vision, including tasks and key ideas, is shown in \autoref{fig:pipeline}. 
 We consider various robot embodiments ({six robots/embodiments}) and a combination of 15 datasets including the Open {\xo}-Embodiment (OXE)~\cite{9} repository, which itself contains 60 robotic datasets.
-% Focusing on \textbf{multimodal robots}, we use data for {six robots/embodiments, and 15 datasets} across experiments (see \autoref{tab:multi_dataset}).
-% Freiburg Franka Play~\cite{rosete2022tacorl,mees23hulc2},
-% Maniskill~\cite{gu2023maniskill2},
-% Stanford Robocook~\cite{shi2023robocook},
-% CMU Franka Pick-Insert Data~\cite{saxena2023multiresolution},
-% RoboVQA~\cite{9},
-% DROID~\cite{khazatsky2024droid},
-% ConqHose~\cite{ConqHoseManipData},
-% DobbE~\cite{shafiullah2023dobbe},
-% FMB~\cite{luo2024fmb},
-% IO-AI Office PicknPlace~\cite{9},
-% RoboSet~\cite{bharadhwaj2023roboagent},
-% VIMA~\cite{jiang2023vima},
-% SPOC~\cite{spoc2023}
-% to build end-to-end robot models. %, \eg %RT-1~\cite{rt-1}, RT-2~\cite{rt-2}, RT-X~\cite{9}, ACT~\cite{zhao2023learningFB}, and OpenVLA~\cite{kim2024openvla}. 
 We leverage other datasets/benchmarks to train/fine-tune backbone VLMs, visual encoders, and LLMs.
 When we push on all fronts to explore the space to its fullest extent, we may uncover new research challenges and better equip the research community to tackle them. 
-% Each research task presents numerous interesting problems to explore and overcome. 
-%The work is wide-ranging and involves building real systems and tools, including software and hardware artifacts, and evaluating them with real data, deployments, and robots. 
 Foundation robotic models will be adopted and democratized in various platforms and industries in the near future, and our vision can be realized by conducting the following research tasks.
-
-
-
-
-%The BFree Ecosystem for Battery-free, Energy Harvesting, Failure Resilient Embedded Computing: a holistic approach to prototyping, designing, testing, programming, and deploying battery-free smart devices.
-
-
 
 
 
@@ -182,7 +157,6 @@ Foundation robotic models will be adopted and democratized in various platforms 
 
 \BfPara{T1: Vulnerability Analysis in Foundation Generalist Robots} 
 To address the large threat vector from data and task complexity, we will conduct comprehensive threat assessments and vulnerability analysis. The approach involves collecting and categorizing diverse data sources and tasks that robots encounter. We will develop detailed taxonomies of potential attacks, focusing on \textit{evasion}, \textit{poisoning}, and \textit{privacy} attacks for predictive models, as well as additional \textit{abuse} (\eg jailbreak) attacks for generative models. Implementation includes compiling a dataset of known threats, performing simulated attack scenarios in controlled environments, and using adversarial machine learning to analyze vulnerabilities. Detailed documentation of each identified vulnerability and its impact on various robotic applications will be maintained. 
-% Collaborative workshops with experts from AI, cybersecurity, and robotics will ensure a multidisciplinary perspective, and periodic reviews will be conducted to update the taxonomy with emerging threats.
 
 
 \BfPara{T2: Modality-inherited Vulnerabilities and Impact on Multimodal Robots} 
@@ -190,18 +164,13 @@ Incorporating large VLMs, VLAs, and LLMs into robotic training policies requires
 This task will focus on textual instruction, visual guidance, and actions, studying their unique impacts on robot behavior. 
 The approach involves designing and building adversarial attacks across different modalities and monitoring their effects on robotic actions to uncover/identify vulnerabilities. 
 We will propose defense mechanisms and evaluate their effects against attacks.
-%The task will culminate in a comprehensive report detailing the vulnerabilities, their impacts, and proposed mitigation strategies, along with open-source tools for the community to replicate and build upon our findings.
 
 
 
 \BfPara{T3: Benchmarks Toward Safe and Trustworthy Robotic Models} 
-% This task involves creating a comprehensive assessment benchmarks of \textit{interpretability} and \textit{safety} in generalist robots. The approach includes designing benchmark tests that simulate a variety of adversarial conditions and ethical dilemmas. 
-% We will use both real-world scenarios and controlled environments to conduct experiments and design new methods to improve robustness, interpretability, safety, and fairness.
-% Additionally, we will employ tools to ensure that robots do not inherit vulnerabilities from large-backbone models. 
 As robotic systems are increasingly adopted and democratized, ensuring their safety and interpretability is crucial. 
 Extending beyond traditional physical safety standards, we need to examine models' output safety under various conditions (both normal and adversarial). 
 This task aims to establish comprehensive benchmarks and open-source tools for evaluating and enhancing \emph{safety} and \emph{interpretability} in robotic foundation models. 
-%It addresses the critical need for trustworthy robotic systems that operate reliably in human environments,. %The goal is to establish standardized benchmarks and open-source tools that enable systematic evaluation of robotic systems under diverse conditions.
 
 
 
@@ -210,11 +179,9 @@ This task aims to establish comprehensive benchmarks and open-source tools for e
 
 \subsection{Intellectual Merit}
 The proposed work initiates, prioritizes, and provides a systematic approach to enhance the security and robustness of large foundation models in robotics through three main contributions: \cib{1} developing a systematic taxonomy and unified framework of threat vectors specific to multimodal robotic systems across diverse embodiments and tasks, \cib{2} establishing methodologies to analyze cross-modal attack propagation that surface under-studied vulnerabilities in vision-language-action integration, and \cib{3} creating standardized benchmarks and evaluation frameworks for robotic security, safety, and interpretability that bridge the gap between AI, cybersecurity, and robotics.
-% Concretely, we propose to develop two VLA-specific attack primitives exploiting mechanisms absent in VLMs: Action-Bin Boundary Perturbation (ABBP), a gradient-based attack driving predicted action tokens across the boundaries of the 256-bin action quantization under a kinematically-consistent constraint across degrees of freedom, and the Temporal Trajectory Drift Attack (TTDA), exploiting the temporal action-chunk structure of multi-step policies. We further propose two robotics-specific defenses, a Temporal Action Consistency Detector (TACD) operating at the trajectory level and Action-Grounded Adversarial Fine-Tuning (AGAT) using kinematically-constrained perturbations. We will release these components through VLA-SecBench, an open benchmark providing a cross-model transferability matrix and a spatial-action interpretability tool. 
 The project will produce practical outcomes, such as security-enhanced versions of foundational robotics models along with open-source attack, defense, and interpretability tools and datasets, allowing the community to replicate and build upon our findings. 
 This research will deliver transformative resources for the robotics community, including a comprehensive attack taxonomy,  assessment methodologies for different robotic embodiments, and evaluation benchmarks that will advance secure robotic systems.
-% The educational components of this project integrate research findings into academic courses and professional workshops. 
-% It emphasizes hands-on labs and research participation for students from various educational levels. These efforts aim to promote a strong focus on security-conscious design and implementation in AI and robotics. All offensive analysis in this project serves solely to build defenses and follows responsible-disclosure practices, and released attack tooling will be gated appropriately to prevent misuse.
+
 
 
 
