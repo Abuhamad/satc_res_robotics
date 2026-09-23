@@ -464,11 +464,17 @@ ABBP exploits this structure in two stages.
 0\le b_j+s_j\le B-1,
 \label{eq:abbp-shift}
 \vspace{-1.5ex}\end{equation}
-subject to $\hat{\bm{a}}+\bm{s}\odot\bm{\Delta}\in\mathcal{A}(\bm{\theta})$, where $\odot$ is the elementwise product, $\beta$ and $\sigma<\beta$ the total and per-dimension bin-shift budgets, $\dot a_{\max}$ the per-dimension action-rate limit, and $\mathcal{A}(\bm{\theta})$
-contains the actions $\bm{a}$ whose executed configuration $\psi(\bm{\theta},\bm{a})$ after one control period $\tau$ respects the joint limits $\mathcal{L}$ and the reachable workspace $\mathcal{W}$, and which satisfy the per-step velocity bound $\|\bm{a}-\hat{\bm{a}}\|_{\infty}\le\dot a_{\max}\tau$. 
-The objective is convex in $\bm{s}$, so the $\ell_1$ budget $\beta$ alone would concentrate the whole shift in the single dimension of largest physical gain. The per-dimension cap $\sigma<\beta$ forces the shift across several degrees of freedom, and the bin bounds keep $b_j+s_j^{*}$ decodable without post-hoc clipping.
-\cib{2} \emph{Perturbation synthesis:} With $b_j^{*}=b_j+s_j^{*}$, ABBP solves a margin objective over the visual input,
-\vspace{-1ex}\begin{equation}
+subject to $\hat{\bm{a}}+\bm{s}\odot\bm{\Delta}\in\mathcal{A}(\bm{\theta})$. Here $\odot$ is the
+elementwise product, and $\beta$ and $\sigma$ are the total and per-dimension bin-shift budgets with
+$\sigma<\beta$. The feasible set $\mathcal{A}(\bm{\theta})$ holds every action $\bm{a}$ obeying the
+per-step velocity bound $\|\bm{a}-\hat{\bm{a}}\|_{\infty}\le\dot a_{\max}\tau$ for a per-dimension
+action-rate limit $\dot a_{\max}$, and reaching a configuration $\psi(\bm{\theta},\bm{a})$ inside the
+joint limits $\mathcal{L}$ and the reachable workspace $\mathcal{W}$ after one control period $\tau$.
+The objective is convex in $\bm{s}$, so $\beta$ alone would spend the budget on the single
+highest-gain dimension, while $\sigma$ spreads the shift across several degrees of freedom, and the
+bin bounds keep $b_j+s_j^{*}$ decodable without post-hoc clipping.
+\cib{2} \emph{Perturbation synthesis:} With $b_j^{*}=b_j+s_j^{*}$, ABBP solves a margin objective over the visual input (expandable to textual input as well),
+\vspace{-3ex}\begin{equation}
   \small
 \min_{\bm{\delta}}\;\sum_{j=1}^{d} w_j
 \Bigl[\max_{c\neq b_j^{*}} z_{j,c}(\bm{x}+\bm{\delta},\bm{t})-z_{j,b_j^{*}}(\bm{x}+\bm{\delta},\bm{t})+\kappa\Bigr]_{+}
@@ -477,23 +483,38 @@ The objective is convex in $\bm{s}$, so the $\ell_1$ budget $\beta$ alone would 
 \label{eq:abbp-obj}
 \vspace{-1.5ex}\end{equation}
 where $\bm{\delta}$ is the additive image perturbation, $\epsilon$ its $\ell_{\infty}$ budget, and $N$ the number of pixel values in $\bm{x}$, with $[\cdot]_{+}=\max(\cdot,0)$, confidence margin $\kappa$, and box constraint in raw pixel space before encoder normalization. The weights are $w_j=\|(WG(\bm{\theta}))_{:,j}\|_{2}\Delta_j$ for $j\in\mathcal{J}$, so the optimizer allocates perturbation budget to the dimensions with the largest physical effect per bin, and $w_j=\lambda$ for $j\notin\mathcal{J}$. 
-Stage 1 fixes $s_j^{*}{=}0$ off $\mathcal{J}$, so $b_j^{*}{=}b_j$ there and the second group of terms pins the gripper aperture and the arm/base/terminate mode to their clean values. Without them $\bm{\delta}$ could flip the mode token to \emph{terminate}, which halts the episode and drives the displacement the attack optimizes for to zero. For $j\notin\mathcal{C}$ the inner maximum runs over that dimension's own label set rather than the $B$ bins. \autoref{eq:abbp-obj} treats the $d$ logit vectors as conditionally independent, which holds for parallel readout heads ({\eg} RT-1, Octo). For autoregressive action decoders ({\eg} RT-2, OpenVLA), the action tokens form a sequence and $\bm{z}_j$ depends on the preceding tokens, so we evaluate each margin under teacher forcing on the target prefix $b^{*}_{<j}$. We solve \autoref{eq:abbp-obj} by projected gradient descent with step $\alpha$ over $T$ iterations. Setting $w_j{=}1$ for $j\in\mathcal{J}$ and $\sigma{=}1$ while retaining $\mathcal{A}(\bm{\theta})$ yields a discretization-agnostic variant, isolating the contribution of the physical-effect weighting in an ablation.
+% Stage 1 fixes $s_j^{*}{=}0$ off $\mathcal{J}$, so $b_j^{*}{=}b_j$ there and the second group of terms pins the gripper aperture and the arm/base/terminate mode to their clean values. Without them $\bm{\delta}$ could flip the mode token to \emph{terminate}, which halts the episode and drives the displacement the attack optimizes for to zero. 
+% For $j\notin\mathcal{C}$ the inner maximum runs over that dimension's own label set rather than the $B$ bins. 
+\autoref{eq:abbp-obj} treats the $d$ logit vectors as conditionally independent, which holds for parallel readout heads ({\eg} RT-1, Octo). For autoregressive action decoders ({\eg} RT-2, OpenVLA), the action tokens form a sequence and $\bm{z}_j$ depends on the preceding tokens, so we evaluate each margin under teacher forcing on the target prefix $b^{*}_{<j}$. We solve \autoref{eq:abbp-obj} by projected gradient descent with step $\alpha$ over $T$ iterations. Setting $w_j{=}1$ for $j\in\mathcal{J}$ and $\sigma{=}1$ while retaining $\mathcal{A}(\bm{\theta})$ yields a discretization-agnostic variant, isolating the contribution of the physical-effect weighting in an ablation.
 
 
-\BfPara{ABBP in Poisoning Scenarios} The two-stage design of ABBP extends from \emph{evasion} to training-time \emph{poisoning} attacks (see \autoref{table:attacks_models}). In evasion, ABBP perturbs the input under budget $\epsilon$; in poisoning, the attacker applies the target selection $\bm{s}^{*}$ (\autoref{eq:abbp-shift}) and the margin objective (\autoref{eq:abbp-obj}) to training data, action labels, or gradient updates, and we reinterpret the attack budget as the poison rate, \ie the fraction of corrupted samples or updates. For example,
-because VLA action labels are bin indices, \emph{label flipping} reduces to setting $b_j \rightarrow b_j+s_j$ on the highest-gain dimensions $j\in\mathcal{J}$, where a shift of $\pm\sigma$ bins encodes a physically adjacent action and evades label inspection. 
-\emph{Backdoor poisoning} pairs a visual or textual trigger with labels fixed at $b_j^{*}=b_j+s_j^{*}$, so the trigger induces a kinematically feasible displacement of maximal magnitude at inference, while \emph{clean-label} and \emph{targeted} poisoning variants keep labels intact and instead perturb the observation so the model binds a context to an off-boundary action mapping. \emph{Subpopulation poisoning} concentrates corrupted samples on configurations with high Jacobian gain $\|(WG(\bm{\theta}))_{:,j}\|_{2}$, limiting degradation on clean data outside the target subpopulation. \emph{Model poisoning}, \emph{model replacement}, and \emph{model boosting} assume gradient- or model-channel access, \eg federated fine-tuning or fine-tuning-as-a-service, and use the ABBP margin as an auxiliary training loss, biasing logits near bin boundaries while clean task success stays high. \emph{Functional attacks} follow the same pattern, poisoning the learned policy toward systematic violation of a behavioral property such as the per-step velocity bound $\|\bm{a}-\hat{\bm{a}}\|_{\infty}\le\dot a_{\max}\tau$. 
+\BfPara{ABBP in Poisoning Scenarios} The two-stage design of ABBP extends from \emph{evasion} to training-time \emph{poisoning} attacks (see \autoref{table:attacks_models}). 
+In evasion, ABBP perturbs the input under budget $\epsilon$. In poisoning, the attacker applies the
+target selection $\bm{s}^{*}$ (\autoref{eq:abbp-shift}) and the margin objective
+(\autoref{eq:abbp-obj}) to training data, action labels, or gradient updates, and we reinterpret the
+attack budget as the poison rate, \ie the fraction of corrupted samples or updates.
+For example,
+because VLA action labels are bin indices, \emph{data poisoning} and \emph{label flipping} reduce to
+setting $b_j \rightarrow b_j+s^{*}_{j}$ on the dimensions \autoref{eq:abbp-shift} selects, where a
+shift of at most $\sigma$ bins encodes a physically adjacent action and evades label inspection. 
+\emph{Backdoor poisoning} pairs a visual or textual trigger with labels fixed at $b_j^{*}=b_j+s_j^{*}$, so the trigger induces a kinematically feasible displacement of maximal magnitude at inference, while \emph{clean-label} and \emph{targeted} poisoning variants keep labels intact and instead
+perturb the observation so the model binds a context to the shifted mapping $b^{*}_{j}$. 
+\emph{Subpopulation poisoning} concentrates corrupted samples on configurations with high kinematic
+gain $\|(WG(\bm{\theta}))_{:,j}\|_{2}$, limiting degradation on clean data outside the target
+subpopulation.
+\emph{Model poisoning}, \emph{model replacement}, and \emph{model boosting} assume gradient- or model-channel access, \eg federated fine-tuning or fine-tuning-as-a-service, and use the ABBP margin as an auxiliary training loss, biasing logits near bin boundaries while clean task success stays high. \emph{Functional attacks} follow the same pattern, poisoning the learned policy toward systematic violation of a behavioral property such as the per-step velocity bound $\|\bm{a}-\hat{\bm{a}}\|_{\infty}\le\dot a_{\max}\tau$. 
 % We evaluate all poisoning variants under the physical-consequence metric of \autoref{eq:abbp-gate}, with the poison rate taking the role of the budget.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
-\BfPara{Evaluation Protocol} All T1 attack families are evaluated under one protocol with
+\BfPara{Attack Evaluation Protocol} All T1 attack families are evaluated under one protocol with
 three metrics computed from a single episode. 
 Let $\mathcal{E}$ be the evaluation episodes of a task ($|\mathcal{E}|{=}25$) and $\mathcal{I}$ the independent seeds ($|\mathcal{I}|{=}10$). Each
 episode $e\in\mathcal{E}$ is run twice from an initial state, once on clean observations and once with $\mathcal{M}$ active at budget $\epsilon$, re-optimized at every step. 
-For inference-time attacks $\epsilon$ is the $\ell_{\infty}$ bound of \autoref{eq:abbp-obj}; for training-time attacks it is the poison rate. In both cases $\epsilon$ is drawn from a fixed geometric grid $E$ capped at $\epsilon_{\max}$. A run returns a task score $v_{\mathcal{M}}(e,\epsilon)\in[0,1]$ under the two-point scoring of \autoref{sec:t0}, the end-effector poses $(\bm{p}_{k},R_{k})$ and $(\bm{p}'_{k},R'_{k})$ for $k=0,\dots,H$ from forward kinematics, and the decoded bins $b_{j,k}$ and $b'_{j,k}$ of \autoref{eq:abbp-quant}.
-We write $v_{0}(e)=v_{\mathcal{M}}(e,0)$ and $\mathcal{E}_{0}=\{e\in\mathcal{E}:v_{0}(e)=1\}$ for the episodes the undefended policy completes. We fix $H$ at one quarter of the median episode of the embodiment.
+For inference-time attacks, $\epsilon$ is the $\ell_{\infty}$ bound of \autoref{eq:abbp-obj}; for training-time attacks it is the poison rate. 
+In both cases $\epsilon$ is drawn from a fixed geometric grid $E$ capped at $\epsilon_{\max}$. A run returns a task score $v_{\mathcal{M}}(e,\epsilon)\in[0,1]$ under the two-point scoring of \autoref{sec:t0}, the end-effector poses $(\bm{p}_{k},R_{k})$ and $(\bm{p}'_{k},R'_{k})$ for $k=0,\dots,H$ from forward kinematics, and the decoded bins $b_{j,k}$ and $b'_{j,k}$ of \autoref{eq:abbp-quant}.
+We write $v_{0}(e)=v_{\mathcal{M}}(e,0)$ and $\mathcal{E}_{0}=\{e\in\mathcal{E}:v_{0}(e)=1\}$ for the episodes the undefended policy completes. We fix $H$ at one quarter of the median episode of the embodiment. We measure the following metrics.
 
 \cib{1} \textbf{Physical consequence.} Comparing the two pose sequences,
 \vspace{-1ex}\begin{equation}
@@ -505,7 +526,7 @@ D^{e}_{\mathcal{M}}(H)=\bigl\|W\bm{e}_{H}\bigr\|_{2},
 \bar{D}^{e}_{\mathcal{M}}(H)=\max_{0\le k\le H}\bigl\|W\bm{e}_{k}\bigr\|_{2},
 \label{eq:abbp-gate}
 \vspace{-1.5ex}\end{equation}
-where $rv$ is the rotation-vector map of the relative rotation and $W=\mathrm{diag}(1,1,1, \ell,\ell,\ell)$ weights rotational displacement by the characteristic lever arm $\ell$ of the embodiment, so that $D$ and $\bar{D}$ carry units of length. $D^{e}_{\mathcal{M}}(H)$ is the terminal deviation, written $D_{\mathcal{M}}(H)$ when the episode is implicit (\autoref{eq:ttda-obj}); the peak deviation $\bar{D}^{e}_{\mathcal{M}}(H)$ is reported alongside it so that an excursion followed by a return is not scored as harmless. The threshold $\rho$ is calibrated per task as the smaller of the gripper-aperture clearance and the footprint of the manipulated object, (\eg $\rho{=}5$\,cm in preliminary tasks).
+where $rv$ is the rotation-vector map of the relative rotation and $W=\mathrm{diag}(1,1,1, \ell,\ell,\ell)$ weights rotational displacement by the characteristic lever arm $\ell$ of the embodiment, so that $D$ and $\bar{D}$ carry units of length. $D^{e}_{\mathcal{M}}(H)$ is the terminal deviation, written $D_{\mathcal{M}}(H)$ when the episode is implicit; the peak deviation $\bar{D}^{e}_{\mathcal{M}}(H)$ is also reported. The threshold $\rho$ is calibrated per task (\ie based on the gripper-aperture clearance and the size of manipulated object, \eg $\rho{=}5$\,cm in preliminary tasks).
 \cib{2} \textbf{Task and attack success.} From the same runs,
 \vspace{-1ex}\begin{equation}
   \small
@@ -526,9 +547,10 @@ $\mathbb{1}[\exists j:b'_{j,k}{=}b^{*}_{j,k}]$ and $\mathbb{1}[b'_{j,k}{=}b^{*}_
 j\in\mathcal{J}]$ for the targeted \textit{Contain} and \textit{Exactmatch} criteria
 \cite{lu2024test,luo2024image}, with $b^{*}_{j}$ the target bin of \autoref{eq:abbp-shift}.
 Conditioning $\mathrm{ASR}^{\mathrm{task}}$ on $\mathcal{E}_{0}$ prevents baseline policy
-failures from inflating it. A token flip is necessary but not sufficient for displacement,
-which is necessary but not sufficient for task failure, so we expect
-$\mathrm{ASR}^{\mathrm{task}}\le\mathrm{ASR}^{\mathrm{phys}}\le\mathrm{ASR}^{\mathrm{tok}}$. 
+failures from inflating it. 
+%A token flip is necessary but not sufficient for displacement,
+% which is necessary but not sufficient for task failure, so we expect
+% $\mathrm{ASR}^{\mathrm{task}}\le\mathrm{ASR}^{\mathrm{phys}}\le\mathrm{ASR}^{\mathrm{tok}}$. 
 \cib{3} \textbf{Attack cost and comparison.} For an effect $\Phi$ and threshold
 $\rho_{\Phi}$,
 \vspace{-1ex}\begin{equation}
@@ -553,7 +575,8 @@ $\epsilon^{*}_{\mathrm{tok}}=\epsilon^{*}(\mathrm{ASR}^{\mathrm{tok}}_{\mathcal{
 0.5)$ needs forward passes only.
 We report $\mathcal{M}_{b}$ as a distinct vulnerability over $\mathcal{M}_{1},\dots,\mathcal{M}_{m}$ when the median of $\hat{\gamma}^{\,i}_{ \mathcal{M}_{b}}$ over $\mathcal{I}$ satisfies $\hat{\gamma}_{\mathcal{M}_{b}}\le\gamma$ on $\epsilon^{*}_{\mathrm{TSR}}$ for at least two of three tasks. Weaker adversarial knowledge relaxes $\gamma$ ($\gamma{=}0.7$ in white-box, $\gamma_{g}{=}0.8$ in gray-box, $\gamma_{b}{=}0.9$ in black-box).
 
-\emph{Defenses.} Under the same protocol, for each attack $\mathcal{M}$,
+\BfPara{Defense Evaluation Protocol}
+Under the same protocol, for each attack $\mathcal{M}$,
 \vspace{-1ex}\begin{equation}
   \small
 \mathcal{C}_{\mathcal{M}}=\frac{\epsilon^{*}_{\mathcal{M}}(\Phi,\rho_{\Phi})\big|_{\mathrm{def}}}
@@ -592,7 +615,7 @@ $\xi_{t}$ calibrated on held-out benign episodes.
 % So, an attack $\mathcal{M}_b$ is distinct over attacks (\eg $\mathcal{M}_1,\dots,\mathcal{M}_m$) if $\epsilon^{*}_{{\mathcal{M}_b}}(\rho)\le\gamma\,\min_{\mathcal{M}\in\{\mathcal{M}_1,\dots,\mathcal{M}_m\}}\epsilon^{*}_{\mathcal{M}}(\rho)$.
 % Weaker adversarial knowledge relaxes $\gamma$ ($\gamma{=}0.7$, $0.8$, $0.9$ for white-, gray-\autoref{sec:t1_2}, and black-box \autoref{sec:t1_3}, respectively). Training-time attacks use the poison rate as budget. Metrics are reported as mean~$\pm$~std across runs. 
 
-\BfPara{Evaluation} We evaluate ABBP under the shared protocol (\autoref{eq:abbp-gate}) with $\gamma{=}0.7$ and baselines PGD, FGSM, and CW. We calibrate $(\sigma,\rho)$ against the open-loop reachability bound $\rho\le H\sqrt{|\mathcal{J}|}\,\sigma\max_{j\in\mathcal{J}}\|(WG(\bm{\theta}))_{:,j}\|_{2}\Delta_{j}$ implied by \autoref{eq:abbp-quant} and \autoref{eq:abbp-shift}, so the target remains reachable before any experiment runs. We also report the discretization-agnostic ablation ($w_j{=}1$, $\sigma{=}1$) to isolate the contribution of the physical-effect weighting.
+\BfPara{ABBP Evaluation} We evaluate ABBP under the shared protocol (\autoref{eq:abbp-gate}) with $\gamma{=}0.7$ and baselines PGD, FGSM, and CW. We calibrate $(\sigma,\rho)$ against the reachability bound $\rho\le H\sqrt{|\mathcal{J}|}\,\sigma\max_{j\in\mathcal{J}}\|(WG(\bm{\theta}))_{:,j}\|_{2}\Delta_{j}$ implied by \autoref{eq:abbp-quant} and \autoref{eq:abbp-shift}, so the target remains reachable before any experiment runs. We also report the discretization-agnostic ablation ($w_j{=}1$, $\sigma{=}1$) to isolate the contribution of the physical-effect weighting.
 
 
 \subsubsection{T1-2: Gray-box Attacks} \label{sec:t1_2}
