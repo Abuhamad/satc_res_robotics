@@ -1,10 +1,10 @@
 \section{Overview}
 
-Generalist ``foundation'' robot models are the next step toward the widespread adoption of intelligent and robust robotic systems. 
+Generalist ``\emph{foundation}'' robot models are the next step toward the widespread adoption of intelligent and robust robotic systems. 
 Inspired by the tremendous advancements in large language, vision, and vision-language models, the development of robotic foundation models is just beginning. 
-However, ensuring their security, safety, and trustworthiness remains a significant challenge. Building on these models, system designers need comprehensive frameworks, advanced security measures, and specialized methods to build secure, safe, and reliable models for downstream tasks. This proposal aims to address these critical needs, improving the security and trustworthiness of foundation robot models for real-world deployment. %We define trust as the assurance that a robotic foundation model produces safe, intended physical actions under both benign and adversarial multimodal inputs.
+However, ensuring their security, safety, and trustworthiness remains a significant challenge. Building on these models, system designers need comprehensive frameworks, advanced security measures, and specialized methods to build secure, safe, and reliable models for downstream tasks. This proposal aims to address these critical needs, improving the security and trustworthiness of foundation robot models for real-world deployment. 
 
-Millions of industrial robots (\eg logistics and manufacturing) and service robots (\eg medicine, home, transportation, defense, and military) are poised to become smarter and more reliable with advances in these foundation models. The previous barrier to the emergence of large robotic foundation models, namely, the need for large-scale ``Internet-wide'' datasets as seen in large language models (LLMs) and vision-language models (VLMs), has diminished. Recent efforts employ large-scale \xot robotic datasets and new training methods, making this challenge less critical and paving the way for significant advancements.
+Millions of industrial robots (\eg logistics and manufacturing) and service robots (\eg medicine, home, transportation, defense, and military) are poised to become smarter and more reliable with advances in these foundation models. The previous barrier to the emergence of large robotic foundation models, namely, the need for large-scale ``\emph{Internet-wide}'' datasets as seen in large language models (LLMs) and vision-language models (VLMs), has diminished. Recent efforts employ large-scale \xot robotic datasets and new training methods, making this challenge less critical and paving the way for significant advancements.
 Current efforts to build robotic foundation models, \eg Language-Vision-Action (VLA) models, focus on integrating various pre-trained models (\eg vision models, LLMs, and VLMs) for multiple modalities (\eg visual and textual instructions) used by robots. 
 The transfer learning capabilities of these components enable robotic systems to understand, interact, and learn new tasks. However, this raises concerns about potential security and safety issues that might be inherited from these models, along with other adversarial threats.% they may face.
 
@@ -12,36 +12,58 @@ The transfer learning capabilities of these components enable robotic systems to
 %This proposal seeks to fill the gap in hardware platforms, runtime systems, and tools for practical, dynamic, and capable applications on intermittently powered embedded systems.
 \observationdef{
 \begin{observation*}{}{}
-\vspace{-1ex}\textbf{This proposal seeks to address the security and trustworthiness challenges in developing foundation models for robotics, ensuring robust frameworks and defense mechanisms for integrating various pre-trained models, and securing against inherited vulnerabilities and adversarial threats.}
+\vspace{-1ex}\textbf{This proposal seeks to address the security and trustworthiness challenges in
+developing foundation models for robotics, ensuring robust frameworks and defense mechanisms for
+integrating various pre-trained models, and securing against inherited vulnerabilities and adversarial
+threats.}
 \vspace{-1ex}
 \end{observation*}
 }
 \vspace{-3ex}
 
-Neural network-based models are susceptible to adversarial manipulations, where imperceptible perturbations to the input can drastically alter the output (\eg targeting a specific output or a random incorrect output). Unlike the mature research on studying vulnerabilities in vision and LLMs, which have been the theme of AI security research for many researchers, including the PI, robotics is just beginning to tackle the complexities of securing large models. The real-time interaction of robots with dynamic environments introduces numerous attack vectors that could induce harmful behaviors, leading to safety hazards and operational failures. 
-Moreover, the integration of multiple modalities in robotics creates a complex and largely unexplored attack surface, where subtle input data manipulations can significantly degrade performance.
-Investigating these vulnerabilities is imperative for developing robust defense mechanisms tailored to the specific requirements of robotic systems. 
-The lack of comprehensive security studies and evaluation benchmarks in this field highlights the need for dedicated research to identify and mitigate the risks associated with the use of these models. Ensuring the safe deployment of robotic technologies across various applications requires a focused effort to understand and address these security challenges, paving the way for secure and reliable robotic operations in dynamic and unseen environments.
+% Neural network-based models are susceptible to adversarial manipulations, where imperceptible perturbations to the input can drastically alter the output (\eg targeting a specific output or a random incorrect output). 
+Studying vulnerabilities in vision and LLMs, which have been the theme of AI security research for many researchers including the PIs, does not transfer cleanly to robotics. %Robotics is just beginning to tackle the complexities of securing large models. 
+The integration of multiple modalities/model-components to generate physical interaction with the robot environment introduces complex and largely unexplored attack surface that can be exploited to cause harmful behaviors, safety hazards, and operational failures.
+Ensuring the safe deployment of robotic technologies across various applications requires a focused effort to understand and address these security challenges.  
+A robot policy returns a joint-angle or an end-effector pose, so every manipulated output becomes a
+physical displacement rather than a string of textual tokens. Security research on robot models has yet to
+account for this distinction, leaving the field without shared threat models, defenses, or benchmarks
+grounded in the kinematics of the robot. 
+% and without a benchmark comparing results across models and embodiments.
+This project closes those gaps by characterizing the threat space of generalist robot models across
+embodiments and levels of adversarial knowledge, exposing how vulnerabilities propagate across coupled
+modalities, grounding defenses in the action space of the robot, and releasing benchmarks for
+safety, robustness, and interpretability. %This makes the physical consequences of adversarial manipulation become measurable, defensible, and reproducible for generalist robot models.
+%This work enables the development and adoption of secure and trustworthy robotic models in real-world applications.
 
-This project builds and examines diverse models using real-world \xot datasets for various robots with different embodiments and builds security frameworks and benchmarks to address these urgent shortfalls in emerging robotic foundation models. This work enables the development and adoption of secure and trustworthy robotic models in real-world applications.
-The project promotes public acceptance and trust in robotics and impacts the community by developing comprehensive curriculum modules, organizing seminars, and promoting active research participation for high school and undergraduate students.
-% Educational initiatives aim to foster interest in secure robotics and responsible AI, and provide practical, hands-on learning opportunities.
 
 
 
 
-
-
+\begin{figure*}[t]
+  \centering
+  % \vspace{-1.5ex}
+  \includegraphics[width=\textwidth]{figures/pipeline_7.pdf}\vspace{-2ex}
+  \caption{\textbf{Toward Secure, Trustworthy, End-to-End Robotic Models.} Gaps, Challenges, and Proposed Work.}
+  \vspace{-4ex}
+  \label{fig:pipeline}
+\end{figure*}
 
 % \newpage
-\subsection{Vision, Goals, and Technical Approach}
-%This proposal advocates for a future
-~{%\vspace{-1ex}}
+\subsection{Vision, Goals, and Technical Approach} 
+
+This proposal advocates for a future with secure, trustworthy, and safe large generalist robotic models.
+Creating robot manipulators capable of performing successfully in various scenarios has been a persistent objective in robotics research \cite{kaelbling2020foundation,9,rt-1,rt-2,zhang2024vla}. 
+Recent studies have shown that generalization in robotic manipulation can be achieved using large and diverse datasets~\cite{pinto2016supersizing,kaelbling2020foundation,levine2018learning,xu2025vla,arai2025covla}. 
+Robots learn to manipulate new objects~\cite{pinto2016supersizing,levine2018learning,finn2017deep,young2021visual,9},  tasks~\cite{james2018task,dasari2021transformers,jang2022bc,9},  instructions and goals~\cite{nair2022learning,jang2022bc,jiang2023vima,mees2022matters}, and unseen environments~\cite{hansen2020self,cui2022play,9}. 
+For example, $\text{RT-2-}_\text{PaLM-E-12B}$~\cite{rt-2} achieved {93}\% overall success in seen tasks, and {62}\% average success on unseen objects, backgrounds, and environments. 
+Building a single end-to-end model that generalizes to unforeseen conditions across all these dimensions is becoming a reality~\cite{rt-1,rt-2,9,wen2025tinyvla,xu2025vla}, aligning with developments in vision and language models where large general models are pre-trained on large-scale datasets with task-agnostic open-ended training. Moreover, training robots with \xot datasets can help improve their performance~\cite{9},
+{%\vspace{-1ex}}
 \begin{wrapfigure}{r}{0.25\textwidth}%\vspace{-2ex}
   \centering
   \begin{minipage}{0.25\textwidth}
     \centering
-  \vspace{-9ex}
+  \vspace{-2ex}
   \includegraphics[width=0.9\textwidth]{figures/rtx_resultss.pdf}\vspace{-2ex}
   \caption{{\scriptsize Results of end-to-end {\xo}-embodied robot learning.}}\vspace{3ex}
   \label{fig:rt-x_result}
@@ -80,97 +102,52 @@ The project promotes public acceptance and trust in robotics and impacts the com
   \end{minipage}}%
   }
   \vspace{-2ex}
-
-  
   \caption{\scriptsize (A) Jailbreak attacks \cite{robey2024jailbreaking} causing harmful robotic actions, including collision with humans, bomb detonation, and weapon retrieval. 
-    (B) Subtle perturbations (by $3^{\circ}$) \cite{shi2024rethinking} causing  failure in quadruped locomotion.}
-  \vspace{3ex}
+    (B) Subtle perturbations (by$3^{\circ}$) \cite{shi2024rethinking} causing failure in quadruped locomotion.}
+  \vspace{-3ex}
   \label{fig:examples}
 \end{minipage}
 \end{wrapfigure}
-\vspace{-5ex}
-
-%\BfPara{Security in Robotic Learning Towards Generalist {\xo}-embodied Robots}
-\noindent This proposal advocates for a future with secure, trustworthy, and safe large generalist robotic models.
-Creating robot manipulators capable of performing successfully in various scenarios has been a persistent objective in robotics research \cite{kaelbling2020foundation,9,rt-1,rt-2,zhang2024vla}. 
-Recent studies have shown that generalization in robotic manipulation can be achieved using large and diverse datasets~\cite{pinto2016supersizing,kaelbling2020foundation,levine2018learning,xu2025vla,arai2025covla}. 
-Robots learn to manipulate new objects~\cite{pinto2016supersizing,levine2018learning,finn2017deep,young2021visual,9},  tasks~\cite{james2018task,dasari2021transformers,jang2022bc,9},  instructions and goals~\cite{nair2022learning,jang2022bc,jiang2023vima,mees2022matters}, and unseen environments~\cite{hansen2020self,cui2022play,9}. 
-For example, $\text{RT-2-}_\text{PaLM-E-12B}$~\cite{rt-2} achieved {93}\% overall success in seen tasks, and {62}\% average success on unseen objects, backgrounds, and environments. 
-Building a single end-to-end model that generalizes to unforeseen conditions across all these dimensions is becoming a reality~\cite{rt-1,rt-2,9,wen2025tinyvla,xu2025vla}, aligning with developments in vision and language models where large general models are pre-trained on large-scale datasets with task-agnostic open-ended training. 
-Moreover, training robots with \xot datasets can help improve their performance~\cite{9}, as shown in \autoref{fig:rt-x_result}.
+% \vspace{-2ex}
+as shown in \autoref{fig:rt-x_result}.
 Like other neural networks, end-to-end robotic models can be vulnerable to adversarial manipulations despite tolerating input noise.
-% Recent studies \cite{robey2024jailbreaking} shows successful jailbreak attacks on LLM-controlled robots (\autoref{fig:examples}-A) and
-%  ~\cite{shi2024rethinking} reveals adversarial vulnerabilities in quadrupedal locomotion controllers, including the DARPA Subterranean Challenge-winning policy~\cite{miki2022scirob,rslsubt2022} (\autoref{fig:examples}-B).
-Recent studies revealed security vulnerabilities in robotic systems: \cite{robey2024jailbreaking} successfully executed jailbreak attacks on LLM-controlled robots (\autoref{fig:examples}-A), while \cite{shi2024rethinking} exposed critical adversarial vulnerabilities in quadrupedal locomotion controllers, including the DARPA Subterranean Challenge-winning policy \cite{miki2022scirob,rslsubt2022} (\autoref{fig:examples}-B).
-\emph{We must systematically investigate the threat space of robotic foundation models, including the vision, language, and/or vision-language backbone models used in end-to-end learning.}
-
-Emerging industry efforts, \eg Google's RT-1 and RT-2, Nvidia's GR00T, Covariant's RFM-1, Meta's V-JEPA 2, and Tesla's Optimus show that using large high-capacity robotic models to transfer knowledge from large and diverse datasets can achieve high performance on robot-specific tasks even with smaller datasets. 
-The same trend now drives academia and laboratories worldwide, where recent generalist models such as GR00T N1~\cite{gr00tn1}, Gemini Robotics~\cite{geminirobotics2025}, $\pi_{0.5}$~\cite{pi05_2025}, RDT-1B~\cite{rdt1b}, OpenVLA-OFT~\cite{openvla_oft}, WorldVLA~\cite{cen2025worldvla}, SpatialVLA~\cite{qu2025spatialvla}, and GR-2~\cite{cheang2024gr2} extend earlier systems like OpenVLA~\cite{kim2024openvla} and Octo~\cite{team2024octo}, and this progress is expected to continue. 
+Recent works have begun exposing isolated vulnerabilities, including jailbreaking of LLM-controlled robots~\cite{robey2024jailbreaking}  (\autoref{fig:examples}-A), adversarial attacks on quadrupedal locomotion~\cite{shi2024rethinking,miki2022scirob,rslsubt2022}  (\autoref{fig:examples}-B), and emerging backdoor and adversarial attacks on vision-language-action models~\cite{badvla,advvla}. These efforts target isolated components or single models rather than the end-to-end robotic learning pipeline.
+This proposal closes that gap with a unified framework spanning threat modeling, cross-modal
+vulnerability analysis, defenses, and benchmarks, organized as three research thrusts
+(\autoref{fig:pipeline}). We have assembled the supporting infrastructure, model collection, 15 dataset sources including the Open {\xo}-Embodiment repository~\cite{9} for six robot embodiments, as well as baseline attacks (results in
+simulation and on a real Xarm7 robot are shown in \autoref{sec:t0}).
+\emph{We must investigate the threat space of robotic foundation models, including the vision, language, and/or vision-language backbone models used in end-to-end learning.}
+\\
+Emerging industry efforts, \eg Google's RT-1 and RT-2, Nvidia's GR00T, Covariant's RFM-1, Meta's V-JEPA 2, and Tesla's Optimus, show that using large high-capacity robotic models to transfer knowledge from large and diverse datasets can achieve high performance on robot-specific tasks even with smaller datasets. 
+The same trend now drives academia and laboratories worldwide \cite{openvla_oft,qu2025spatialvla,kim2024openvla,team2024octo}.%, and this progress is expected to continue.
 The open \xot \cite{9} project published a large \xot robotic dataset and shows that robots achieve better generalization when trained on such datasets.
 The democratization of these models and resources promises continuous growth in generalist robots.
-Despite this progress, the security and trustworthiness of generalist robots remain underexplored. Recent works have begun exposing isolated vulnerabilities, including jailbreaking of LLM-controlled robots~\cite{robey2024jailbreaking}, adversarial attacks on quadrupedal locomotion~\cite{shi2024rethinking}, and emerging backdoor and adversarial attacks on vision-language-action models~\cite{badvla,advvla}. These efforts target isolated components or single models rather than the end-to-end robotic learning pipeline.
-This proposal presents a unified framework spanning threat modeling, cross-modal vulnerability analysis, defenses, and benchmarks, addressing this gap through three conceptual and practical ideas: 
+This proposal presents the following three conceptual and practical ideas: 
+\\
+\BfPara{{\cib{1}} T1: Threat Space and Vulnerability Analysis} Data and task complexity create a threat
+vector no single attack characterizes. We will build a threat model spanning \textit{evasion},
+\textit{poisoning}, \textit{privacy}, and \textit{abuse} attacks, across embodiments, environments, and tasks. Rather
+than adapting pixel-space or input-token attacks from VLMs, we exploit structure specific to VLAs, the uniform
+quantization of the action space, the temporal action chunk, and the mapping from predicted action-token to
+physical displacement. Three attack families span \emph{white}-, \emph{gray}-, and \emph{black}-box adversaries, and two
+defenses inspect predicted actions rather than inputs, so both hold when the compromised modality is
+unknown. Connecting AI security and robotics grounds threat models and the defenses, ensuring practicality across embodiments.
 
+\BfPara{{\cib{2}} T2: Modality-Inherited Vulnerabilities in Multimodal Robots} Each modality carries
+its own weaknesses, and prior multimodal attacks perturb modalities independently, so alignment
+defenses detect them. We will instead target the mechanism binding vision to language in each
+architecture, \eg FiLM in RT-1~\cite{rt-1}, a projection MLP in OpenVLA~\cite{kim2024openvla}, and
+cross-attention in Octo~\cite{team2024octo}, and craft perturbations reinforcing one another at that
+layer. Reverting one modality at a time then isolates how much each contributes to the adversarial
+objective, and we evaluate representation-level defenses against the resulting attacks.
 
-\BfPara{{\cib{1}} Comprehensive Framework against Vast Threat space}
-Considering the large threat vector from data/task complexity,
-we need to implement a robotic security framework that combines systematic threat modeling, vulnerability assessment, and cross-disciplinary attack taxonomies.
-This framework will help understand the adversarial strategies that can be employed against robots (\ie with different embodiments/environments/tasks). 
-Bridging the gap across fields, \ie AI, cybersecurity, and robotics, will help the holistic understanding of the threat space and guide future research to identify threats and defenses.
-
-\BfPara{{\cib{2}} Investigation of Modality-Specific Vulnerabilities in Multimodal Robotics} Incorporating LLMs, VLMs, and VLAs into training robotic policies dictates investigating the unique vulnerabilities of each modality, such as textual instruction, visual guidance, and actions, and how these inputs impact robot actions. 
-Although many studies focus on adversarial attacks against single modalities, little work has been done on multimodal adversarial techniques. {We must identify areas of strengths and potential weaknesses in end-to-end multimodal robotic training pipeline, and advise measures to improve the security and safety of the system.}
-
-\BfPara{{\cib{3}} Benchmarks for Robustness and Trustworthiness}
-    Research must prioritize the development of evaluation frameworks that rigorously test the robustness and trustworthiness of robotic systems, ensuring that they can withstand adversarial conditions and maintain high ethical/safety standards. This is essential for building reliable generalist robots that can be trusted to operate autonomously in diverse and dynamic environments.
-    
-
-
-
-
-
-
-\begin{figure*}[t]
-  \centering
-  \vspace{-1.5ex}
-  \includegraphics[width=\textwidth]{figures/pipeline_7.pdf}\vspace{-2ex}
-  \caption{\textbf{Toward Secure, Trustworthy, End-to-End Robotic Models.} Gaps, Challenges, and Proposed Work.}
-  \vspace{-4ex}
-  \label{fig:pipeline}
-\end{figure*}
+\BfPara{{\cib{3}} T3: Benchmarks for Safety, Robustness, and Trustworthiness} Operational standards constrain robot mechanisms, not model outputs. We will convert those limits into a specification testable over predicted actions, and develop attribution methods
+tracing predicted actions to input image regions and instruction tokens. We will release open benchmarks evaluating attacks, defenses, safety, and interpretability.
 
 
 
 
 
-
-
-Building a secure and trustworthy end-to-end robotic learning paradigm is an interconnected approach that redefines core concepts in the context of robotics. An overview of our approach and vision, including tasks and key ideas, is shown in \autoref{fig:pipeline}. 
-We consider various robot embodiments ({six robots/embodiments}) and a combination of 15 datasets including the Open {\xo}-Embodiment (OXE)~\cite{9} repository, which itself contains 60 robotic datasets.
-We leverage other datasets/benchmarks to train/fine-tune backbone VLMs, visual encoders, and LLMs.
-When we push on all fronts to explore the space to its fullest extent, we may uncover new research challenges and better equip the research community to tackle them. 
-Foundation robotic models will be adopted and democratized in various platforms and industries in the near future, and our vision can be realized by conducting the following research tasks.
-
-
-
-
-
-\BfPara{T1: Vulnerability Analysis in Foundation Generalist Robots} 
-To address the large threat vector from data and task complexity, we will conduct comprehensive threat assessments and vulnerability analysis. The approach involves collecting and categorizing diverse data sources and tasks that robots encounter. We will develop detailed taxonomies of potential attacks, focusing on \textit{evasion}, \textit{poisoning}, and \textit{privacy} attacks for predictive models, as well as additional \textit{abuse} (\eg jailbreak) attacks for generative models. Implementation includes compiling a dataset of known threats, performing simulated attack scenarios in controlled environments, and using adversarial machine learning to analyze vulnerabilities. Detailed documentation of each identified vulnerability and its impact on various robotic applications will be maintained. 
-
-
-\BfPara{T2: Modality-inherited Vulnerabilities and Impact on Multimodal Robots} 
-Incorporating large VLMs, VLAs, and LLMs into robotic training policies requires investigating the vulnerabilities of each modality and the underlying backbone model. 
-This task will focus on textual instruction, visual guidance, and actions, studying their unique impacts on robot behavior. 
-The approach involves designing and building adversarial attacks across different modalities and monitoring their effects on robotic actions to uncover/identify vulnerabilities. 
-We will propose defense mechanisms and evaluate their effects against attacks.
-
-
-
-\BfPara{T3: Benchmarks Toward Safe and Trustworthy Robotic Models} 
-As robotic systems are increasingly adopted and democratized, ensuring their safety and interpretability is crucial. 
-Extending beyond traditional physical safety standards, we need to examine models' output safety under various conditions (both normal and adversarial). 
-This task aims to establish comprehensive benchmarks and open-source tools for evaluating and enhancing \emph{safety} and \emph{interpretability} in robotic foundation models. 
 
 
 
