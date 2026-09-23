@@ -202,16 +202,18 @@ Scaling up these models faces many challenges:
 \cib{3} addressing the computational demands and resource requirements of training and deployment, 
 \cib{4} managing the complexity of integrating multimodal inputs, and 
 \cib{5} ensuring reliability and safety in dynamic and unpredictable real-world settings.
-As end-to-end techniques and integration of large vision, LLM, and VLM backbones become more prevalent~\cite{9} (see the evolution of robotic models in \autoref{fig:vla-timeline}), security research for these models is limited. Generalist robotic models continue to emerge rapidly, with recent examples such as SpatialVLA, OpenVLA-OFT, {GR00T}~N1, Gemini Robotics, pi-0.5, and WorldVLA~\cite{qu2025spatialvla,openvla_oft,gr00tn1,geminirobotics2025,pi05_2025,cen2025worldvla,cheang2024gr2} added to \autoref{fig:vla-timeline}. Ensuring that these models are resilient to adversarial attacks is crucial.
+As end-to-end techniques and integration of large vision, LLM, and VLM backbones become more prevalent~\cite{9} (see the evolution of robotic models in \autoref{fig:vla-timeline}), security research for these models is limited. Generalist robotic models continue to emerge, \eg OpenVLA-OFT, {GR00T}~N1, Gemini Robotics, pi-0.5, and WorldVLA~\cite{qu2025spatialvla,openvla_oft,gr00tn1,geminirobotics2025,pi05_2025,cen2025worldvla,cheang2024gr2}. Ensuring these models resilience to attacks is crucial.
 To this end, we identify the following challenges.
+% We identify the key challenges in ensuring model resilience to adversarial attacks.
+
 
 \BfPara{C1: Wide-array of Data and Model Adoption}
 The emergence of large-scale datasets for {\xo}-embodied generalist robots across diverse robotic platforms, embodiments, and environments has enabled many advances in the field.
 Standardizing and processing these heterogeneous datasets in a consistent format requires substantial effort and innovation, as seen in efforts such as RoboNet~\cite{dasari2020robonet} and Open {\xo}-Embodiment Repository~\cite{9}. 
 These datasets cover different kinds of tasks, objects, scenarios, and settings.
 Moreover, recent work showed the benefits of learning visual representations from human video data~\cite{nair2022r3m,xiao2022masked,radosavovic2022,majumdar2024we,karamcheti2023language,mu2023ec2,bahl2023affordances} for robotics learning. 
-Beyond robot-specific or {\xo}-embodied data/demonstrations, more and more data will inevitably be included in the pursuit of generalist robots.
-This introduces new security and safety challenges that must be addressed to prevent/mitigate vulnerabilities.
+Beyond robot-specific or {\xo}-embodied data, more data will inevitably be included to train generalist models.
+This introduces security/safety challenges that must be addressed to prevent/mitigate vulnerabilities.
 
 
 \BfPara{C2: Multimodal Data and Model Integration} 
