@@ -551,6 +551,7 @@ failures from inflating it.
 %A token flip is necessary but not sufficient for displacement,
 % which is necessary but not sufficient for task failure, so we expect
 % $\mathrm{ASR}^{\mathrm{task}}\le\mathrm{ASR}^{\mathrm{phys}}\le\mathrm{ASR}^{\mathrm{tok}}$. 
+
 \cib{3} \textbf{Attack cost and comparison.} For an effect $\Phi$ and threshold
 $\rho_{\Phi}$,
 \vspace{-1ex}\begin{equation}
@@ -645,7 +646,7 @@ Black-box attacks operate without access to the model's architecture, parameters
 \BfPara{Related Work} Query-based and transfer-based attacks are well studied for vision models~\cite{guo2019simple,hallyburton2022security,abdukhamidov2022black,juraev2024attack,abdukhamidov2023microbial} and LLMs~\cite{li2023deepinception,yao2024fuzzllm,ding-etal-2024-wolf,wei2023jailbreak,deng2024pandora}. For VLMs, Zhang \etal~\cite{zhang2024avibench} show vulnerability to decision-based black-box visual instructions, and Dong \etal~\cite{dong2023robust} show transfer attacks succeed against defended VLMs. Work on robotic foundation models remains limited to isolated jailbreak and backdoor studies~\cite{badvla,advvla}. Lu \etal~\cite{lu2026whenrobots} construct universal adversarial patches which transfer across robot policies in physical settings. Our preliminary experiments show token-level instruction perturbations degrade task success under a 500-query budget.
 \ul{In this sub-task, we propose a new query-based attack, Temporal Trajectory Drift Attack (TTDA), and we study black-box privacy attacks (\eg \emph{data reconstruction} and \emph{prompt stealing}) against robotic models.}
 
-\BfPara{Proposed Attack} While we continue to investigate language-based attacks (\eg SHIELD \autoref{fig:visual_black_box}), we propose vision-based attack, TTDA.
+\BfPara{Proposed Attack} While we continue to investigate language-based attacks (\eg SHIELD \autoref{fig:lang_black_box}), we propose vision-based attack, TTDA.
 TTDA is a query-based black-box attack against chunking policies, \ie policies predicting a sequence of $c$ actions per inference (\eg Octo, ACT). Unlike per-step attacks, TTDA optimizes a sequence of perturbations $\bm{\delta}_{0:H}$ so each step satisfies the per-step kinematic limits of \autoref{eq:abbp-shift} and evades anomaly checks, while the executed trajectory drifts toward a task-failing state. TTDA solves:
 \vspace{-1ex}\begin{equation}
 \max_{\bm{\delta}_{0:H}}\; D_{\mathcal{M}}(H)
@@ -656,8 +657,8 @@ TTDA is a query-based black-box attack against chunking policies, \ie policies p
 \label{eq:ttda-obj}
 \vspace{-1.5ex}\end{equation}
 where $D_{\mathcal{M}}(H)$ is the terminal deviation of \autoref{eq:abbp-gate}, $\nu$ bounds the per-step change of the perturbation so drift accumulates slowly, and $\eta$ keeps each step below the displacement threshold of the per-step detector in \autoref{sec:t1_4}. The adversary has no gradients, so we optimize \autoref{eq:ttda-obj} with zeroth-order estimation under a query budget of $Q{=}500$. Because TTDA perturbs vision observations, it is applicable to most VLAs and most effective against vision-focused models such as ACT. 
-A surrogate-based black-box variant can benefit from STAP framework. 
-We will formalize sufficient conditions for drift and characterize how chunk length $c$ affects feasibility. %, and we will extend TTDA to flow-matching policies (\eg pi-0), whose denoising trajectory provides an analogous sequence structure.
+A surrogate-based black-box variant can benefit from STAP. 
+% We will formalize sufficient conditions for drift and characterize how chunk length $c$ affects feasibility. %, and we will extend TTDA to flow-matching policies (\eg pi-0), whose denoising trajectory provides an analogous sequence structure.
 
 \BfPara{TTDA in Privacy Attacks} Black-box privacy attacks use the same query interface. For \emph{data reconstruction}, the adversary crafts observation sequences whose predicted actions reveal episodes from the victim's fine-tuning data, scored by the action-agreement measure $r(e)$ of \autoref{sec:t1_2}. For \emph{prompt stealing}, the adversary queries a language-conditioned victim and recovers the conditioning prompt from behavioral shifts in $\{\bm{a}_{out}\}$. Prompt stealing applies only to language-conditioned models and excludes vision-only models.
 
@@ -693,9 +694,13 @@ We additionally report the query-efficiency curve (episodes reaching $\rho$ vers
 
 
 \subsubsection{T1-4: Defense Strategies} \label{sec:t1_4}
-\begin{wraptable}{r}{0.36\textwidth}{\vspace{-3ex}}
+Defense strategies detect and/or mitigate attacks at inference time or during training. Inference-time defenses (\eg anomaly detection, pre- and post-proccessing methods) address evasion and abuse attacks, while training-time defenses (robust fine-tuning, alignment) harden the model against evasion and poisoning.% (\autoref{table:attacks_models}).
+
+\BfPara{Related Work} Several existing defenses (\autoref{tab:defense}) were designed for VLMs. % and will be adapted to robotic models. 
+JailGuard~\cite{zhang2023mutation} and ECSO~\cite{gou2024eyes} 
+\begin{wraptable}{r}{0.3\textwidth}%{\vspace{-3ex}}
 \centering
-\caption{(\textbf{T})raining \& (\textbf{I})nference defenses.}\vspace{-2ex}
+\caption{\scriptsize(\textbf{T})raining\&(\textbf{I})nference defenses.}\vspace{-2ex}
 \label{tab:defense}
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{l}
@@ -716,10 +721,8 @@ We additionally report the query-efficiency curve (episodes reaching $\rho$ vers
 \end{tabular}
 }\vspace{-2ex}
 \end{wraptable}
-Defense strategies detect and/or mitigate attacks at inference time or during training. Inference-time defenses (\eg anomaly detection, pre- and post-proccessing methods) address evasion and abuse attacks, while training-time defenses (robust fine-tuning, alignment) harden the model against evasion and poisoning.% (\autoref{table:attacks_models}).
-\\
-\BfPara{Related Work} Several existing defenses (\autoref{tab:defense}) were designed for VLMs.% and will be adapted to robotic models. 
-JailGuard~\cite{zhang2023mutation} and ECSO~\cite{gou2024eyes} identify multimodal jailbreaking attacks during inference. MLLM-Protector~\cite{pi2024mllm} detects harmful inputs and detoxifies output responses. InferAligner~\cite{wang2024inferaligner} performs inference-time safety alignment. %Alignment methods, mainly Instruction Tuning and Reinforcement Learning from Human Feedback, align model behavior with expected values and intentions. 
+identify multimodal jailbreaking attacks during inference. 
+ MLLM-Protector~\cite{pi2024mllm} detects harmful inputs and detoxifies output responses. InferAligner~\cite{wang2024inferaligner} performs inference-time safety alignment. %Alignment methods, mainly Instruction Tuning and Reinforcement Learning from Human Feedback, align model behavior with expected values and intentions. 
 Prompt-engineering defenses~\cite{wu2023jailbreaking,wang2024adashield,chen2023can} optimize the prompt to harden the model. Training-time VLM defenses construct robust feedback or prompts~\cite{chen2023dress,zhang2023adversarial,li2024one}, or train robust VLMs by fine-tuning or contrastive learning~\cite{li2024red,yang2024robust}. Recent work has begun to develop VLA-specific defenses, including structure-aware robust fine-tuning, randomized smoothing for certified robustness, and backdoor token reconstruction~\cite{zhang2026structure,seferis2025randomized,li2026whenattention}. These defenses operate on the input or the model parameters, and none inspects the physical plausibility of the predicted actions.
 {\ul{In this sub-task, we propose two robotics-specific defenses, the Temporal Action Consistency Detector (TACD) and Action-Grounded Adversarial Fine-Tuning (AGAT), and benchmark them against various defenses.}}
 
@@ -733,6 +736,9 @@ where $\bm{a}_{k'}$ is the action the policy predicts at step $k'$ and $\xi_t$ i
 
 % \BfPara{Evaluation} We evaluate TACD and AGAT under the shared protocol of \autoref{sec:t1_1} against three baseline defenses: input smoothing, VLM-ported adversarial training, and ensemble voting. For detection, we report TACD as effective if its true-positive rate on ABBP, STAP, and TTDA exceeds 90\% at the calibrated 1\% false-positive rate on benign episodes, on at least two of the three tasks. For robustness, we report AGAT as effective if it raises the attack cost by at least $2\times$, \ie $\epsilon^{*}_{\mathcal{M}}(\rho)$ on the defended model is at least twice $\epsilon^{*}_{\mathcal{M}}(\rho)$ on the undefended model for each attack $\mathcal{M}$, or if it degrades each attack to the level of the best baseline defense. We report detection-rate versus false-positive Pareto curves across attacks, models, and embodiments, each as mean~$\pm$~std over multiple runs.
 
+\begin{comment}
+  
+
 \subsubsection{Deliverables} \label{sec:t1_evaluation}
 % We will benchmark various attacks (\autoref{table:attacks_models}) and defenses (\autoref{tab:defense}) against state-of-the-art robotic models using comprehensive datasets. Our primary metric is task success rate (TSR) under attack, a binary task-completion judgment using the two-point scoring system of our preliminary experiments. We retain the 30\% action-token deviation as a secondary physical-consequence proxy, alongside Attack Success Rate, \textit{Contain} \cite{lu2024test} (presence of attacker-specific action tokens), \textit{Exactmatch} \cite{luo2024image,lu2024test} (perfect match with attacker-specific tokens), transferability, and perturbation imperceptibility. 
 % To further ground these token-level metrics in physical consequences, we report maximum end-effector action displacement and the rate of safety-zone and force-threshold violations. We evaluate our proposed defenses against at least three baseline defenses, and we construct a full model~$\times$~model~$\times$~attack transferability matrix across the model families and embodiments in our scope. We report all metrics as mean~$\pm$~std over at least ten runs with multiple seeds, and assess significance with Welch's $t$-test.
@@ -740,7 +746,7 @@ where $\bm{a}_{k'}$ is the action the policy predicts at step $k'$ and $\xi_t$ i
 Deliverables include: \cib{1} a comprehensive framework of attack vectors (and defenses) specific to robotic models
 with target modalities, tasks, and embodiments, \cib{2} open-source implementation includes datasets, developed attacks, defenses, and evaluations, and \cib{3} publications/reports/labs on findings and methodologies.
 
-
+\end{comment}
 
 
 \subsection{T2: Modality-inherited Vulnerabilities and Impact on Multimodal Robots} \label{sec:t2}
@@ -764,7 +770,7 @@ By understanding and leveraging these interactions, we aim to develop more robus
 \ul{In this task, variations of attacks by}~{\cite{qi2024visual,walmer2022dual}} \ul{will be implemented against robotic models.}
 
 
-
+\begin{comment}
 \subsubsection{Evaluation Plan and Deliverables} \label{sec:t2_evaluation}
 
 We will benchmark various multimodal attacks, measuring their effectiveness across multiple robot embodiments and tasks. As in T1, our primary metric is task success rate (TSR) under attack, with the 30\% action-token deviation retained as a secondary proxy.
@@ -776,7 +782,7 @@ As in T1, we also report maximum end-effector action displacement and safety-zon
 We will align this protocol with recent physically-grounded evaluation practice for robot policies~\cite{sun2026maniparena}.
 Deliverables include: \cib{1} a comprehensive framework for multimodal attacks/defenses against robotic foundation models, analyzing how vulnerabilities propagate across modalities, \cib{2} open-source implementations of developed multimodal attacks, defenses, and benchmarks, and \cib{3} academic publications/reports/labs on findings and methodologies.
 
- 
+ \end{comment}
 
 
 \subsection{T3: Benchmarks Toward Safe and Trustworthy Robotic Models} \label{sec:t3}
@@ -843,14 +849,14 @@ A study by~\cite{DBLP:conf/aaai/SalinFAF22} introduces inference tasks to unders
 \ul{We aim to investigate both gradient- and inference-based techniques to better understand predicted robotic actions. We will develop methods to interpret the decisions made by robotic models.}
 Recent work has begun to explore spatial-grounding attribution and neuro-symbolic spatial reasoning for embodied models, which we will build on for action-level interpretation~\cite{schofield2026chain,jahangard2025multimodal}.
 
-
+\begin{comment}
 \subsubsection{Evaluation Plan and Deliverables} \label{sec:t3_evaluation}
 Visualization techniques, \eg heatmaps and saliency maps, will be used to interpret how the model makes decisions under both normal and adversarial conditions.
 Case studies on specific instances (\ie instruction-action pairs) where the model fails or succeeds will be conducted to understand the behavior of the model.
 There will be human-in-the-loop evaluations that include reviewing and interpreting the results, ensuring that the methods align with human understanding and expectations.
 Deliverables include: \cib{1} benchmarks for safety and interpretability of robotic foundation models, \cib{2} open-source implementations of developed safety and interpretability methods, and \cib{3} academic publications/reports/labs on findings and methodologies.
+\end{comment}
 
 
 
-
-\input{sections/timeline.tex}
+% \input{sections/timeline.tex}
