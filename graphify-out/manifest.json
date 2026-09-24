@@ -1,0 +1,302 @@
+{
+  ".vscode/settings.json": {
+    "mtime": 1789754289.7506194,
+    "seen": 1790263655.421035,
+    "ast_hash": "fe1a44d7d6ac6e1075ab1a0e4b94675e",
+    "semantic_hash": "fe1a44d7d6ac6e1075ab1a0e4b94675e"
+  },
+  ".agents/rules/graphify.md": {
+    "mtime": 1790263099.0775263,
+    "seen": 1790263655.4210382,
+    "ast_hash": "f1e53ecc9194573d3c28fc116c743a2e",
+    "semantic_hash": "f1e53ecc9194573d3c28fc116c743a2e"
+  },
+  ".agents/workflows/graphify.md": {
+    "mtime": 1790263099.0777822,
+    "seen": 1790263655.421039,
+    "ast_hash": "6d73634a678cf1e1c71930adf80bd1f0",
+    "semantic_hash": "6d73634a678cf1e1c71930adf80bd1f0"
+  },
+  ".github/agents/Academic-Reviewer.agent.md": {
+    "mtime": 1788193708.8850646,
+    "seen": 1790263655.42104,
+    "ast_hash": "f4c1f905441248744347905980c536f5",
+    "semantic_hash": "f4c1f905441248744347905980c536f5"
+  },
+  ".github/agents/Architect.agent.md": {
+    "mtime": 1788193712.7694778,
+    "seen": 1790263655.421041,
+    "ast_hash": "fafe6fe00d42356a2a78aef938ef8a6e",
+    "semantic_hash": "fafe6fe00d42356a2a78aef938ef8a6e"
+  },
+  ".github/agents/Auditor.agent.md": {
+    "mtime": 1788886282.1304617,
+    "seen": 1790263655.421041,
+    "ast_hash": "1e7941e5d6dd84fe60fc784c654a7624",
+    "semantic_hash": "1e7941e5d6dd84fe60fc784c654a7624"
+  },
+  ".github/agents/Context.agent.md": {
+    "mtime": 1788886313.2927172,
+    "seen": 1790263655.421042,
+    "ast_hash": "dc90ff719db172c351c4df06962f58e7",
+    "semantic_hash": "dc90ff719db172c351c4df06962f58e7"
+  },
+  ".github/agents/Integrity-Reviewer.agent.md": {
+    "mtime": 1788193729.6463068,
+    "seen": 1790263655.421043,
+    "ast_hash": "37e0c58faf6b8cd75777320c91feb5ac",
+    "semantic_hash": "37e0c58faf6b8cd75777320c91feb5ac"
+  },
+  ".github/agents/Novelty-detector.agent.md": {
+    "mtime": 1788886361.4124315,
+    "seen": 1790263655.421043,
+    "ast_hash": "cf966ca6e1a5b3005054c0e14a669d95",
+    "semantic_hash": "cf966ca6e1a5b3005054c0e14a669d95"
+  },
+  ".github/agents/Orchestrator.agent.md": {
+    "mtime": 1788887328.6429281,
+    "seen": 1790263655.4210439,
+    "ast_hash": "a0aa76d2748d7b2299efd7e950aeca57",
+    "semantic_hash": "a0aa76d2748d7b2299efd7e950aeca57"
+  },
+  ".github/agents/Planner.agent.md": {
+    "mtime": 1788886371.180366,
+    "seen": 1790263655.4210439,
+    "ast_hash": "9fba4b875e0f9c5e06a2d8fd90239a5a",
+    "semantic_hash": "9fba4b875e0f9c5e06a2d8fd90239a5a"
+  },
+  ".github/agents/Reader.agent.md": {
+    "mtime": 1788886390.3940845,
+    "seen": 1790263655.421045,
+    "ast_hash": "4721033c29456688d35d19e560122735",
+    "semantic_hash": "4721033c29456688d35d19e560122735"
+  },
+  ".github/agents/Researcher.agent.md": {
+    "mtime": 1788886759.9663062,
+    "seen": 1790263655.421046,
+    "ast_hash": "51e60d84c41b5b00f0711a580956feff",
+    "semantic_hash": "51e60d84c41b5b00f0711a580956feff"
+  },
+  ".github/agents/Revision-Coach.agent.md": {
+    "mtime": 1788193763.3072336,
+    "seen": 1790263655.421046,
+    "ast_hash": "b6500f55e79365a1d433c03fce55c80b",
+    "semantic_hash": "b6500f55e79365a1d433c03fce55c80b"
+  },
+  ".github/agents/Visualization.agent.md": {
+    "mtime": 1788192789.602221,
+    "seen": 1790263655.421047,
+    "ast_hash": "5018fe2c7a501f30f0483cd27213ce5d",
+    "semantic_hash": "5018fe2c7a501f30f0483cd27213ce5d"
+  },
+  ".github/agents/Writer.agent.md": {
+    "mtime": 1788192797.282832,
+    "seen": 1790263655.421047,
+    "ast_hash": "1875326c40bb409c474ef87089a35437",
+    "semantic_hash": "1875326c40bb409c474ef87089a35437"
+  },
+  ".github/instructions/writing.instructions.md": {
+    "mtime": 1782329873.9430335,
+    "seen": 1790263655.4210482,
+    "ast_hash": "fcf03be71646b743310cb4c378168f50",
+    "semantic_hash": "fcf03be71646b743310cb4c378168f50"
+  },
+  ".github/skills/building_skill/SKILL.md": {
+    "mtime": 1782328889.9578953,
+    "seen": 1790263655.421049,
+    "ast_hash": "ca2183a0683406ab519755767296eb12",
+    "semantic_hash": "ca2183a0683406ab519755767296eb12"
+  },
+  ".github/skills/doublecheck/SKILL.md": {
+    "mtime": 1774623048.4590487,
+    "seen": 1790263655.421049,
+    "ast_hash": "cc83ed102fd7631adbb50cac364145e5",
+    "semantic_hash": "cc83ed102fd7631adbb50cac364145e5"
+  },
+  ".github/skills/doublecheck/assets/verification-report-template.md": {
+    "mtime": 1774623048.4592667,
+    "seen": 1790263655.42105,
+    "ast_hash": "f4de41c57161f86e0f4052e783208610",
+    "semantic_hash": "f4de41c57161f86e0f4052e783208610"
+  },
+  ".github/skills/prompt-boost/SKILL.md": {
+    "mtime": 1774623048.4594839,
+    "seen": 1790263655.42105,
+    "ast_hash": "e6297a1bf98d826204095be67bf55b00",
+    "semantic_hash": "e6297a1bf98d826204095be67bf55b00"
+  },
+  ".github/skills/proposal-review-boost/SKILL.md": {
+    "mtime": 1788887406.98702,
+    "seen": 1790263655.4210508,
+    "ast_hash": "e45ebe1c4d1a013ce12529faaa7e313e",
+    "semantic_hash": "e45ebe1c4d1a013ce12529faaa7e313e"
+  },
+  ".github/skills/writer-academic-writing-cs/SKILL.md": {
+    "mtime": 1782328573.4633024,
+    "seen": 1790263655.421052,
+    "ast_hash": "2addabe3aec49c4eb054c44bc83c54c2",
+    "semantic_hash": "2addabe3aec49c4eb054c44bc83c54c2"
+  },
+  ".github/skills/writing-quality-check/SKILL.md": {
+    "mtime": 1782329185.9017923,
+    "seen": 1790263655.421052,
+    "ast_hash": "6d26a3fe9fc7ad0d9daa9330475d568b",
+    "semantic_hash": "6d26a3fe9fc7ad0d9daa9330475d568b"
+  },
+  ".github/skills/writing-quality-check/references/burstiness.md": {
+    "mtime": 1782329259.2966979,
+    "seen": 1790263655.421053,
+    "ast_hash": "bc6ce4fe6beb456a0ef580a8413abfb7",
+    "semantic_hash": "bc6ce4fe6beb456a0ef580a8413abfb7"
+  },
+  ".github/skills/writing-quality-check/references/high-frequency-terms.md": {
+    "mtime": 1782329201.4845316,
+    "seen": 1790263655.421053,
+    "ast_hash": "b3fcb47b487977330b0e5b3bc64e30d5",
+    "semantic_hash": "b3fcb47b487977330b0e5b3bc64e30d5"
+  },
+  ".github/skills/writing-quality-check/references/punctuation-patterns.md": {
+    "mtime": 1782329215.04617,
+    "seen": 1790263655.421054,
+    "ast_hash": "b4aa9e66f5e7c03b6205dfba70cb8372",
+    "semantic_hash": "b4aa9e66f5e7c03b6205dfba70cb8372"
+  },
+  ".github/skills/writing-quality-check/references/structure-patterns.md": {
+    "mtime": 1782329244.1441371,
+    "seen": 1790263655.421054,
+    "ast_hash": "3a6136bbae76d96134879a10ca972267",
+    "semantic_hash": "3a6136bbae76d96134879a10ca972267"
+  },
+  ".github/skills/writing-quality-check/references/throat-clearing.md": {
+    "mtime": 1782329226.6965764,
+    "seen": 1790263655.421055,
+    "ast_hash": "96eda51d5a962c5045a3b3ec61768232",
+    "semantic_hash": "96eda51d5a962c5045a3b3ec61768232"
+  },
+  ".github/skills/writing_abstract/SKILL.md": {
+    "mtime": 1775680209.4974577,
+    "seen": 1790263655.421055,
+    "ast_hash": "696196e5e2b2504f33254b381400600a",
+    "semantic_hash": "696196e5e2b2504f33254b381400600a"
+  },
+  ".github/skills/writing_introduction/SKILL.md": {
+    "mtime": 1775682602.762835,
+    "seen": 1790263655.421056,
+    "ast_hash": "03e84061d3a679d1b82b395cb4ce6914",
+    "semantic_hash": "03e84061d3a679d1b82b395cb4ce6914"
+  },
+  ".vscode/ltex.dictionary.en-US.txt": {
+    "mtime": 1788892853.1273384,
+    "seen": 1790263655.421057,
+    "ast_hash": "a28f752b34de06cab8673e68c9be3f59",
+    "semantic_hash": "a28f752b34de06cab8673e68c9be3f59"
+  },
+  "artifacts/academic_review.md": {
+    "mtime": 1788888345.940755,
+    "seen": 1790263655.421057,
+    "ast_hash": "cbd52c46b5ee0e9f6cb90c22fa65e82e",
+    "semantic_hash": "cbd52c46b5ee0e9f6cb90c22fa65e82e"
+  },
+  "artifacts/auditor_feasibility.md": {
+    "mtime": 1788888337.1824853,
+    "seen": 1790263655.421058,
+    "ast_hash": "1c39fe54dc8115bc098f6c1672a1fe42",
+    "semantic_hash": "1c39fe54dc8115bc098f6c1672a1fe42"
+  },
+  "artifacts/context_report.md": {
+    "mtime": 1788194906.8864188,
+    "seen": 1790263655.421058,
+    "ast_hash": "f3cc371c21037d135e06f1465d223bf7",
+    "semantic_hash": "f3cc371c21037d135e06f1465d223bf7"
+  },
+  "artifacts/integrity_review.md": {
+    "mtime": 1788887852.9797008,
+    "seen": 1790263655.4210591,
+    "ast_hash": "bd632fc30fe244f5eefb5171a276e72b",
+    "semantic_hash": "bd632fc30fe244f5eefb5171a276e72b"
+  },
+  "artifacts/integrity_review_final.md": {
+    "mtime": 1788891225.4052193,
+    "seen": 1790263655.4210591,
+    "ast_hash": "2310dcb098258d23783441b45d6a01c0",
+    "semantic_hash": "2310dcb098258d23783441b45d6a01c0"
+  },
+  "artifacts/novelty_assessment.md": {
+    "mtime": 1788887817.366531,
+    "seen": 1790263655.42106,
+    "ast_hash": "2f54f206f34109eb215f71a1b6e9658b",
+    "semantic_hash": "2f54f206f34109eb215f71a1b6e9658b"
+  },
+  "artifacts/research_plan_timeline.md": {
+    "mtime": 1788200517.7548437,
+    "seen": 1790263655.421061,
+    "ast_hash": "78521acdcdd54b11341956b31cee74d2",
+    "semantic_hash": "78521acdcdd54b11341956b31cee74d2"
+  },
+  "artifacts/researcher_report.md": {
+    "mtime": 1788194906.8866985,
+    "seen": 1790263655.421061,
+    "ast_hash": "934dbbe23459113503a0ead9b9c84a29",
+    "semantic_hash": "934dbbe23459113503a0ead9b9c84a29"
+  },
+  "artifacts/revision_plan.md": {
+    "mtime": 1788889587.7972872,
+    "seen": 1790263655.421062,
+    "ast_hash": "1ec77dc9bb8c457504267959bf018ca0",
+    "semantic_hash": "1ec77dc9bb8c457504267959bf018ca0"
+  },
+  "artifacts/timeline_update.md": {
+    "mtime": 1788462154.3450813,
+    "seen": 1790263655.421062,
+    "ast_hash": "5ec0901de5cdcdcf423253ea3a41de19",
+    "semantic_hash": "5ec0901de5cdcdcf423253ea3a41de19"
+  },
+  "artifacts/writer_changelog.md": {
+    "mtime": 1788890061.5477624,
+    "seen": 1790263655.421063,
+    "ast_hash": "0d11b36eb354cc0bd6313d39f8650fd5",
+    "semantic_hash": "0d11b36eb354cc0bd6313d39f8650fd5"
+  },
+  "figures/examples/1.png": {
+    "mtime": 1788192593.093177,
+    "seen": 1790263655.421064,
+    "ast_hash": "7f2f1e682347cea208a52e7c612b610a",
+    "semantic_hash": "7f2f1e682347cea208a52e7c612b610a"
+  },
+  "figures/examples/2.png": {
+    "mtime": 1788192593.0935893,
+    "seen": 1790263655.421064,
+    "ast_hash": "17c0282deca9663edaf24663d0479f7f",
+    "semantic_hash": "17c0282deca9663edaf24663d0479f7f"
+  },
+  "figures/examples/3.png": {
+    "mtime": 1788192593.093942,
+    "seen": 1790263655.4210649,
+    "ast_hash": "db8698b7076015074fd52f2721635f37",
+    "semantic_hash": "db8698b7076015074fd52f2721635f37"
+  },
+  "figures/examples/4.png": {
+    "mtime": 1788192593.0945234,
+    "seen": 1790263655.4210649,
+    "ast_hash": "ea2fbcae7f0bffb72496922069dd388f",
+    "semantic_hash": "ea2fbcae7f0bffb72496922069dd388f"
+  },
+  "figures/examples/5.png": {
+    "mtime": 1788192593.095152,
+    "seen": 1790263655.421066,
+    "ast_hash": "292d6605e425d6c31e0f5b7a48acce99",
+    "semantic_hash": "292d6605e425d6c31e0f5b7a48acce99"
+  },
+  "figures/examples/6.png": {
+    "mtime": 1788192593.0957642,
+    "seen": 1790263655.421067,
+    "ast_hash": "7a4633b7662ba40002122455739ae51c",
+    "semantic_hash": "7a4633b7662ba40002122455739ae51c"
+  },
+  "figures/results/lang_black_box.png": {
+    "mtime": 1788192593.2643697,
+    "seen": 1790263655.421067,
+    "ast_hash": "5818a569226077e8b706e1c1b42f66a4",
+    "semantic_hash": "5818a569226077e8b706e1c1b42f66a4"
+  }
+}
