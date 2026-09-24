@@ -14,7 +14,7 @@ The core concept relies on the systematic evaluation and discovery of potential 
 \caption{{Datasets augmenting OXE~\cite{9} for robots (\textbf{R}), \textbf{F}ranka, \textbf{G}oogle Robot, \textbf{S}pot, \textbf{H}ello Stretch, \textbf{U}R5, Hu\textbf{M}an}, and \textbf{X}arm7, with control frequency (\textbf{Hz}) and \textbf{\#} of episodes.}
 \label{tab:multi_dataset}\vspace{-2ex}
 \resizebox{0.97\linewidth}{!}{%
-\begin{tabular}{lcclc}
+\begin{tabular}{p{4cm}ccp{4cm}c}
 \toprule
 Dataset                     & \textbf{R}         &\textbf{ \#} & {Action Space}                           & \textbf{Hz}           \\
 \midrule
@@ -248,25 +248,26 @@ For end-to-end robotic models, this task addresses all categories of attacks (\a
 \begin{wraptable}{r}{0.4\textwidth}
 \centering 
 \vspace{-7.5ex}
-\caption{{\footnotesize Stages (Training and Inference), targets (Privacy, Integrity, Availability, and Abuse) and types ( White- (\dd), Gray- (\bb), and Black-box (\vv) ) of common Evasion, Poisoning, and Privacy attacks.}}\vspace{-2ex}
+\caption{{\footnotesize Stages (Training and Inference), targets (Privacy, Integrity, Availability, and Abuse) and types ( White- (\dd), Gray- (\bb), and Black-box (\vv) ) of common Evasion, Poisoning, and Privacy attacks.}}\vspace{-2.5ex}
 \label{table:attacks_models}
 \small
-\resizebox{0.98\linewidth}{!}{%
+\resizebox{0.92\linewidth}{!}{%
 \begin{tblr}{
 rowsep=0pt,
-  column{3} = {c},
-  column{4} = {c},
-  column{5} = {c},
-  column{6} = {c},
-  column{7} = {c},
-  column{8} = {c},
-  column{9} = {c},
+column{1} = {c,0.1cm},
+  column{3} = {c,0.15cm},
+  column{4} = {c,0.15cm},
+  column{5} = {c,0.15cm},
+  column{6} = {c,0.15cm},
+  column{7} = {c,0.15cm},
+  column{8} = {c,0.15cm},
+  column{9} = {c,0.15cm},
   cell{2}{1} = {r=8}{},
   cell{10}{1} = {r=10}{},
   cell{20}{1} = {r=6}{},
   hline{2,10,20,26} = {-}{},
 }
-                                                  &                                & \begin{sideways}Training\end{sideways} & \begin{sideways}Inference\end{sideways} & \begin{sideways}Privacy\end{sideways} & \begin{sideways}Integrity\end{sideways} & \begin{sideways}Availability\end{sideways} & \begin{sideways}Abuse\end{sideways} & \begin{sideways}Type\end{sideways} \\
+                                                  &                                & \begin{sideways}{\rotatebox{-45} {Training}}\end{sideways} & \begin{sideways}{\rotatebox{-45} {Inference}}\end{sideways} & \begin{sideways}{\rotatebox{-45} {Privacy}}\end{sideways} & \begin{sideways}{\rotatebox{-45} {Integrity}}\end{sideways} & \begin{sideways}{\rotatebox{-45} {Availability}}\end{sideways} & \begin{sideways}{\rotatebox{-45} {Abuse}}\end{sideways} & \begin{sideways}{\rotatebox{-45} {Type}}\end{sideways} \\
 \begin{sideways}Evasion      ~\end{sideways}      & Indirect Prompt Injection      & \ee                                       & \checkmark                                         & \checkmark                                       & \checkmark                                         & \checkmark                                            & \checkmark                                     & \vv                          \\
                                                   & Universal Adversarial Triggers & \ee                                       & \checkmark                                         & \ee                                      & \ee                                        & \ee                                           & \checkmark                                     & \vv                          \\
                                                   & Gradient-based Attacks         & \checkmark                                        & \checkmark                                         & \ee                                      & \ee                                        & \ee                                           & \ee                                    & \dd                          \\
