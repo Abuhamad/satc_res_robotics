@@ -88,21 +88,7 @@ Action encoding and discretization are performed as in \cite{rt-1} for the RT-1 
 To ensure that RT-2 outputs valid action tokens during decoding, the output vocabulary is
 constrained to only sampling valid action tokens when the model is prompted with a robot-action task.
 We note that the model, \ie the original VLM, can still output the full range of language tokens on standard vision-language tasks.
-Our implementation focuses on the RT-2-PaLI-X variants~\cite{chen2023palix} built on the backbone of ViT~\cite{dosovitskiy2021image} visual model and UL2~\cite{tay2023ul2} language model, and pre-trained on WebLI~\cite{chen2023palix} dataset. %Variations of RT-2 will be implemented as RT-2-X designs for \xod training.
-We will explore other VLMs (see \autoref{tab:VLMs} for common open-source VLMs with their components) in the RT-2-X implementation.% for \xod training. 
-% \autoref{tab:VLMs} lists common open-source VLMs along with their respective components.
-% Typically, a VLM is composed of three key elements: a visual encoder (\ie vision model), an adapter, and an LLM backbone. 
-% The visual encoder extracts visual features from the input images, facilitating subsequent LLM reasoning and understanding of visual semantics. 
-% The most used visual encoders are pre-trained ViT models, with popular choices including the ViT-L model from CLIP \cite{radford2021learning} and the ViT-g from EVA-CLIP \cite{fang2023eva}. 
-% In addition to ViT-based models, other approaches employ ImageBind \cite{girdhar2023imagebind} and NFNet-F6 \cite{brock2021high}, among others, as visual encoders.
-% The adapter module connects the visual and textual input modalities. 
-% VLMs use various adapters, from basic architectures such as linear layers and MLPs to advanced ones such as Q-Former \cite{li2023blip} and cross-attention \cite{vaswani2017attention}.
-% For the LLM component, the LLaMA family is commonly preferred as the LLM backbone, primarily due to its open source status and the range of versions available to suit different requirements/capacities, such as LLaMA \cite{touvron2023llama}, LLaMA-2 \cite{touvron2023llama2}, Vicuna, and Vicuna-v1.5 \cite{chiang2023vicuna}. 
-% Other LLM backbones include Flan-T5 \cite{chung2024scaling}, MPT \cite{mosaicml2023introducing}, Chinchilla \cite{hoffmann2022training}, OPT \cite{zhang2022opt}, Mixtral \cite{jiang2024mixtral}, and Qwen \cite{bai2023aqwen}. 
-% We plan to explore variations of VLMs in building RT-2-X and evaluate the impact of architecture design on the development of robotic models. %Similarly, multiple vision models with the RT-1-X design will be evaluated.
-
-% \noindent\textbf{\cib{3} } Variants of RT-1 and RT-2 with different base/backbone models will be implemented to assess the impact of design choices on performance and robustness of models. In addition, we will evaluate the impact of incorporation of various datasets, including \xot datasets, on the generalization, performance, and robustness of models.
-% We note that other implementations of generalist robotic models, \eg ~{MOO}~\cite{stone2023open} will be included in our evaluation. {MOO}~\cite{stone2023open} employs a VLM to generate an additional image channel for a semantic map, which is subsequently fed into an RT-1 backbone.
+Our implementation focuses on RT-2-X variants with common open-source VLMs (see \autoref{tab:VLMs} for their components). 
 \begin{wraptable}{r}{0.4\textwidth}
 \centering
 \vspace{-2ex}
@@ -135,7 +121,7 @@ is an open-source alternative to RT-2~\cite{rt-2}. % that is built on the open-s
 OpenVLA, as other VLAs, follows the same design principles that include training/fine-tuning open-source VLMs which consist of three components: vision tokenizer/encoder/adapter, LLM backbone, and action decoder/tokenizer. 
 OpenVLA uses Prismatic VLM (7B-parameter) and is trained on 970k real-world robot demonstrations outperforming larger models like RT-2 ($\sim$55B). The Prismatic VLM uses dual vision encoders (DINOv2 \cite{oquab2023dinov2} and SigLIP \cite{zhai2023sigmoid}) and a LLaMA-2 language model \cite{touvron2023llama}.
 Variants of OpenVLA, \eg  ReVLA~\cite{dey2024revla}, Edge-VLA~\cite{budzianowski20edgevla}, PointVLA~\cite{li2025pointvla}, and CoVLA~\cite{arai2025covla} (see \autoref{fig:vla-timeline}), have been proposed to improve the original design in terms of performance, efficiency, reasoning, and/or specialty.
-Similar to RT-2-X, we will adopt various open-source VLMs/components (in \autoref{tab:VLMs}) to build/train [X]-VLA variants.
+Similar to RT-2-X, we will adopt various open-source VLMs/components to build/train [X]-VLA variants.
 
 
 % \noindent\textbf{\cib{4} RoboCat~\cite{bousmalis2023robocat}} RoboCat follows a different approach by conditioning the model on visual goal. The architecture is VQ-GAN encoder which is based on the Gato architecture~\cite{esser2021taming} that processes the image (with $128\times128$ resolution) as $8\times8$ tokens and outputs encoded vectors. These vectors are then discretized via a nearest-neighbor lookup in a codebook of embeddings.
@@ -697,8 +683,8 @@ We additionally report the query-efficiency curve (episodes reaching $\rho$ vers
 \subsubsection{T1-4: Defense Strategies} \label{sec:t1_4}
 Defense strategies detect and/or mitigate attacks at inference time or during training. Inference-time defenses (\eg anomaly detection, pre- and post-proccessing methods) address evasion and abuse attacks, while training-time defenses (robust fine-tuning, alignment) harden the model against evasion and poisoning.% (\autoref{table:attacks_models}).
 
-\BfPara{Related Work} Several existing defenses (\autoref{tab:defense}) were designed for VLMs. % and will be adapted to robotic models. 
-JailGuard~\cite{zhang2023mutation} and ECSO~\cite{gou2024eyes} 
+\BfPara{Related Work} Several existing defenses (\autoref{tab:defense}) were designed for VLMs. Recent work has begun to 
+% JailGuard~\cite{zhang2023mutation} and ECSO~\cite{gou2024eyes} 
 \begin{wraptable}{r}{0.3\textwidth}%{\vspace{-3ex}}
 \centering
 \caption{\scriptsize(\textbf{T})raining\&(\textbf{I})nference defenses.}\vspace{-2ex}
@@ -722,9 +708,10 @@ JailGuard~\cite{zhang2023mutation} and ECSO~\cite{gou2024eyes}
 \end{tabular}
 }\vspace{-2ex}
 \end{wraptable}
-identify multimodal jailbreaking attacks during inference. 
- MLLM-Protector~\cite{pi2024mllm} detects harmful inputs and detoxifies output responses. InferAligner~\cite{wang2024inferaligner} performs inference-time safety alignment. %Alignment methods, mainly Instruction Tuning and Reinforcement Learning from Human Feedback, align model behavior with expected values and intentions. 
-Prompt-engineering defenses~\cite{wu2023jailbreaking,wang2024adashield,chen2023can} optimize the prompt to harden the model. Training-time VLM defenses construct robust feedback or prompts~\cite{chen2023dress,zhang2023adversarial,li2024one}, or train robust VLMs by fine-tuning or contrastive learning~\cite{li2024red,yang2024robust}. Recent work has begun to develop VLA-specific defenses, including structure-aware robust fine-tuning, randomized smoothing for certified robustness, and backdoor token reconstruction~\cite{zhang2026structure,seferis2025randomized,li2026whenattention}. These defenses operate on the input or the model parameters, and none inspects the physical plausibility of the predicted actions.
+% identify multimodal jailbreaking attacks during inference. 
+%  MLLM-Protector~\cite{pi2024mllm} detects harmful inputs and detoxifies output responses. InferAligner~\cite{wang2024inferaligner} performs inference-time safety alignment. %Alignment methods, mainly Instruction Tuning and Reinforcement Learning from Human Feedback, align model behavior with expected values and intentions. 
+% Prompt-engineering defenses~\cite{wu2023jailbreaking,wang2024adashield,chen2023can} optimize the prompt to harden the model. Training-time VLM defenses construct robust feedback or prompts~\cite{chen2023dress,zhang2023adversarial,li2024one}, or train robust VLMs by fine-tuning or contrastive learning~\cite{li2024red,yang2024robust}. 
+develop VLA-specific defenses, including structure-aware robust fine-tuning, randomized smoothing for certified robustness, and backdoor token reconstruction~\cite{zhang2026structure,seferis2025randomized,li2026whenattention}. These defenses operate on the input or the model parameters, and none inspects the physical plausibility of the predicted actions.
 {\ul{In this sub-task, we propose two robotics-specific defenses, the Temporal Action Consistency Detector (TACD) and Action-Grounded Adversarial Fine-Tuning (AGAT), and benchmark them against various defenses.}}
 
 \BfPara{Proposed Defense 1} We propose TACD, an action-space anomaly detector operating on predicted actions rather than inputs. Because TACD inspects the action output directly, it complements input-side defenses and remains effective when the compromised modality is unknown. TACD operates at two levels. At the per-step level, it flags actions violating the kinematic bounds of \autoref{eq:abbp-shift}, \ie joint limits, the reachable workspace, and the per-step velocity bound. At the sequence level, a multi-task trajectory-forecasting model conditioned on a task embedding, trained jointly on the benign demonstrations of all tasks, forecasts $\hat{\bm{a}}_{k:k+c}$ from the action history $\bm{a}_{k-c:k}$, and flags an anomaly when
