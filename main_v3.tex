@@ -1129,13 +1129,23 @@ Defense strategies detect and/or mitigate attacks at inference time or during tr
 develop VLA-specific defenses, including structure-aware robust fine-tuning, randomized smoothing for certified robustness, and backdoor token reconstruction~\cite{zhang2026structure,seferis2025randomized,li2026whenattention}. These defenses operate on the input or the model parameters, and none inspects the physical plausibility of the predicted actions.
 {\ul{In this sub-task, we propose two robotics-specific defenses, the Temporal Action Consistency Detector (TACD) and Action-Grounded Adversarial Fine-Tuning (AGAT), and benchmark them against various defenses.}}
 
-\BfPara{Proposed Defense 1} We propose TACD, an action-space anomaly detector operating on predicted actions rather than inputs. Because TACD inspects the action output directly, it complements input-side defenses and remains effective when the compromised modality is unknown. TACD operates at two levels. At the per-step level, it flags actions violating the kinematic bounds of \autoref{eq:abbp-shift}, \ie joint limits, the reachable workspace, and the per-step velocity bound. At the sequence level, a multi-task trajectory-forecasting model conditioned on a task embedding, trained jointly on the benign demonstrations of all tasks, forecasts $\hat{\bm{a}}_{k:k+c}$ from the action history $\bm{a}_{k-c:k}$, and flags an anomaly when
-$
-{\sf{max}}_{k'\in[k,k+c)} \bigl\|W\bigl(\bm{a}_{k'}-\hat{\bm{a}}_{k'}\bigr)\bigr\|_{2} > \xi_t,
-$
-where $\bm{a}_{k'}$ is the action the policy predicts at step $k'$ and $\xi_t$ is a per-task threshold calibrated on held-out benign episodes to a 1\% false-positive rate. The sequence-level check catches TTDA-style drift (\autoref{eq:ttda-obj}) that satisfies every per-step bound, since the cumulative deviation diverges from the forecast even when each individual action is kinematically feasible.
+\BfPara{Proposed Defense 1} We propose TACD, an action-space anomaly detector operating on predicted actions rather than inputs. Because TACD inspects the action output directly, it complements input-side defenses and remains effective when the compromised modality is unknown. TACD operates at two levels. At the per-step level, it flags actions outside the feasible set $\mathcal{A}(\bm{\theta})$ of \autoref{eq:abbp-shift}, \ie actions violating joint limits, the reachable workspace, or the per-step velocity bound. At the sequence level, a multi-task trajectory-forecasting model conditioned on a task embedding, trained jointly on the benign demonstrations of all tasks, forecasts $\hat{\bm{a}}_{k:k+c}$ from the action history $\bm{a}_{k-c:k}$, where the horizon equals the policy chunk length $c$ of \autoref{sec:t2_2}, and raises an alarm when
+\vspace{-1ex}\begin{equation}
+  \small
+s_k=\max_{k'\in[k,k+c)} \bigl\|W\bigl(\bm{a}_{k'}-\hat{\bm{a}}_{k'}\bigr)\bigr\|_{2},
+\qquad
+\mathrm{flag}_k=\mathbb{1}\bigl[\,\bm{a}_k\notin\mathcal{A}(\bm{\theta}_k)\ \lor\ s_k>\xi_t\,\bigr],
+\label{eq:tacd-rule}
+\vspace{-1.5ex}\end{equation}
+where $\bm{a}_{k'}$ is the action the policy predicts at step $k'$, $W$ is the displacement weighting of \autoref{eq:abbp-shift}, and $\xi_t$ is a per-task threshold calibrated on held-out benign episodes to a 1\% false-positive rate. The sequence-level check catches TTDA-style drift (\autoref{eq:ttda-obj}) that satisfies every per-step bound, since the cumulative deviation diverges from the forecast even when each individual action is kinematically feasible.
 
-\BfPara{Proposed Defense 2} We complement detection with AGAT, which augments fine-tuning with kinematically-constrained ABBP-style perturbations sampled from \autoref{eq:abbp-obj}. The training distribution mixes on-manifold bin-adjacent shifts ($\sigma{=}1$) with occasional larger boundary crossings ($\sigma{>}1$), so the model learns to resist various threat models. AGAT applies LoRA rank-16 adaptation to the action head and the final transformer blocks ($\sim$25M parameters) rather than full-model tuning, keeping the defense compute-feasible and efficient.
+\BfPara{Proposed Defense 2} We complement detection with AGAT, which augments fine-tuning with kinematically-constrained ABBP-style perturbations. Formally, AGAT minimizes a mixture of the clean task loss and the task loss under perturbations drawn from the attack distribution,
+\vspace{-1ex}\begin{equation}
+  \small
+\min_{\bm{\omega}_{\mathrm{LoRA}}}\;\mathbb{E}_{(\bm{x},\bm{t},\bm{a})}\Bigl[\mathcal{L}_{\mathrm{task}}\bigl(\mathcal{F}(\bm{x},\bm{t}),\bm{a}\bigr)+\lambda_{\mathrm{adv}}\,\mathbb{E}_{\bm{\delta}\sim\mathcal{D}_{\mathrm{ABBP}}}\,\mathcal{L}_{\mathrm{task}}\bigl(\mathcal{F}(\bm{x}+\bm{\delta},\bm{t}),\bm{a}\bigr)\Bigr],
+\label{eq:agat-obj}
+\vspace{-1.5ex}\end{equation}
+where $\mathcal{D}_{\mathrm{ABBP}}$ is the perturbation distribution induced by \autoref{eq:abbp-obj} subject to the kinematic feasible set $\mathcal{A}(\bm{\theta})$ of \autoref{eq:abbp-shift}, mixing on-manifold bin-adjacent shifts ($\sigma{=}1$) with occasional larger boundary crossings ($\sigma{>}1$) so the model learns to resist various threat models. The same objective admits textual and joint perturbations drawn from \autoref{eq:abbp-obj-text} and \autoref{eq:abbp-obj-joint}, and we include them in the mixture, since textual augmentation requires no image rendering. AGAT and the attacks of \autoref{sec:t1} thus share one saddle point: the attack maximizes the margin of \autoref{eq:abbp-obj} while AGAT minimizes the task loss under the same perturbations. AGAT applies LoRA rank-16 adaptation to the action head and the final transformer blocks ($\sim$25M parameters, $\bm{\omega}_{\mathrm{LoRA}}$) rather than full-model tuning, keeping the defense compute-feasible and efficient.
 
 % \BfPara{Evaluation} We evaluate TACD and AGAT under the shared protocol of \autoref{sec:t1} against three baseline defenses: input smoothing, VLM-ported adversarial training, and ensemble voting. For detection, we report TACD as effective if its true-positive rate on ABBP, STAP, and TTDA exceeds 90\% at the calibrated 1\% false-positive rate on benign episodes, on at least two of the three tasks. For robustness, we report AGAT as effective if it raises the attack cost by at least $2\times$, \ie $\epsilon^{*}_{\mathcal{M}}(\rho)$ on the defended model is at least twice $\epsilon^{*}_{\mathcal{M}}(\rho)$ on the undefended model for each attack $\mathcal{M}$, or if it degrades each attack to the level of the best baseline defense. We report detection-rate versus false-positive Pareto curves across attacks, models, and embodiments, each as mean~$\pm$~std over multiple runs.
 
@@ -1153,23 +1163,38 @@ Under the same protocol, for each attack $\mathcal{M}$,
 \label{eq:defense-metrics}
 \vspace{-1.5ex}\end{equation}
 where $\mathcal{C}_{\mathcal{M}}$ is the multiplicative attack-cost increase, $\mathcal{T}$ the clean-task
-cost of the defense, and $\mathrm{TPR}_{\mathcal{M}}$ the TACD detection rate at the threshold
-$\xi_{t}$ calibrated on held-out benign episodes. 
-
-
+cost of the defense, and $\mathrm{TPR}_{\mathcal{M}}$ the detection rate of the TACD rule of \autoref{eq:tacd-rule} at the threshold
+$\xi_{t}$ calibrated on held-out benign episodes. We benchmark TACD and AGAT against the input-side VLM defenses of \autoref{tab:defense}, namely mutation-based detection~\cite{zhang2023mutation,gou2024eyes}, output protection~\cite{pi2024mllm}, and inference-time alignment~\cite{wang2024inferaligner}, together with input smoothing, VLM-ported adversarial training, and ensemble voting, so the action-space defenses are measured against the strongest available input-space alternatives.
 
 \subsubsection{T3-2: Safety Assessment of Robotic Foundation Models} \label{sec:t3_2}
-Ensuring safety has been a crucial aspect of robotics since the introduction of the earliest industrial robots.
-Safety, defined as the condition of being protected from or unlikely to cause danger, risk, or injury, is a critical issue in Industrial Robotics, where more than 1.5 million industrial robots operate in factories worldwide.
-Although there are high standards of operational safety of robotics, such as ISO 13482:2014 personal care robots, ISO 10218-1 and ISO 10218-2 for industrial robots, and ISO/TS 15066 for collaborative robots, safety in foundation robotic models should address possible harm or bias in output given certain inputs (benign or adversarial).
-In relation to such safety aspects, there have been no previous works that addressed such issues, except physical safety~\cite{FoschVillaronga2015CreationOA,RePEc:eps:cepswp:26204,10.3389/frobt.2022.1002226}.
-A study by~\cite{fosch21} explores the interaction between robots, cybersecurity, and safety from a European legal perspective, illustrating cybersecurity challenges and their subsequent safety implications with the concrete example of care robots.
-Another study by~\cite{tadokoro19} provides an overview of the ImPACT Tough Robotics Challenge and Strategy for Disruptive Innovation in Safety and Security (ImPACT-TRC), a project by the Japan Cabinet Office focusing on robotic technologies for disaster response, recovery, and preparedness.
-To ensure the safety of the robot model, an effective and innovative validation process is crucial. This is difficult due to the restricted number of validation scenarios which may fail to reflect real-world intricacies, along with the significant computational expense of identifying infrequent failures.
-Several prior studies have established standardized push-recovery testbeds by imposing consistent external perturbations on the legged robot under varying control strategies \cite{zhangei2023quadruped-tro, weng2023standard-legged-test, weng2023comparability}.
+Operational safety of robots is governed by established standards, among them ISO 13482:2014 for personal care robots, ISO 10218-1 and ISO 10218-2 for industrial robots, and ISO/TS 15066 for collaborative robots, and by prior work on validation under rare failures and on standardized physical testbeds~\cite{FoschVillaronga2015CreationOA,RePEc:eps:cepswp:26204,10.3389/frobt.2022.1002226,fosch21,tadokoro19,zhangei2023quadruped-tro,weng2023standard-legged-test,weng2023comparability}. These frameworks assess the robot as a physical system; none assesses the foundation model as the component that can be driven to unsafe outputs by benign or adversarial inputs.
 Recent work has begun to release dedicated VLA security benchmarks and physically-grounded evaluation suites, which we will build on and compare against~\cite{li2025attackvla,sun2026maniparena}.
+\ul{To assess the safety of generalist robot models, we propose a violation-based assessment protocol that measures how often a model, defended or not, produces physically unsafe behavior under attacks and under benign distribution shift.}
+We define a per-episode safety-violation event from the physical quantities of \autoref{sec:t1},
+\vspace{-1ex}\begin{equation}
+  \small
+\mathcal{V}(e)=\mathbb{1}\Bigl[\,\exists k:\ \bm{a}_k\notin\mathcal{A}(\bm{\theta}_k)\ \lor\ \bigl\|W\bm{e}_k\bigr\|_{2}>\rho_{\mathrm{safe}}\,\Bigr],
+\label{eq:safety-violation}
+\vspace{-1.5ex}\end{equation}
+where $\mathcal{A}(\bm{\theta}_k)$ is the kinematic feasible set of \autoref{eq:abbp-shift}, $\bm{e}_k$ the weighted pose deviation of \autoref{eq:abbp-gate}, and $\rho_{\mathrm{safe}}$ a per-task safety margin calibrated from gripper clearance and object size, as for $\rho$ in \autoref{sec:t1}. Safety assessment is then the estimation of $\Pr[\mathcal{V}]$ per condition over the evaluation episodes, with conditions spanning the attack families of \autoref{sec:t1} and \autoref{sec:t2}, the defenses of \autoref{sec:t3_1}, and benign shifts in lighting, clutter, and instruction phrasing, so the assessment covers both adversarial and non-adversarial failure modes. Because $\mathcal{V}$ subsumes the per-step detector of \autoref{eq:tacd-rule}, the same protocol scores the defenses and certifies the detector, and the resulting violation rates form the safety benchmark of this task.
 
-\ul{To evaluate the safety measures of generalist robot models, we propose examining various defense mechanisms that enhance robustness and safety. We will develop methods similar to JailGuard~}\cite{zhang2023mutation}\ul{, ECSO~}\cite{gou2024eyes}\ul{,  MLLM-Protector~}\cite{pi2024mllm}\ul{, InferAligner~}\cite{wang2024inferaligner}\ul{ to detect/normalize safety-critical outputs during inference.}
+\BfPara{Estimation and Verification} Each condition $q$ is a cell of the condition matrix $\mathcal{Q}$ (model $\times$ attack $\times$ defense $\times$ shift), and within a cell we run the $|\mathcal{E}||\mathcal{I}|$ episode-seed pairs of \autoref{sec:t1}, giving the estimator and confidence bound
+\vspace{-1ex}\begin{equation}
+  \small
+\hat p_q=\frac{1}{|\mathcal{E}||\mathcal{I}|}\sum_{e,i}\mathcal{V}(e,i,q),
+\qquad
+\bigl|\hat p_q-p_q\bigr|\le\sqrt{\tfrac{\ln(2/\alpha)}{2\,|\mathcal{E}||\mathcal{I}|}}
+\;\;\text{with probability }1-\alpha,
+\label{eq:safety-est}
+\vspace{-1.5ex}\end{equation}
+by the Hoeffding bound, since $\mathcal{V}\in\{0,1\}$; at the shared protocol size the half-width is below $0.13$ at $\alpha{=}0.05$, and we report exact Clopper-Pearson intervals alongside. Rare unsafe events are the failure mode of naive estimation: in benign cells, where $p_q$ may sit below the grid resolution, we apply importance sampling over the shift distribution, biasing lighting, clutter, and phrasing toward configurations with high kinematic gain $\|(WG(\bm{\theta}))_{:,j}\|_{2}$ and correcting by the likelihood ratio, so the estimator stays unbiased at a fraction of the episode count.
+Verification proceeds by falsification: the attack families of \autoref{sec:t1} and \autoref{sec:t2} act as stress generators that search each cell for witnesses of $\mathcal{V}$, and the assessment reports both the rate $\hat p_q$ and the witness set, so every claimed-safe cell carries the strongest counterexample search we can mount.
+
+\BfPara{Testing and Acceptance} Three criteria make the assessment decidable.
+\cib{1} \emph{Benign safety:} $\hat p_q\le p_{0}$ with the upper confidence bound below $p_{0}$ in every benign cell, for a per-task rate $p_{0}$ fixed before experiments, \eg $p_{0}{=}0.01$ on the benchmark tasks.
+\cib{2} \emph{Defense efficacy:} for each attack $\mathcal{M}$, the defended cells satisfy $\hat p_q^{\,\mathrm{def}}\le \gamma_{s}\,\hat p_q^{\,\mathrm{undef}}$ with $\gamma_{s}{=}0.5$, paralleling the cost criterion $\mathcal{C}_{\mathcal{M}}$ of \autoref{eq:defense-metrics} in terms of violations rather than attack budget, and the two criteria are reported together.
+\cib{3} \emph{Detector consistency:} the TACD rule of \autoref{eq:tacd-rule} attains $\mathrm{TPR}\ge0.9$ against $\mathcal{V}$-positive episodes at the calibrated $1\%$ false-positive rate, which tests whether the detector of \autoref{sec:t3_1} certifies the violation event of this task.
+A model-defense pair passes the assessment when all three criteria hold; the pass/fail matrix over $\mathcal{Q}$, the per-cell intervals, and the witness sets form the delivered safety benchmark.
 
 
 \subsubsection{T3-3: Interpretation of Robotic Foundation Models} \label{sec:t3_3}
