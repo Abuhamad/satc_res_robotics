@@ -885,7 +885,7 @@ subpopulation.
 
 
 
-\subsubsection{T1-2: Multimodal Adversarial Attacks}  \label{sec:t1_2}
+\subsubsection{T1-2: Multimodal White-Box Action-Space Attacks}  \label{sec:t1_2}
 This task aims to examine the security and defense strategies derived from the targeting of one or more modalities used by robots. 
 Although much progress has been made in designing adversarial attacks in individual modalities (\eg vision or language), the interaction between modalities remains less explored. Existing attackers, even with multimodal systems, generally treat the perturbations of different modalities separately and design them independently. 
 However, this results in less interactive relations between the perturbed multimodal inputs and can be easily recognized by security alignment methods (\ie methods
@@ -903,7 +903,41 @@ Recent work has begun to explore physical attention-hijacking and patch attacks 
 By understanding and leveraging these interactions, we aim to develop more robust defense mechanisms that can protect against sophisticated multimodal adversarial attacks. We will also assess robustness techniques such as CleanCLIP~\cite{bansal2023cleanclip}, which retrains multimodal representations to reduce cross-modal misalignment, as a complementary defense against these attacks.
 \ul{In this task, variations of ABBP attacks will be explored and evaluated.}
 
+\BfPara{ABBP over Language Instructions}
+The two-stage design of ABBP extends from the visual input to the language instruction $\bm{t}$ with no change to the action-space machinery, because only perturbation synthesis touches the input domain.
+Target selection (\autoref{eq:abbp-shift}) operates entirely in action and kinematic space, so it is modality-agnostic and transfers verbatim; the selected shift $\bm{s}^{*}$ and target bins $b_j^{*}=b_j+s_j^{*}$ are unchanged.
+What changes is the synthesis step (\autoref{eq:abbp-obj}): instead of perturbing the image, we perturb the instruction and solve the same weighted hinge margin over the logits, now driven by $\bm{t}$,
+\vspace{-1ex}\begin{equation}
+  \small
+\min_{\bm{t}'}\;\sum_{j=1}^{d} w_j
+\Bigl[\max_{c\neq b_j^{*}} z_{j,c}(\bm{x},\bm{t}')-z_{j,b_j^{*}}(\bm{x},\bm{t}')+\kappa\Bigr]_{+}
+\quad\text{s.t.}\quad
+\mathcal{C}_{\mathrm{text}}(\bm{t},\bm{t}')\le\epsilon_t,
+\label{eq:abbp-obj-text}
+\vspace{-1.5ex}\end{equation}
+where $\bm{t}'$ is the perturbed instruction and the weights $w_j=\|(WG(\bm{\theta}))_{:,j}\|_{2}\Delta_j$ and margin $\kappa$ are exactly those of \autoref{eq:abbp-obj}.
+Because the input is a discrete token sequence, we replace the projected-gradient solver of \autoref{eq:abbp-obj} with a first-order token-substitution search in the embedding space of the instruction encoder, followed by nearest-token projection; the gradient of the margin with respect to each token embedding identifies the highest-impact replacements.
+The constraint $\mathcal{C}_{\mathrm{text}}$ must play the role that the $\ell_{\infty}$ ball and pixel box play for vision, and it carries two requirements.
+The first is a bounded edit budget $d_{\mathrm{edit}}(\bm{t},\bm{t}')\le k$ together with an embedding-similarity floor, so the perturbation stays imperceptible in the same sense that $\epsilon$ bounds the pixel change.
+The second is semantic equivalence: without it, editing the instruction degenerates into changing the task rather than attacking it, and the clean reference trajectory in \autoref{eq:abbp-gate} no longer isolates the effect of the attack.
+We therefore restrict $\bm{t}'$ to meaning-preserving edits, namely synonym substitution, paraphrase, reordering, misspelling, and appended adversarial suffixes, and we enforce this with a similarity threshold under a reference sentence encoder.
+The poisoning constructions of \autoref{sec:t1_1} extend to the textual channel unchanged, since label flipping and backdoor poisoning already admit a textual trigger paired with the shifted labels $b_j^{*}$.
 
+\BfPara{ABBP over Joint Visual and Language Input}
+We then formulate the tightly-multimodal attack as a joint optimization over both modalities.
+Let $\bm{\delta}_x$ denote the visual perturbation of \autoref{eq:abbp-obj} and $\bm{t}'$ the perturbed instruction of \autoref{eq:abbp-obj-text}. The joint objective couples the shared action-margin loss with a grounding term that forces the two perturbations to co-reinforce at the vision-language fusion layer,
+\vspace{-1ex}\begin{equation}
+  \small
+\min_{\bm{\delta}_x,\,\bm{t}'}\;\sum_{j=1}^{d} w_j
+\Bigl[\max_{c\neq b_j^{*}} z_{j,c}(\bm{x}+\bm{\delta}_x,\bm{t}')-z_{j,b_j^{*}}(\bm{x}+\bm{\delta}_x,\bm{t}')+\kappa\Bigr]_{+}
+\;-\;\lambda_c\,\bigl\|\Phi(\bm{x}+\bm{\delta}_x,\bm{t}')-\Phi(\bm{x},\bm{t})\bigr\|_{2}
+\label{eq:abbp-obj-joint}
+\vspace{-1.5ex}\end{equation}
+subject to $\|\bm{\delta}_x\|_{\infty}\le\epsilon_x$, $\bm{x}+\bm{\delta}_x\in[0,1]^{N}$, and $\mathcal{C}_{\mathrm{text}}(\bm{t},\bm{t}')\le\epsilon_t$.
+Here $\Phi$ is the model-specific coupling mechanism named above, namely FiLM in RT-1, the projection MLP in OpenVLA, and cross-attention in Octo, and $\lambda_c$ weights the coupling term so the visual and textual perturbations align at grounding rather than act independently.
+Because one modality is continuous and the other discrete, we solve \autoref{eq:abbp-obj-joint} by alternating optimization: a projected-gradient step on $\bm{\delta}_x$ reuses the solver of \autoref{eq:abbp-obj} unchanged, and a token-substitution step on $\bm{t}'$ reuses the textual search of \autoref{eq:abbp-obj-text}, iterating until the margin converges.
+The joint formulation also exposes the budget split $(\epsilon_x,\epsilon_t)$ as an experimental variable; we will report attack success across this split to measure how much textual budget substitutes for pixel budget in each model, which directly quantifies the cross-modal interaction that single-modality attacks cannot capture.
+The evaluation protocol of \autoref{eq:metric-stack} carries over without modification because it is computed from end-effector poses and decoded bins; we add only text-side imperceptibility metrics, specifically edit distance and embedding similarity, alongside the $\ell_{\infty}$ pixel budget so the textual perturbation is held to the same stealth standard as the visual one.
 
  \subsubsection{Evaluation Protocol}
 
@@ -1006,12 +1040,19 @@ The attacker constructs a surrogate policy $\mathcal{F}'$ by fine-tuning the sam
 STAP realizes an untargeted evasion attack $\mathcal{M}(\bm{x},\bm{t})\xrightarrow{{}_{\textbf{U}}}\bm{a}_{out}'$ with $\mathcal{M}(\bm{x},\bm{t})=(\bm{x}+\bm{\delta}^{*},\bm{t})$. The perturbation $\bm{\delta}^{*}$ solves the ABBP objective on the surrogate, \ie the attacker runs target selection (\autoref{eq:abbp-shift}) with the surrogate kinematics $G'(\bm{\theta}')$ and perturbation synthesis (\autoref{eq:abbp-obj}) with the surrogate logits $\bm{z}'_j(\bm{x}+\bm{\delta},\bm{t})$, then applies $\bm{\delta}^{*}$ to the victim without re-optimization. 
 For same-embodiment pairs $G'=G(\bm{\theta})$. For cross-embodiment pairs, stage 1 keeps the surrogate kinematics and the perturbation transfers as is, since the embodiment of the victim is observable. To improve transfer, we optimize the margin over an ensemble of $K$ surrogates with input diversity and momentum, and we ablate $K\in\{1,3\}$ in the evaluation. Because we control the surrogate backbone, training data, and embodiment head, we vary each factor independently and measure how surrogate-victim mismatch degrades $\epsilon^{*}(\rho)$, a study not possible with fixed public surrogates. This study identifies which factor dominates transfer degradation and forms a deliverable of the attack framework. Language-modality attacks (\eg \emph{prompt injection} and \emph{jailbreak} through surrogate text embeddings) apply only to language-conditioned models (\ie RT-1, RT-2, OpenVLA, and Octo) and exclude vision-only models such as ACT.
 
+\BfPara{STAP over Language and Joint Modalities} The surrogate-transfer design extends to the textual and joint perturbations of \autoref{sec:t1_2} with no change to the threat model, because the instruction pathway is part of the public components $\mathcal{P}$, so the surrogate $\mathcal{F}'$ shares the tokenizer and the text encoder with the victim.
+In the textual variant, $\mathcal{M}(\bm{x},\bm{t})=(\bm{x},\bm{t}')$, where $\bm{t}'$ solves the margin objective of \autoref{eq:abbp-obj-text} on the surrogate logits $\bm{z}'_j(\bm{x},\bm{t}')$ under the same constraint $\mathcal{C}_{\mathrm{text}}(\bm{t},\bm{t}')\le\epsilon_t$, and is then applied to the victim without re-optimization. The token-substitution search runs on surrogate gradients, which the gray-box adversary holds even though victim gradients are unavailable.
+For same-backbone pairs the shared tokenizer transfers token-level edits directly; for closed-backbone victims with a substituted public VLM, tokenizers diverge and token-level edits need not transfer, so we restrict $\bm{t}'$ to paraphrase and suffix edits, whose effect is carried by semantics rather than token identity. We test this restriction empirically rather than assume it: the evaluation stratifies textual transfer success by surrogate-victim backbone mismatch and compares token-level edits against paraphrase and suffix edits under the same budget $\epsilon_t$, so the tokenizer-mismatch penalty is measured directly on the transferability matrix.
+In the joint variant, $\mathcal{M}(\bm{x},\bm{t})=(\bm{x}+\bm{\delta}_x^{*},\bm{t}')$ solves \autoref{eq:abbp-obj-joint} on the surrogate with the surrogate coupling $\Phi'$, since the FiLM, projection-MLP, and cross-attention mechanisms named in \autoref{sec:t1_2} are all public components, and the alternating optimization and the ensemble of $K$ surrogates apply unchanged.
+The budget split $(\epsilon_x,\epsilon_t)$ then becomes a transfer variable: we will report per-modality transfer success, \ie the fraction of episodes reaching $D_{\mathcal{M}}(H)\ge\rho$ under text-only, vision-only, and joint perturbations, to identify which channel carries transfer across surrogate-victim mismatch.
+Both variants inherit the scope restriction above and apply only to language-conditioned models.
+
 \BfPara{STAP in Privacy Attacks} The privacy attacks query the victim through its public interface and record the predicted actions $\{\bm{a}_{out}\}$, so they apply to every model in scope, including ACT. For \emph{membership inference}, the attacker draws candidate episodes from the public corpora of \autoref{tab:multi_dataset} without knowledge of inclusion in the victim's fine-tuning data, queries the victim on the episode observations, and scores each episode $e$ of length $H_e$ by the action agreement $r(e)=\frac{1}{H_e}\sum_{k=1}^{H_e}\mathbb{1}[\,|a_{k,j}-a^{(e)}_{k,j}|\le\Delta_j\;\;\forall j\in\mathcal{C}]$, \ie the fraction of steps at which the predicted action $\bm{a}_k$ matches the recorded action $\bm{a}^{(e)}_k$ within a one-bin tolerance on every continuous dimension. Shadow surrogates fine-tuned on disjoint halves of the corpora provide member and non-member score distributions and calibrate the decision threshold without any victim query. Victim queries then proceed under a budget of 500 queries. For \emph{attribute} and \emph{property inference}, we train a probe on surrogate action traces to recover attributes of the victim, \eg embodiment and task composition, from predicted actions.
 
 
 
 \BfPara{Evaluation} We evaluate STAP under the same protocol of \autoref{sec:t1} with the gray-box factor $\gamma_{g}=0.8$ across various attack settings, estimating $\epsilon^{*}(\rho)$ per surrogate-victim pair in the transferability matrix. 
-We define transfer success as the fraction of evaluation episodes where a perturbation synthesized entirely on surrogates reaches $D_{\mathcal{M}}(H)\ge\rho$ on the victim. We report transfer success, $\epsilon^{*}(\rho)$ along each mismatch across backbone and data/embodiment, and membership-inference advantage (true-positive rate at a 1\% false-positive rate).
+We define transfer success as the fraction of evaluation episodes where a perturbation synthesized entirely on surrogates reaches $D_{\mathcal{M}}(H)\ge\rho$ on the victim. We report transfer success, $\epsilon^{*}(\rho)$ along each mismatch across backbone and data/embodiment, and membership-inference advantage (true-positive rate at a 1\% false-positive rate). For the textual and joint variants, we report transfer success per modality and per edit type under each level of backbone mismatch, which identifies which channel and which edit class carries transfer across surrogate-victim mismatch.
 
 \subsubsection{T2-2: Black-box Attacks} \label{sec:t2_2}
 Black-box attacks operate without access to the model's architecture, parameters, or gradients. The adversary queries the system and observes input-output pairs only. This threat model matches commercial deployments, where vendors do not share model details, and makes black-box attacks the most realistic setting we study.
