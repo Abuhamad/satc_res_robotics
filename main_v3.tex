@@ -156,10 +156,10 @@ its own weaknesses, and prior multimodal attacks perturb modalities independentl
 defenses detect them. We will instead target the mechanism binding vision to language in each
 architecture, \eg FiLM in RT-1~\cite{rt-1}, a projection MLP in OpenVLA~\cite{kim2024openvla}, and
 cross-attention in Octo~\cite{team2024octo}, and craft perturbations reinforcing one another at that
-layer. Reverting one modality at a time then isolates how much each contributes to the adversarial
-objective, and we evaluate representation-level defenses against the resulting attacks.
+layer. Mutating one modality at a time then isolates how much each contributes to the adversarial
+objective, and we evaluate input- and action-level defenses against the resulting attacks.
 
-\BfPara{{\cib{3}} T3: Benchmarks for Safety, Robustness, and Trustworthiness} Operational standards constrain robot mechanisms, not model outputs. We will convert those limits into a specification testable over predicted actions, and develop attribution methods
+\BfPara{{\cib{3}} T3: Benchmarks for Safety, Robustness, and Trustworthiness} Operational standards constrain robot mechanisms, not model outputs. We will defend the model at its point of effect with action-space detection and adversarial fine-tuning, convert operational limits into a specification testable over predicted actions, and develop attribution methods
 tracing predicted actions to input image regions and instruction tokens. We will release open benchmarks evaluating attacks, defenses, safety, and interpretability.
 
 
@@ -170,7 +170,7 @@ Robotic foundation models carry an attack surface absent from vision and languag
 \cibx{1} Three attack families exploit structure specific to VLAs. Action-Bin Boundary Perturbation (ABBP) drives action tokens across quantization boundaries under Jacobian-weighted feasibility constraints. Surrogate-Transfer Action Perturbation (STAP) transfers perturbations from surrogates under controlled backbone, data, and embodiment mismatch. The Temporal Trajectory Drift Attack (TTDA) accumulates trajectory drift under a query budget while every step stays kinematically plausible. Poisoning and privacy variants extend these families across the NIST Trustworthy and Responsible AI attack taxonomy.
 \cibx{2} Two defenses operate on predicted actions rather than inputs, the Temporal Action Consistency Detector (TACD) and Action-Grounded Adversarial Fine-Tuning (AGAT), so both hold when the compromised modality is unknown. 
 \cibx{3} One evaluation protocol reports task success under attack, end-effector deviation, and the perturbation budget needed to halve task success, replacing the sole reliance on action-token-deviation.
-\cibx{4} Two interpretability methods explain robot behavior under attack, modality attribution isolating each modality contribution to an adversarial objective by selective reversion, and Spatial-Action Attribution (SAA) tracing a predicted action to image regions and instruction tokens.
+\cibx{4} Action-level interpretation methods explain robot behavior under attack, attributing predicted action tokens to their driving modalities, image regions, and instruction tokens, validated by faithfulness, action-grounding, and temporal-consistency checks (\autoref{sec:t3_3}).
 \cibx{5} VLA-SecBench releases the model zoo, hardened checkpoints, attacks, defenses, a cross-model transferability matrix, and the interpretability tools across various robot embodiments and datasets.
 
 
