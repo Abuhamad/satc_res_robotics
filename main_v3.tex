@@ -20,12 +20,12 @@ Project Description
 
 \section{Overview}
 
-Generalist ``\emph{foundation}'' robot models are the next step toward the widespread adoption of intelligent and robust robotic systems. 
-Inspired by the tremendous advancements in large language, vision, and vision-language models, the development of robotic foundation models is just beginning. 
-However, ensuring their security, safety, and trustworthiness remains a significant challenge. Building on these models, system designers need comprehensive frameworks, advanced security measures, and specialized methods to build secure, safe, and reliable models for downstream tasks. This proposal aims to address these critical needs, improving the security and trustworthiness of foundation robot models for real-world deployment. 
+Generalist ``\emph{foundation}'' robotic models (RMs) are the next step toward the widespread adoption of intelligent and robust robotic systems. 
+Inspired by the tremendous advancements in large language, vision, and vision-language models, the development of RMs is just beginning. 
+However, ensuring their security, safety, and trustworthiness remains a significant challenge. Building on these models, system designers need comprehensive frameworks, advanced security measures, and specialized methods to build secure, safe, and reliable models for downstream tasks. This proposal aims to address these critical needs, improving the security and trustworthiness of RMs for real-world deployment. 
 
-Millions of industrial robots (\eg logistics and manufacturing) and service robots (\eg medicine, home, transportation, defense, and military) are poised to become smarter and more reliable with advances in these foundation models. The previous barrier to the emergence of large robotic foundation models, namely, the need for large-scale ``\emph{Internet-wide}'' datasets as seen in large language models (LLMs) and vision-language models (VLMs), has diminished. Recent efforts employ large-scale \xot robotic datasets and new training methods, making this challenge less critical and paving the way for significant advancements.
-Current efforts to build robotic foundation models, \eg Language-Vision-Action (VLA) models, focus on integrating various pre-trained models (\eg vision models, LLMs, and VLMs) for multiple modalities (\eg visual and textual instructions) used by robots. 
+Millions of industrial robots (\eg logistics and manufacturing) and service robots (\eg medicine, home, transportation, defense, and military) are poised to become smarter and more reliable with advances in foundation RMs. The previous barrier to the emergence of large foundation RMs, namely, the need for large-scale ``\emph{Internet-wide}'' datasets as seen in large language models (LLMs) and vision-language models (VLMs), has diminished. Recent efforts employ large-scale \xot robotic datasets and new training methods, making this challenge less critical and paving the way for significant advancements.
+Current efforts to build foundation RMs, \eg Language-Vision-Action (VLA) models, focus on integrating various pre-trained models (\eg vision models, LLMs, and VLMs) for multiple modalities (\eg visual and textual instructions) used by robots. 
 The transfer learning capabilities of these components enable robotic systems to understand, interact, and learn new tasks. However, this raises concerns about potential security and safety issues that might be inherited from these models, along with other adversarial threats.% they may face.
 
 \vspace{-2ex}
@@ -44,15 +44,15 @@ threats.}
 Studying vulnerabilities in vision and LLMs, which have been the theme of AI security research for many researchers including the PIs, does not transfer cleanly to robotics. 
 The integration of multiple modalities/model-components to generate physical interaction with the robot environment introduces complex and largely unexplored attack surface that can be exploited to cause harmful behaviors, safety hazards, and operational failures.
 Ensuring the safe deployment of robotic technologies across various applications requires a focused effort to understand and address these security challenges.  
-A robot policy returns a joint-angle or an end-effector pose, so every manipulated output becomes a
-physical displacement rather than a string of textual tokens. Security research on robot models has yet to
+A robot model/policy returns a joint-angle or an end-effector pose, so every manipulated output becomes a
+physical displacement rather than a string of textual tokens. Security research on RMs has yet to
 account for this distinction, leaving the field without shared threat models, defenses, or benchmarks
 grounded in the kinematics of the robot. 
-This project closes those gaps by characterizing the threat space of generalist robot models across
+This project closes those gaps by characterizing the threat space of generalist RMs across
 embodiments and levels of adversarial knowledge, exposing how vulnerabilities propagate across coupled
 modalities, grounding defenses in the action space of the robot, and releasing benchmarks for
-safety, robustness, and interpretability. %This makes the physical consequences of adversarial manipulation become measurable, defensible, and reproducible for generalist robot models.
-%This work enables the development and adoption of secure and trustworthy robotic models in real-world applications.
+safety, robustness, and interpretability. %This makes the physical consequences of adversarial manipulation become measurable, defensible, and reproducible for generalist RMs.
+%This work enables the development and adoption of secure and trustworthy RMs in real-world applications.
 
 
 
@@ -62,15 +62,15 @@ safety, robustness, and interpretability. %This makes the physical consequences 
   \centering
   % \vspace{-1.5ex}
   \includegraphics[width=\textwidth]{figures/pipeline_7.pdf}\vspace{-2ex}
-  \caption{\textbf{Toward Secure, Trustworthy, End-to-End Robotic Models.} Gaps, Challenges, and Proposed Work.}
+  \caption{\textbf{Toward Secure, Trustworthy, End-to-End RMs.} Gaps, Challenges, and Proposed Work.}
   \vspace{-4ex}
   \label{fig:pipeline}
 \end{figure*}
 
 % \newpage
-\subsection{Vision, Goals, and Technical Approach} 
+\subsection{Vision, Goals, and Technical Approach} \label{sec:vision}
 
-This proposal advocates for a future with secure, trustworthy, and safe large generalist robotic models.
+This proposal advocates for a future with secure, trustworthy, and safe large generalist RMs.
 Creating robot manipulators capable of performing successfully in various scenarios has been a persistent objective in robotics research \cite{kaelbling2020foundation,9,rt-1,rt-2,zhang2024vla}. 
 Recent studies have shown that generalization in robotic manipulation can be achieved using large and diverse datasets~\cite{pinto2016supersizing,kaelbling2020foundation,levine2018learning,xu2025vla,arai2025covla}. 
 Robots learn to manipulate new objects~\cite{pinto2016supersizing,levine2018learning,finn2017deep,young2021visual,9},  tasks~\cite{james2018task,dasari2021transformers,jang2022bc,9},  instructions and goals~\cite{nair2022learning,jang2022bc,jiang2023vima,mees2022matters}, and unseen environments~\cite{hansen2020self,cui2022play,9}. 
@@ -128,15 +128,15 @@ Building a single end-to-end model that generalizes to unforeseen conditions acr
 \end{wrapfigure}
 % \vspace{-2ex}
 as shown in \autoref{fig:rt-x_result}.
-Like other neural networks, end-to-end robotic models can be vulnerable to adversarial manipulations despite tolerating input noise.
+Like other neural networks, end-to-end RMs can be vulnerable to adversarial manipulations despite tolerating input noise.
 Recent works have begun exposing isolated vulnerabilities, including jailbreaking of LLM-controlled robots~\cite{robey2024jailbreaking}  (\autoref{fig:examples}-A), adversarial attacks on quadrupedal locomotion~\cite{shi2024rethinking,miki2022scirob,rslsubt2022}  (\autoref{fig:examples}-B), and emerging backdoor and adversarial attacks on vision-language-action models~\cite{badvla,advvla}. These efforts target isolated components or single models rather than the end-to-end robotic learning pipeline.
 This proposal closes that gap with a unified framework spanning threat modeling, cross-modal
 vulnerability analysis, defenses, and benchmarks, organized as three research thrusts
 (\autoref{fig:pipeline}). We have assembled the supporting infrastructure, model collection, 15 dataset sources including the Open {\xo}-Embodiment repository~\cite{9} for six robot embodiments, as well as baseline attacks (results in
 simulation and on a real Xarm7 robot are shown in \autoref{sec:t0}).
-\emph{We must investigate the threat space of robotic foundation models, including the vision, language, and/or vision-language backbone models used in end-to-end learning.}
+\emph{We must investigate the threat space of foundation RMs, including the vision, language, and/or vision-language backbone models used in end-to-end learning.}
 \\
-Emerging industry efforts, \eg Google's RT-1 and RT-2, Nvidia's GR00T, Covariant's RFM-1, Meta's V-JEPA 2, and Tesla's Optimus, show that using large high-capacity robotic models to transfer knowledge from large and diverse datasets can achieve high performance on robot-specific tasks even with smaller datasets. 
+Emerging industry efforts, \eg Google's RT-1 and RT-2, Nvidia's GR00T, Covariant's RFM-1, Meta's V-JEPA 2, and Tesla's Optimus, show that using large high-capacity RMs to transfer knowledge from large and diverse datasets can achieve high performance on robot-specific tasks even with smaller datasets. 
 The same trend now drives academia and laboratories worldwide \cite{openvla_oft,qu2025spatialvla,kim2024openvla,team2024octo}.%, and this progress is expected to continue.
 The open \xot \cite{9} project published a large \xot robotic dataset and shows that robots achieve better generalization when trained on such datasets.
 The democratization of these models and resources promises continuous growth in generalist robots.
@@ -145,7 +145,7 @@ This proposal presents the following three conceptual and practical ideas:
 \BfPara{{\cib{1}} T1: Threat Space and Vulnerability Analysis} Data and task complexity create a threat
 vector no single attack characterizes. We will build a threat model spanning \textit{evasion},
 \textit{poisoning}, \textit{privacy}, and \textit{abuse} attacks, across embodiments, environments, and tasks. Rather
-than adapting pixel-space or input-token attacks from VLMs, we exploit structure specific to VLAs, the uniform
+than adapting pixel-space or input-token attacks from VLMs, we exploit structure specific to RMs, \ie the uniform
 quantization of the action space, the temporal action chunk, and the mapping from predicted action-token to
 physical displacement. The central attack primitive, ABBP, inverts the usual objective, first selecting \emph{which} bin shifts maximize physical displacement under kinematic feasibility, then synthesizing the cheapest input perturbation that achieves them, so the perturbation budget is allocated by physical effect rather than by gradient magnitude, and the evaluation measures end-effector deviation rather than token flips. Three attack families span \emph{white}-, \emph{gray}-, and \emph{black}-box adversaries, and two
 defenses inspect predicted actions rather than inputs, so both hold when the compromised modality is
@@ -166,7 +166,7 @@ tracing predicted actions to input image regions and instruction tokens. We will
 
 
 \subsection{Intellectual Merit}
-Robotic foundation models carry an attack surface absent from vision and language models. Action heads quantize continuous control into 256 uniform bins, policies emit chunks of consecutive actions, and every predicted token maps to a physical displacement bounded by joint limits and the reachable workspace. Prior security work adapts pixel-space attacks from VLMs and scores success in token space, leaving physical consequence unmeasured. This project grounds attacks, defenses, and measurement in the action space of the robot, delivering \cib{1} a threat taxonomy for multimodal robotic systems across embodiments and tasks, \cib{2} methods for analyzing cross-modal attack propagation, and \cib{3} standardized benchmarks for robotic security, safety, and interpretability. Five artifacts realize these contributions.
+Foundation robotic models carry an attack surface absent from vision and language models. Action heads quantize continuous control into 256 uniform bins, policies emit chunks of consecutive actions, and every predicted token maps to a physical displacement bounded by joint limits and the reachable workspace. Prior security work adapts pixel-space attacks from VLMs and scores success in token space, leaving physical consequence unmeasured. This project grounds attacks, defenses, and measurement in the action space of the robot, delivering \cib{1} a threat taxonomy for multimodal robotic systems across embodiments and tasks, \cib{2} methods for analyzing cross-modal attack propagation, and \cib{3} standardized benchmarks for robotic security, safety, and interpretability. Five artifacts realize these contributions.
 \cibx{1} Three attack families exploit structure specific to VLAs. Action-Bin Boundary Perturbation (ABBP) drives action tokens across quantization boundaries under Jacobian-weighted feasibility constraints. Surrogate-Transfer Action Perturbation (STAP) transfers perturbations from surrogates under controlled backbone, data, and embodiment mismatch. The Temporal Trajectory Drift Attack (TTDA) accumulates trajectory drift under a query budget while every step stays kinematically plausible. Poisoning and privacy variants extend these families across the NIST Trustworthy and Responsible AI attack taxonomy.
 \cibx{2} Two defenses operate on predicted actions rather than inputs, the Temporal Action Consistency Detector (TACD) and Action-Grounded Adversarial Fine-Tuning (AGAT), so both hold when the compromised modality is unknown. 
 \cibx{3} One evaluation protocol reports task success under attack, end-effector deviation, and the perturbation budget needed to halve task success, replacing the sole reliance on action-token-deviation.
@@ -368,7 +368,7 @@ Building generalist
 robots advances in multiple dimensions: 
 \cib{1} the development and integration of vision, language, large action models, and multimodal fusion techniques into robotic learning, 
 \cib{2} {\xo}-embodiment sensing and training using large, diverse datasets from across embodiments, enhanced transfer learning methods, and scalable data collection frameworks, and
-\cib{3} the incorporation of real-time feedback, reinforcement learning on modular robotic models for various tasks.
+\cib{3} the incorporation of real-time feedback, reinforcement learning on modular RMs for various tasks.
 High-capacity models have demonstrated an exceptional ability to process and learn diverse and extensive datasets, which is critical for end-to-end robotic learning. 
 These models leverage their vast parameter space, \eg GPT-3, Jurassic-1, WuDao-2 with 175B+, Microsoft and Nvidia's Megatron-Turing NLG with 530B, and Google's Switch Transformer with 1.56 trillion parameters, to capture intricate patterns and relationships within the data, enabling them to generalize effectively across a wide array of tasks. 
 Compared to these models, models used for robotic learning directly are relatively smaller, \eg RT-1~\cite{rt-1}, MOO~\cite{stone2023open}, and CLIPort~\cite{shridhar2022cliport} (with CLIP-ViT-Base), have 35M+, 111M, and 400M+, respectively. RT-2~\cite{rt-2} and variations of RT-2-X~\cite{9} incorporate pre-trained VLMs, which have large parameter space (\eg RT-2-PaLM-E and RT-2-PaLI-X have 12B and 55B, respectively).
@@ -378,7 +378,7 @@ Scaling up these models faces many challenges:
 \cib{3} addressing the computational demands and resource requirements of training and deployment, 
 \cib{4} managing the complexity of integrating multimodal inputs, and 
 \cib{5} ensuring reliability and safety in dynamic and unpredictable real-world settings.
-As end-to-end techniques and integration of large vision, LLM, and VLM backbones become more prevalent~\cite{9} (see the evolution of robotic models in \autoref{fig:vla-timeline}), security research for these models is limited. Generalist robotic models continue to emerge, \eg OpenVLA-OFT, {GR00T}~N1, Gemini Robotics, pi-0.5, and WorldVLA~\cite{qu2025spatialvla,openvla_oft,gr00tn1,geminirobotics2025,pi05_2025,cen2025worldvla,cheang2024gr2}. Ensuring these models resilience to attacks is crucial.
+As end-to-end techniques and integration of large vision, LLM, and VLM backbones become more prevalent~\cite{9} (see the evolution of RMs in \autoref{fig:vla-timeline}), security research for these models is limited. Generalist RMs continue to emerge, \eg OpenVLA-OFT, {GR00T}~N1, Gemini Robotics, pi-0.5, and WorldVLA~\cite{qu2025spatialvla,openvla_oft,gr00tn1,geminirobotics2025,pi05_2025,cen2025worldvla,cheang2024gr2}. Ensuring these models resilience to attacks is crucial.
 To this end, we identify the following challenges.
 % We identify the key challenges in ensuring model resilience to adversarial attacks.
 
@@ -401,7 +401,7 @@ We must identify and counteract attacks that can exploit the specific weaknesses
 
 \BfPara{C3: Robustness and Trustworthiness}
 Ensuring the robustness and trustworthiness of robotic agents is a major challenge. 
-Few studies have adequately assessed factors such as interpretability, robustness, safety, and fairness in robots, raising concerns about the potential for inherited vulnerabilities and bias from large backbone models. We must assess robot models
+Few studies have adequately assessed factors such as interpretability, robustness, safety, and fairness in robots, raising concerns about the potential for inherited vulnerabilities and bias from large backbone models. We must assess RMs
 under a variety of conditions, including adversarial attacks and unexpected inputs, and develop methods that can improve their robustness.
 We must develop methods for interpretability and fairness to ensure transparent and unbiased decisions.
 
@@ -419,7 +419,7 @@ These works appeared in ACM CCS, IEEE ICDCS, IEEE TDSC, ACM TOPS, IEEE TIFS, IEE
 %TODO Add PI Thiruvathukal's relevant publications and contributions.
 
 The PIs recognize the vast and evolving landscape of adversarial attacks against large foundation models. 
-In this project, the PIs will work to establish foundational research and collaborative efforts to develop comprehensive frameworks and benchmarks that build toward secure and reliable robotic models. 
+In this project, the PIs will work to establish foundational research and collaborative efforts to develop comprehensive frameworks and benchmarks that build toward secure and reliable RMs. 
 %While addressing all possible attack vectors is impossible within a single project, creating foundational tools, metrics, and methodologies will enable the broader research community to systematically evaluate and improve robotic system security. 
 %The PI will leverage expertise in AI security to create lasting infrastructure that supports continuous improvement in robotic model security, with a particular focus on developing standardized evaluation protocols that can evolve alongside emerging threats.
 
@@ -431,21 +431,21 @@ In this project, the PIs will work to establish foundational research and collab
 
 \subsection{Vulnerability Analysis in Foundation Generalist Robots}
 
-This proposal aims to secure emerging robotic foundation models, where security and robustness are crucial.
+This proposal aims to secure emerging foundation RMs, where security and robustness are crucial.
 Based on the NIST Trustworthy and Responsible AI report~\cite{NIST_AI_100_2e2023}, the taxonomy of the most studied and effective attacks includes \emph{evasion}, \emph{poisoning}, \emph{privacy}, and \emph{abuse} attacks. % for generative AI systems.
-For end-to-end robotic models, this proposal addresses all categories of attacks (\autoref{table:attacks_models}).%, including evasion, poisoning, privacy, and abuse attacks.
-% Given the high-dimensional and multimodal nature of the search space for attacks aginst robotic models, simply introducing random noise to inputs might fail to identify subtle vulnerabilities of the robotic model.
-% Moreover, robotic models/policies are generally designed to be resilient against such noise~\cite{miki2022scirob}, making such adversarial attacks ineffective using straightforward methods.
+For end-to-end RMs, this proposal addresses all categories of attacks (\autoref{table:attacks_models}).%, including evasion, poisoning, privacy, and abuse attacks.
+% Given the high-dimensional and multimodal nature of the search space for attacks aginst RMs, simply introducing random noise to inputs might fail to identify subtle vulnerabilities of the RM.
+% Moreover, RMs/policies are generally designed to be resilient against such noise~\cite{miki2022scirob}, making such adversarial attacks ineffective using straightforward methods.
 
 \BfPara{Challenges} 
-Attacking robotic models
+Attacking RMs
 presents unique challenges due to their complex architectures, the multimodal nature of their input, restrictions on the output/action space, and the evolving landscape of security measures. 
 Main challenges include the following:
-{\cib{1}} \emph{{Multimodal Complexity}:} Generalist robotic models process/integrate data from multiple modalities, such as sensory/positions data, images, and text, to predict action sequences. %We believe that the efforts to build robotic foundation models will continue to grow and other modalities will be incorporated.
+{\cib{1}} \emph{{Multimodal Complexity}:} Generalist RMs process/integrate data from multiple modalities, such as sensory/positions data, images, and text, to predict action sequences. %We believe that the efforts to build foundation RMs will continue to grow and other modalities will be incorporated.
     % Creating effective attacks requires understanding and manipulating the intricate relationships and interactions among these modalities \cite{radford2021learning}. 
     % Consequently, 
     Creating adversarial examples that can deceive both the visual and language components is more challenging than focusing on one. 
-{\cib{2}} \emph{{Model Scale and Complexity:}} Current robotic models involve large architectures containing millions to billions of parameters, making them highly complex and computationally expensive to attack.
+{\cib{2}} \emph{{Model Scale and Complexity:}} Current RMs involve large architectures containing millions to billions of parameters, making them highly complex and computationally expensive to attack.
     Examining adversarial attacks on such large models necessitates significant computational resources.
 {\cib{3}} \emph{{Attack Practicality and Transferability:}} 
     Adversarial scenarios against robotics should be practical, \ie scenarios in which robots are likely to face operational tasks. 
@@ -506,7 +506,7 @@ column{1} = {c,0.1cm},
     Nevertheless, attacks designed for similar LLMs/VLMs models might not always work effectively on other models, even if they share similar architectures. 
     Ensuring adversarial examples are transferable \cite{liu2016delving} across models and tasks requires understanding model-specific vulnerabilities and generalizable attack methods.
 \\
-\BfPara{Definitions: Attacking Robotic Foundation Models}
+\BfPara{Definitions: Attacking foundation RMs}
 {Let $\mathcal{F}$ represent a robotic foundation model, which takes a tuple of inputs, \eg $(\{\bm{x}\}, \{\bm{t}\}, \{\bm{s}\}, \dots)$ representing input modalities (\ie a set (at least one) of images \{$\bm{x}\} \in \mathcal{X}$, set of text instructions $\{\bm{t}\} \in \mathcal{T}$, set of sensory/position data $\{\bm{s}\}\in \mathcal{S}$, and other available information) and outputs a set of tokenized actions $\mathcal{F}(\{\bm{x}\}, \{\bm{t}\}, \{\bm{s}\}, \dots)=\{\bm{a}_{out}\}$.
 Since robots could have multiple embodiments/tasks (and various action spaces), some inputs could become a placeholder/masked $\oslash$ or nonexistent input to fit the model.}
 For example, RT-2 and OpenVLA models receive only images and textual instruction $\mathcal{F}(\{\bm{x}\}, \{\bm{t}\})=\{\bm{a}_{out}\}$, 
@@ -525,7 +525,7 @@ For example, $\mathcal{M}(\bm{x},\bm{t}) \xrightarrow{{}_{\textbf{U}}} \bm{a}_{o
 Similarly, $\mathcal{M}(\bm{t}) \xrightarrow{{}_{\textbf{T}}} \bm{a}_{jailbreak}$ is a targeted jailbreak attack that alters the input instructions to cause the model to produce a specific (undesired) output.
 If the attack is designed such that $\mathcal{M}(\bm{x},\bm{t}) \xrightarrow{{}_{\textbf{U}}} \bm{a}_{out}'$ where $\bm{a}_{out}'$ reveals confidential information, this constitutes a privacy attack.
 Depending on the level of the \ul{\emph{adversary's capabilities and knowledge}} on the victim model/data/system, adversarial attacks can be categorized into \textbf{white-box}, \textbf{gray-box}, and \textbf{black-box} attacks. 
-% \autoref{table:attacks_models} shows the general adversarial attack on robotic models.
+% \autoref{table:attacks_models} shows the general adversarial attack on RMs.
 Several threat models can be defined based on the adversarial specificity/goals, timing of the attack (\eg training or inference), the extent of adversarial capabilities, and the knowledge about the target model/system (\eg model parameters, source code, and/or training data).
 
 
@@ -537,11 +537,11 @@ Several threat models can be defined based on the adversarial specificity/goals,
 \section{Research Plan}
 
 This work proposes a novel security framework for end-to-end generalist robots to address the inherent challenges of ensuring robustness, security, and trustworthiness in general-purpose robots across various physical embodiments. 
-End-to-end generalist robot models leverage high-capacity models (\eg ViTs, LLMs, VLMs, and VLAs) pre-trained using Internet-scale data and training pipelines that use specific and/or \xot robotics datasets. 
+End-to-end generalist RMs leverage high-capacity models (\eg ViTs, LLMs, VLMs, and VLAs) pre-trained using Internet-scale data and training pipelines that use specific and/or \xot robotics datasets. 
 The core concept relies on the systematic evaluation and discovery of potential vulnerabilities in all layers of the robotic learning stack. This plan describes the research tasks in this project.
 
 
-\subsection{T0: Ongoing Progress: Comprehensive Repository for Robotic Models and Data} \label{sec:t0}
+\subsection{T0: Ongoing Progress: Comprehensive Repository for RMs and Data} \label{sec:t0}
 % ~\vspace{-3ex}
 \begin{wraptable}{r}{0.5\textwidth}\vspace{-2.5ex}
 % \begin{table}
@@ -570,7 +570,7 @@ Ours & X & 10000 & EEF/joint Position & 5-50 \\
 \bottomrule
 \end{tabular}}\vspace{-2ex}
 \end{wraptable}
-To conduct research tasks toward assessing and enhancing robustness, trustworthiness, and performance of robotic foundation models, we are  building/training/evaluating various models using state-of-the-art techniques and \xot data.\\
+To conduct research tasks toward assessing and enhancing robustness, trustworthiness, and performance of foundation RMs, we are  building/training/evaluating various models using state-of-the-art techniques and \xot data.\\
 \BfPara{Robotics Data Mixture} We consider a multimodal robotics data mixture of
 six robot embodiments (Franka, Google Robot, Spot, Hello Stretch, UR5, and Xarm7; \textit{fewer than the 22 embodiments in the OXE~\cite{9} dataset, for multimodality and practical reasons}) in addition to human demonstration data (see \autoref{tab:multi_dataset}). The mixture draws from 15 dataset sources: 14 robotics datasets (\autoref{tab:multi_dataset}, including our own for Xarm7) and the Open X-Embodiment (OXE)~\cite{9} repository, which  aggregates 60 robotic datasets.
 We plan to continue extending our dataset (\ie added tasks/episodes) as we continue in our research.% and this project. 
@@ -579,7 +579,7 @@ We plan to continue extending our dataset (\ie added tasks/episodes) as we conti
 
 
 \BfPara{End-to-end Models}
-We identify two main families of end-to-end robotic foundation models: policy prediction models (\eg VLAs) and goal-conditioned models (\eg RoboCat~\cite{bousmalis2023robocat}). VLAs predict the next action based on the current state and instruction, while the second family, goal-conditioned models, predicts the next state based on the current state and goal. VLAs are gaining more traction due to their ability to leverage large pre-trained models and fine-tune them for specific tasks/embodiments (see~\autoref{fig:vla-timeline}).
+We identify two main families of end-to-end foundation RMs: policy prediction models (\eg VLAs) and goal-conditioned models (\eg RoboCat~\cite{bousmalis2023robocat}). VLAs predict the next action based on the current state and instruction, while the second family, goal-conditioned models, predicts the next state based on the current state and goal. VLAs are gaining more traction due to their ability to leverage large pre-trained models and fine-tune them for specific tasks/embodiments (see~\autoref{fig:vla-timeline}).
 {In the following, we describe the main models that we will use in this project. We will continue to expand the list of models as new models are released and/or become available for research use.}
 
 \noindent\textbf{\cib{1} RT-1~\cite{rt-1} and RT-1-X~\cite{9}:} RT-1 is a 35M parameter network built on a transformer architecture~\cite{vaswani2017attention} and designed for robotic control. 
@@ -727,8 +727,8 @@ The transformer decoder processes the encoder output through cross-attention to 
 \end{comment}
 Our implementation of ACT follows the original design, but changes are adopted to accommodate other embodiments, \eg change the number of views and action dimensions.%, 
 \\
-\BfParaUL{Preliminary Experiments: Robotic Models} 
-We have conducted preliminary experiments to evaluate the performance of robotic models, \ie RT-1, RT-2, Octo, and ACT on simulated and real robotic tasks. 
+\BfParaUL{Preliminary Experiments: RMs} 
+We have conducted preliminary experiments to evaluate the performance of RMs, \ie RT-1, RT-2, Octo, and ACT on simulated and real robotic tasks. 
 For simulation, we used Simpler~\cite{li24simpler} benchmark for three tasks: \emph{Close the drawer}, \emph{Move closer}, and \emph{Pick the Coke Can} using Google robot embodiment, while for real experiments, we used Xarm7 robot for three tasks: \emph{Stack Cubes}, \emph{Duck in Bowl}, and \emph{Sweep} (see~\autoref{fig:xarm7}).
 For the simulation tasks, models were fine-tuned (using single third-person view and language-conditioned control) using 50 episodes per task. Language instructions are not used for ACT. Five training runs were performed per model, where each run was trained for 20,000 iterations with a batch size of 512 and a learning rate of 1e-5 using AdamW optimizer. The evaluation was performed on 25 episodes per task over five runs with different random seeds.
 Similar training and evaluation settings were used for the real robotic tasks, but with visual observations only and no language instructions to avoid any changes on the ACT model architecture. 
@@ -738,14 +738,14 @@ The preliminary results are shown in~\autoref{fig:res}.
 % At inference time, each model is required to run at the rate required for the robot (3-10~Hz). 
 % While relatively small models, \eg ACT, Octo, RT-1 can run locally on some robots with such inference rate, larger models, \eg OpenVLA and RT-2 (7B+ parameters), are hosted on a cloud service and queried over the network. This can introduce latency and network reliability issues, which are critical for real-time robotic applications.
 % Even when designing/training such models to generate chunks of actions at once, which can be executed over several time steps,
-% robotic models require strict real-time performance for smooth operation. % unlike general LLM/VLMs which often operate without stringent timing constraints.
-% This adds complexity to robotic models, \ie managing latency, network reliability, and data communication security aspects that are less critical in typical LLM/VLM applications.
+% RMs require strict real-time performance for smooth operation. % unlike general LLM/VLMs which often operate without stringent timing constraints.
+% This adds complexity to RMs, \ie managing latency, network reliability, and data communication security aspects that are less critical in typical LLM/VLM applications.
 % In terms of adversarial attacks, attacking a robot's availability through prompt injection or jailbreak attacks (\eg running prompts that take more than 15Hz) can have far more serious consequences than similar attacks on other LLM/VLM applications.
 % Compromised availability (and/or functionality) of a robot from an attack can cause physical harm, property damage, or operational disruptions.
 % The real-time and/or (network dependence) of these models adds vulnerabilities that can be exploited to disrupt availability, making it imperative to prioritize security and resilience against such attacks.
 
 
-\BfParaUL{Preliminary Experiments: Attacking Robotic Models}
+\BfParaUL{Preliminary Experiments: Attacking RMs}
 We have conducted two preliminary experiments
 \begin{wrapfigure}{r}{0.25\textwidth}
 \vspace{-2.5ex}
@@ -755,7 +755,7 @@ We have conducted two preliminary experiments
 \begin{minipage}{\textwidth}
 \centering
 \includegraphics[width=0.95\textwidth]{figures/results/visual_white_box.pdf}\vspace{-2ex}
-\caption{\footnotesize Success rate of white-box attacks on robotic models using visual perturbations.}
+\caption{\footnotesize Success rate of white-box attacks on RMs using visual perturbations.}
 \label{fig:visual_white_box}
 \end{minipage}
 % \hspace{-4ex}
@@ -769,16 +769,16 @@ We have conducted two preliminary experiments
 \vspace{-3ex}
 \end{wrapfigure}
  to evaluate the effectiveness of adversarial attacks on models trained on Simpler~\cite{li24simpler} benchmark using three tasks. Both experiments were conducted on the same three tasks as in the preliminary experiments, and evaluated using 25 episodes repeated 5 times.
-\textbf{Experiment 1:} We examined \emph{untargeted white-box} attacks using visual perturbations (\ie on image inputs) against robotic models. We implemented three baseline attack methods: PGD~\cite{madry2017towards}, FGSM~\cite{goodfellow2014explaining}, and CW~\cite{carlini2017towards}. This attack scenario assumes the attacker has complete access to the parameters of the model's visual encoder, \ie EfficientNet-B3 (RT-1), Vision Transformer (RT-2), and ResNet (Octo and ACT). Such an assumption is realistic since these robotic models typically incorporate open-source pre-trained visual encoders. %, making their architecture and parameters readily available to potential attackers.
+\textbf{Experiment 1:} We examined \emph{untargeted white-box} attacks using visual perturbations (\ie on image inputs) against RMs. We implemented three baseline attack methods: PGD~\cite{madry2017towards}, FGSM~\cite{goodfellow2014explaining}, and CW~\cite{carlini2017towards}. This attack scenario assumes the attacker has complete access to the parameters of the model's visual encoder, \ie EfficientNet-B3 (RT-1), Vision Transformer (RT-2), and ResNet (Octo and ACT). Such an assumption is realistic since these RMs typically incorporate open-source pre-trained visual encoders. %, making their architecture and parameters readily available to potential attackers.
 We evaluated the success rate of the attacks by measuring the percentage of successful adversarial examples where the generated actions differ from the ground-truth actions with a threshold of 30\%. \autoref{fig:visual_white_box} shows the attack success rate on various models. 
 
-\textbf{Experiment 2:} We examined \emph{black-box} attacks using token-based language perturbations (\ie on text inputs) against robotic models (except ACT as it does not support language instructions). We assume the attacker has no access to the model parameters and can only query the model. The attacker can manipulate the language instructions by deleting/replacing/adding tokens to the original instructions.
+\textbf{Experiment 2:} We examined \emph{black-box} attacks using token-based language perturbations (\ie on text inputs) against RMs (except ACT as it does not support language instructions). We assume the attacker has no access to the model parameters and can only query the model. The attacker can manipulate the language instructions by deleting/replacing/adding tokens to the original instructions.
 We adopted a similar attack approach to one used in SHIELD~\cite{abuhamad2025shield}, our previous work. %which focused on enhancing the robustness of code attribution models.
 The attack perturbs 30\% of the tokens in the instructions with random tokens from the tokenizer vocabulary, and probes the model with a query limit of 500 queries. The attack terminates if the query limit is reached or if the model's output action differs from the ground-truth action by more than 30\%, in which case the attack is successful.
 The results are shown
 % {\vspace{-2.5ex}}
  in~\autoref{fig:lang_black_box}. %, where we observe that the success rate of the models drops significantly after the attack, indicating that even simple token-based perturbations can disrupt the model's performance.
-These results demonstrate the potential vulnerabilities of robotic models to adversarial attacks.
+These results demonstrate the potential vulnerabilities of RMs to adversarial attacks.
 % In these preliminary experiments we operationalized attack success as a 30\% action-token deviation. 
 % In the full evaluation protocol described below, we use task success rate (TSR) under attack as the primary metric and use action deviation as a secondary physical-consequence metric.
 
@@ -799,7 +799,7 @@ These results demonstrate the potential vulnerabilities of robotic models to adv
 
 
 
-\subsection{T1: Full-Access Attacks on Robotic Foundation Models} \label{sec:t1}
+\subsection{T1: Full-Access Attacks on foundation RMs} \label{sec:t1}
 Full-access (white-box) attacks exploit full access to the model's architecture and parameters.
 White-box attacks provide deep insights into model vulnerabilities, enabling better understanding of its robustness.% and security of models, ensuring reliable and safe performance in real-world applications.
 \\
@@ -1023,18 +1023,18 @@ For example, assess whether the attack can succeed or change behavior when an in
 The mutation process can be adjusted to alter the extent of shifts required to facilitate behavior change.
 As in T1, we also report maximum end-effector action displacement and safety-zone and force-threshold violation rate, each as mean~$\pm$~std over at least ten runs with significance assessed by Welch's $t$-test, and we contribute the multimodal attacks to the full cross-model transferability matrix.
 We will align this protocol with recent physically-grounded evaluation practice for robot policies~\cite{sun2026maniparena}.
-Deliverables include: \cib{1} a comprehensive framework for multimodal attacks/defenses against robotic foundation models, analyzing how vulnerabilities propagate across modalities, \cib{2} open-source implementations of developed multimodal attacks, defenses, and benchmarks, and \cib{3} academic publications/reports/labs on findings and methodologies.
+Deliverables include: \cib{1} a comprehensive framework for multimodal attacks/defenses against foundation RMs, analyzing how vulnerabilities propagate across modalities, \cib{2} open-source implementations of developed multimodal attacks, defenses, and benchmarks, and \cib{3} academic publications/reports/labs on findings and methodologies.
 
  \end{comment}
 
-\subsection{T2: Limited-Access Attacks on Robotic Foundation Models} \label{sec:t2}
+\subsection{T2: Limited-Access Attacks on foundation RMs} \label{sec:t2}
 
 \subsubsection{T2-1: Gray-box Attacks}\label{sec:t2_1}
 Gray-box attacks exploit partial knowledge of the victim model, \eg the architecture and training data, to expose vulnerabilities under moderate adversarial capabilities. For example, existing gray-box attacks against VLMs use open-source vision or language encoders as surrogates to launch the attack.
 Attacks include \emph{prompt injection} and \emph{jailbreak} for evasion and \emph{membership}, \emph{property}, and \emph{attribute inference} for privacy (\autoref{table:attacks_models}).
 
 \BfPara{Related Work} Zhao \etal~\cite{zhao2024evaluating} align adversarial perturbations with CLIP~\cite{radford2021learning} and BLIP~\cite{li2022blip} embeddings to generate transferable adversarial examples. Wang \etal~\cite{wang2024transferable} disrupt modality-consistency features in critical attention regions. Wu \etal~\cite{wu2024adversarial} embed adversarial sub-images within larger images to attack GPT-4o, Gemini, and Claude. Prior work measures transfer success on the text or image outputs of VLMs, not on the actions of a robot policy, and relies on fixed public surrogates with no control over the surrogate training.
-\ul{In this sub-task, we propose a new attack family, Surrogate-Transfer Action Perturbation (STAP), and we study gray-box privacy attacks against robotic models.}
+\ul{In this sub-task, we propose a new attack family, Surrogate-Transfer Action Perturbation (STAP), and we study gray-box privacy attacks against RMs.}
 
 \BfPara{Proposed Attack} We propose STAP, a surrogate-transfer gray-box attack grounded in the action space of the robot. Let a victim policy  $\mathcal{F}=(\mathcal{P},\bm{\omega})$, where $\mathcal{P}$ collects the public components (\eg the vision encoder, the VLM backbone, and the action tokenizer) and $\bm{\omega}$ collects the private components (\eg fine-tuned policy weights, the action head, and the data mixture). The gray-box adversary knows $\mathcal{P}$ and the architecture family but not $\bm{\omega}$. 
 This assumption matches deployments of Octo and OpenVLA, whose base components are public while embodiment-specific checkpoints and training data remain private. For victims on closed backbones (\eg RT-2 with PaLI-X), the adversary substitutes the closest public VLM (see \autoref{tab:VLMs}). %Component knowledge separates this setting from the black-box setting of \autoref{sec:t2_2}, where the adversary knows no component and builds a generic surrogate.
@@ -1058,8 +1058,8 @@ We define transfer success as the fraction of evaluation episodes where a pertur
 \subsubsection{T2-2: Black-box Attacks} \label{sec:t2_2}
 Black-box attacks operate without access to the model's architecture, parameters, or gradients. The adversary queries the system and observes input-output pairs only. This threat model matches commercial deployments, where vendors do not share model details, and gives black-box attacks the most restrictive adversarial knowledge we study.
 
-\BfPara{Related Work} Query-based and transfer-based attacks are well studied for vision models~\cite{guo2019simple,hallyburton2022security,abdukhamidov2022black,juraev2024attack,abdukhamidov2023microbial} and LLMs~\cite{li2023deepinception,yao2024fuzzllm,ding-etal-2024-wolf,wei2023jailbreak,deng2024pandora}. For VLMs, decision-based black-box visual instructions induce failures~\cite{zhang2024avibench}, and transfer attacks succeed even against defended models~\cite{dong2023robust}. Work on robotic foundation models remains limited to isolated jailbreak and backdoor studies~\cite{badvla,advvla}. Lu \etal~\cite{lu2026whenrobots} construct universal adversarial patches which transfer across robot policies in physical settings. Our preliminary experiments show token-level instruction perturbations degrade task success under a 500-query budget.
-\ul{In this sub-task, we propose a new query-based attack family, Temporal Trajectory Drift Attack (TTDA), spanning visual, textual, and joint perturbations, and we study black-box privacy attacks (\eg \emph{data reconstruction} and \emph{prompt stealing}) against robotic models.}
+\BfPara{Related Work} Query-based and transfer-based attacks are well studied for vision models~\cite{guo2019simple,hallyburton2022security,abdukhamidov2022black,juraev2024attack,abdukhamidov2023microbial} and LLMs~\cite{li2023deepinception,yao2024fuzzllm,ding-etal-2024-wolf,wei2023jailbreak,deng2024pandora}. For VLMs, decision-based black-box visual instructions induce failures~\cite{zhang2024avibench}, and transfer attacks succeed even against defended models~\cite{dong2023robust}. Work on foundation RMs remains limited to isolated jailbreak and backdoor studies~\cite{badvla,advvla}. Lu \etal~\cite{lu2026whenrobots} construct universal adversarial patches which transfer across robot policies in physical settings. Our preliminary experiments show token-level instruction perturbations degrade task success under a 500-query budget.
+\ul{In this sub-task, we propose a new query-based attack family, Temporal Trajectory Drift Attack (TTDA), spanning visual, textual, and joint perturbations, and we study black-box privacy attacks (\eg \emph{data reconstruction} and \emph{prompt stealing}) against RMs.}
 
 \BfPara{Proposed Attack} Alongside the language-based attacks we investigate (\eg SHIELD, \autoref{fig:lang_black_box}), we propose TTDA, a query-based black-box attack against chunking policies, \ie policies predicting a sequence of $c$ actions per inference (\eg Octo, ACT). 
 Unlike per-step attacks, TTDA optimizes a sequence of perturbations $\bm{\delta}_{0:H}$ so each step satisfies the per-step kinematic limits of \autoref{eq:abbp-shift} and evades anomaly checks, while the executed trajectory drifts toward a task-failing state. TTDA solves:
@@ -1091,14 +1091,9 @@ T2 delivers four results. \cib{1} Open-source implementations of STAP and TTDA i
 
 
 
-\subsection{T3: Defense, Safety, and Interpretation of Robotic Foundation Models} \label{sec:t3}
+\subsection{T3: Defense, Safety, and Interpretation of foundation RMs} \label{sec:t3}
 
-The attack tasks of \autoref{sec:t1} and \autoref{sec:t2} expose how robotic foundation models fail under adversarial pressure; this task builds the counterpart that makes those failures detectable, certifiable, and explainable. T3 pursues three goals. \cib{1} \emph{Defense} (\autoref{sec:t3_1}): mitigate the attacks at their point of effect, the predicted actions, with an action-space anomaly detector and adversarial fine-tuning constrained by the same kinematics the attacks exploit. \cib{2} \emph{Safety assessment} (\autoref{sec:t3_2}): turn the physical-consequence metrics of the attack protocol into a violation-based safety benchmark with statistical guarantees, covering both adversarial and benign failure modes. \cib{3} \emph{Interpretation} (\autoref{sec:t3_3}): explain why attacks succeed and defenses work by attributing decisions to their driving modalities, layers, and tokens. The three sub-tasks reinforce each other: the detector certifies the safety event, the assessment scores the defenses, and the interpretation feeds its findings back into defense design.
-
-\BfPara{Related Work} The defense landscape relevant to all three sub-tasks splits by where it acts. VLM-era defenses act on the input or the output text (\autoref{tab:defense}): anomaly and mutation-based detection~\cite{zhang2023mutation,gou2024eyes,pi2024mllm}, prompt engineering~\cite{wu2023jailbreaking,wang2024adashield,chen2023can}, inference-time alignment~\cite{wang2024inferaligner}, and training-time robust feedback or contrastive fine-tuning~\cite{zhang2023adversarial,chen2023dress,li2024one,yang2024robust,li2024red}. VLA-specific defenses have begun to appear, including structure-aware robust fine-tuning, randomized smoothing for certified robustness, and backdoor token reconstruction~\cite{zhang2026structure,seferis2025randomized,li2026whenattention}. None of these inspects the physical plausibility of the predicted actions, which is the gap T3-1 addresses. Safety assessment of robot foundation models and interpretation of their action predictions draw on further literatures, operational-safety standards and interpretability methods respectively, which we review in \autoref{sec:t3_2} and \autoref{sec:t3_3}.
-
-\subsubsection{T3-1: Defense Strategies for Robotic Foundation Models}\label{sec:t3_1}
-% (\autoref{table:attacks_models}).
+The attack tasks of \autoref{sec:t1} and \autoref{sec:t2} expose how foundation RMs fail under adversarial pressure; 
 
 \begin{wraptable}{r}{0.3\textwidth}%{\vspace{-3ex}}
 \centering
@@ -1123,6 +1118,13 @@ The attack tasks of \autoref{sec:t1} and \autoref{sec:t2} expose how robotic fou
 \end{tabular}
 }\vspace{-2ex}
 \end{wraptable}
+this task builds the counterpart that makes those failures detectable, certifiable, and explainable. T3 pursues three goals. \cib{1} \emph{Defense} (\autoref{sec:t3_1}): mitigate the attacks at their point of effect, the predicted actions, with an action-space anomaly detector and adversarial fine-tuning constrained by the same kinematics the attacks exploit. \cib{2} \emph{Safety assessment} (\autoref{sec:t3_2}): turn the physical-consequence metrics of the attack protocol into a violation-based safety benchmark with statistical guarantees, covering both adversarial and benign failure modes. \cib{3} \emph{Interpretation} (\autoref{sec:t3_3}): explain why attacks succeed and defenses work by attributing decisions to their driving modalities, layers, and tokens. The three sub-tasks reinforce each other: the detector certifies the safety event, the assessment scores the defenses, and the interpretation feeds its findings back into defense design.
+
+\BfPara{Related Work} The defense landscape relevant to all three sub-tasks splits by where it acts. VLM-era defenses act on the input or the output text (\autoref{tab:defense}): anomaly and mutation-based detection~\cite{zhang2023mutation,gou2024eyes,pi2024mllm}, prompt engineering~\cite{wu2023jailbreaking,wang2024adashield,chen2023can}, inference-time alignment~\cite{wang2024inferaligner}, and training-time robust feedback or contrastive fine-tuning~\cite{zhang2023adversarial,chen2023dress,li2024one,yang2024robust,li2024red}. VLA-specific defenses have begun to appear, including structure-aware robust fine-tuning, randomized smoothing for certified robustness, and backdoor token reconstruction~\cite{zhang2026structure,seferis2025randomized,li2026whenattention}. None of these inspects the physical plausibility of the predicted actions, which is the gap T3-1 addresses. Safety assessment of robot foundation models and interpretation of their action predictions draw on further literatures, operational-safety standards and interpretability methods respectively, which we review in \autoref{sec:t3_2} and \autoref{sec:t3_3}.
+
+\subsubsection{T3-1: Defense Strategies for foundation RMs}\label{sec:t3_1}
+% (\autoref{table:attacks_models}).
+
 % identify multimodal jailbreaking attacks during inference. 
 %  MLLM-Protector~\cite{pi2024mllm} detects harmful inputs and detoxifies output responses. InferAligner~\cite{wang2024inferaligner} performs inference-time safety alignment. %Alignment methods, mainly Instruction Tuning and Reinforcement Learning from Human Feedback, align model behavior with expected values and intentions. 
 % Prompt-engineering defenses~\cite{wu2023jailbreaking,wang2024adashield,chen2023can} optimize the prompt to harden the model. Training-time VLM defenses construct robust feedback or prompts~\cite{chen2023dress,zhang2023adversarial,li2024one}, or train robust VLMs by fine-tuning or contrastive learning~\cite{li2024red,yang2024robust}. 
@@ -1164,10 +1166,10 @@ Under the same protocol, for each attack $\mathcal{M}$,
 where $\mathcal{C}_{\mathcal{M}}$ is the multiplicative attack-cost increase, $\Delta_{\mathrm{clean}}\ge0$ the clean-task performance drop caused by the defense, and $\mathrm{TPR}_{\mathcal{M}}$ the detection rate of the TACD rule of \autoref{eq:tacd-rule} at the threshold
 $\xi_{t}$ calibrated on held-out benign episodes. Here $\mathcal{C}_{\mathcal{M}}$ and $\Delta_{\mathrm{clean}}$ measure AGAT of \autoref{eq:agat-obj}, the first against each attack $\mathcal{M}$ and the second on clean episodes, while $\mathrm{TPR}_{\mathcal{M}}$ measures TACD. We benchmark TACD and AGAT against the input-side VLM defenses of \autoref{tab:defense}, namely mutation-based detection~\cite{zhang2023mutation,gou2024eyes}, harmful-instruction detection with output detoxification~\cite{pi2024mllm}, and inference-time alignment~\cite{wang2024inferaligner}, together with input smoothing, VLM-ported adversarial training, and ensemble voting, so the action-space defenses are measured against the strongest available input-space alternatives.
 
-\subsubsection{T3-2: Safety Assessment of Robotic Foundation Models} \label{sec:t3_2}
+\subsubsection{T3-2: Safety Assessment of foundation RMs} \label{sec:t3_2}
 Operational safety of robots is governed by established standards, among them ISO 13482:2014 for personal care robots, ISO 10218-1 and ISO 10218-2 for industrial robots, and ISO/TS 15066 for collaborative robots, and by prior work on validation under rare failures and on standardized physical testbeds~\cite{FoschVillaronga2015CreationOA,RePEc:eps:cepswp:26204,10.3389/frobt.2022.1002226,fosch21,zhangei2023quadruped-tro,weng2023standard-legged-test,weng2023comparability}. These frameworks assess the robot as a physical system; none assesses the foundation model as the component that can be driven to unsafe outputs by benign or adversarial inputs.
 Recent work has begun to release dedicated VLA security benchmarks and physically-grounded evaluation suites, which we will build on and compare against~\cite{li2025attackvla,sun2026maniparena}.
-\ul{To assess the safety of generalist robot models, we propose a violation-based assessment protocol that measures how often a model, defended or not, produces physically unsafe behavior under attacks and under benign distribution shift.}
+\ul{To assess the safety of generalist RMs, we propose a violation-based assessment protocol that measures how often a model, defended or not, produces physically unsafe behavior under attacks and under benign distribution shift.}
 We define a per-episode safety-violation event from the physical quantities of \autoref{sec:t1},
 \vspace{-1ex}\begin{equation}
   \small
@@ -1195,9 +1197,9 @@ Verification proceeds by falsification: the attack families of \autoref{sec:t1} 
 A model-defense pair passes the assessment when all three criteria hold; the pass/fail matrix over $\mathcal{Q}$, the per-cell intervals, and the witness sets form the delivered safety benchmark.
 
 
-\subsubsection{T3-3: Interpretation of Robotic Foundation Models} \label{sec:t3_3}
+\subsubsection{T3-3: Interpretation of foundation RMs} \label{sec:t3_3}
 
-\autoref{sec:t1} and \autoref{sec:t2} establish that robotic foundation models are vulnerable, and \autoref{sec:t3_1} that defenses reduce the risk, but neither says where the vulnerability lives in the model or why a defense changes it. T3-3 closes this loop: interpretation localizes the mechanisms behind attacks and defenses, turning the measurements of the previous tasks into explanations that can guide the next design.
+\autoref{sec:t1} and \autoref{sec:t2} establish that foundation RMs are vulnerable, and \autoref{sec:t3_1} that defenses reduce the risk, but neither says where the vulnerability lives in the model or why a defense changes it. T3-3 closes this loop: interpretation localizes the mechanisms behind attacks and defenses, turning the measurements of the previous tasks into explanations that can guide the next design.
 Methods for interpretability can be categorized into gradient- and inference-based methods. 
 Here, gradient-based methods trace attention and relevancy flow to the predicted action tokens, exposing which modality, patch, or token drives a decision, whereas inference-based methods probe frozen representations for specific components, and their task-specificity is acceptable because our probing tasks are fixed per model family.
 
@@ -1205,7 +1207,7 @@ Here, gradient-based methods trace attention and relevancy flow to the predicted
 
 
 \BfPara{Gradient-based Interpretation Methods} 
-Robotic models mostly incorporate transformer-based components, which can use
+RMs mostly incorporate transformer-based components, which can use
 attention maps for interpretation. 
 Variants of these methods have been discussed in the literature, such as the Attention Rollout \cite{abnar2020quantifying}, which integrates layers to produce an average attention map. %The work by~\cite{voita-etal-2019-analyzing} specifically adapted the LRP method for transformers, addressing computational challenges.
 A recent study \cite{DBLP:journals/corr/abs-2106-12620} proposes $\text{IA-RED}^2$, enhancing transformer efficiency with human-understandable architecture.
@@ -1243,7 +1245,7 @@ where $\phi$ is any of the gradient-based attribution maps above, restricted to 
 \cib{3} \emph{Temporal consistency:} a policy acts over $H$ steps, and per-step attributions should be stable under small state changes, otherwise the explanation is noise. We quantify stability by the rank correlation of attribution maps between adjacent steps $k$ and $k{+}1$, and we use its breakdown as a diagnostic on TTDA-style drift episodes (\autoref{eq:ttda-obj}), where per-step actions are feasible but the trajectory fails.
 If a condition fails for a method or model family, that failure is itself a finding: it marks where VLM-era interpretation does not transfer to action prediction and motivates the action-level methods of this task.
 
-\ul{We will develop action-level interpretation methods for robotic foundation models, attributing adversarial successes and defense effects to their driving modalities, layers, and tokens, validated by the faithfulness check above and delivered as case studies on instruction--observation--action triples drawn from the attack episodes of T1 and T2.}
+\ul{We will develop action-level interpretation methods for foundation RMs, attributing adversarial successes and defense effects to their driving modalities, layers, and tokens, validated by the faithfulness check above and delivered as case studies on instruction--observation--action triples drawn from the attack episodes of T1 and T2.}
 Recent work has begun to explore spatial-grounding attribution and neuro-symbolic spatial reasoning for embodied models, which we will build on for action-level interpretation~\cite{schofield2026chain,jahangard2025multimodal}.
 
 \subsubsection{Deliverables} \label{sec:t3_deliverables}
@@ -1254,10 +1256,10 @@ T3 delivers four results. \cib{1} Open-source implementations of TACD (\autoref{
   
 
 \subsubsection{Deliverables} \label{sec:t1_evaluation}
-% We will benchmark various attacks (\autoref{table:attacks_models}) and defenses (\autoref{tab:defense}) against state-of-the-art robotic models using comprehensive datasets. Our primary metric is task success rate (TSR) under attack, a binary task-completion judgment using the two-point scoring system of our preliminary experiments. We retain the 30\% action-token deviation as a secondary physical-consequence proxy, alongside Attack Success Rate, \textit{Contain} \cite{lu2024test} (presence of attacker-specific action tokens), \textit{Exactmatch} \cite{luo2024image,lu2024test} (perfect match with attacker-specific tokens), transferability, and perturbation imperceptibility. 
+% We will benchmark various attacks (\autoref{table:attacks_models}) and defenses (\autoref{tab:defense}) against state-of-the-art RMs using comprehensive datasets. Our primary metric is task success rate (TSR) under attack, a binary task-completion judgment using the two-point scoring system of our preliminary experiments. We retain the 30\% action-token deviation as a secondary physical-consequence proxy, alongside Attack Success Rate, \textit{Contain} \cite{lu2024test} (presence of attacker-specific action tokens), \textit{Exactmatch} \cite{luo2024image,lu2024test} (perfect match with attacker-specific tokens), transferability, and perturbation imperceptibility. 
 % To further ground these token-level metrics in physical consequences, we report maximum end-effector action displacement and the rate of safety-zone and force-threshold violations. We evaluate our proposed defenses against at least three baseline defenses, and we construct a full model~$\times$~model~$\times$~attack transferability matrix across the model families and embodiments in our scope. We report all metrics as mean~$\pm$~std over at least ten runs with multiple seeds, and assess significance with Welch's $t$-test.
 % We will align this protocol with recent physically-grounded evaluation practice for robot policies~\cite{sun2026maniparena}.
-Deliverables include: \cib{1} a comprehensive framework of attack vectors (and defenses) specific to robotic models
+Deliverables include: \cib{1} a comprehensive framework of attack vectors (and defenses) specific to RMs
 with target modalities, tasks, and embodiments, \cib{2} open-source implementation includes datasets, developed attacks, defenses, and evaluations, and \cib{3} publications/reports/labs on findings and methodologies.
 
 \end{comment}
@@ -1267,7 +1269,7 @@ with target modalities, tasks, and embodiments, \cib{2} open-source implementati
 Visualization techniques, \eg heatmaps and saliency maps, will be used to interpret how the model makes decisions under both normal and adversarial conditions.
 Case studies on specific instances (\ie instruction-action pairs) where the model fails or succeeds will be conducted to understand the behavior of the model.
 There will be human-in-the-loop evaluations that include reviewing and interpreting the results, ensuring that the methods align with human understanding and expectations.
-Deliverables include: \cib{1} benchmarks for safety and interpretability of robotic foundation models, \cib{2} open-source implementations of developed safety and interpretability methods, and \cib{3} academic publications/reports/labs on findings and methodologies.
+Deliverables include: \cib{1} benchmarks for safety and interpretability of foundation RMs, \cib{2} open-source implementations of developed safety and interpretability methods, and \cib{3} academic publications/reports/labs on findings and methodologies.
 \end{comment}
 
 
