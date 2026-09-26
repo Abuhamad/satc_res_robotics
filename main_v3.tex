@@ -147,7 +147,7 @@ vector no single attack characterizes. We will build a threat model spanning \te
 \textit{poisoning}, \textit{privacy}, and \textit{abuse} attacks, across embodiments, environments, and tasks. Rather
 than adapting pixel-space or input-token attacks from VLMs, we exploit structure specific to VLAs, the uniform
 quantization of the action space, the temporal action chunk, and the mapping from predicted action-token to
-physical displacement. Three attack families span \emph{white}-, \emph{gray}-, and \emph{black}-box adversaries, and two
+physical displacement. The central attack primitive, ABBP, inverts the usual objective, first selecting \emph{which} bin shifts maximize physical displacement under kinematic feasibility, then synthesizing the cheapest input perturbation that achieves them, so the perturbation budget is allocated by physical effect rather than by gradient magnitude, and the evaluation measures end-effector deviation rather than token flips. Three attack families span \emph{white}-, \emph{gray}-, and \emph{black}-box adversaries, and two
 defenses inspect predicted actions rather than inputs, so both hold when the compromised modality is
 unknown. Connecting AI security and robotics grounds threat models and the defenses, ensuring practicality across embodiments.
 
