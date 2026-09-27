@@ -148,7 +148,7 @@ physical displacement. We propose an attack family, Action-Bin Boundary Perturba
 
 \BfPara{{\cib{2}} T2: Vulnerability Analysis Under Limited Access} Deployed models do not expose gradients, so T2 investigates vulnerabilities when the adversary holds only partial knowledge. Under gray-box access, our Surrogate-Transfer Action Perturbation (STAP) fine-tunes surrogates on public components and transfers ABBP-style perturbations to private victims, isolating how backbone, data, and embodiment mismatch degrade attacks. Under black-box access, our Temporal Trajectory Drift Attack (TTDA) accumulates kinematically plausible drift over an episode within a strict query budget. Both families are developed over the \emph{visual}, \emph{textual}, and coupled \emph{visual--language} channels and span \emph{evasion} and \emph{privacy} adversarial goals. %Together, T1 and T2 map the same threat space across the full spectrum of adversarial knowledge.
 
-\BfPara{{\cib{3}} T3: Benchmarks for Robustness, Safety, and Trustworthiness} Operational standards constrain robot mechanisms, not model outputs. We will defend the model at its point of effect with the Temporal Action Consistency Detector (TACD), an anomaly detector on predicted actions, and Action-Grounded Adversarial Fine-Tuning (AGAT), both constrained by the same kinematics the attacks exploit, convert operational limits into a violation-based safety specification testable over predicted actions with confidence guarantees, and develop attribution methods
+\BfPara{{\cib{3}} T3: Benchmarks for Robustness, Safety, and Trustworthiness} Operational standards constrain robot mechanisms, not model outputs. We will defend the model at its point of effect with the Temporal Action Consistency Detector (TACD), an anomaly detector on predicted actions, and Action-Grounded Adversarial Fine-Tuning (AGAT), both constrained by the same kinematics the attacks exploit, convert operational limits into a violation-based safety specification testable on predicted actions with confidence guarantees, and develop attribution methods
 tracing predicted actions to input image regions and instruction tokens. We will release open benchmarks evaluating attacks, defenses, safety, and interpretability.
 
 
@@ -356,13 +356,13 @@ This project grounds attacks, defenses, and measurement in the action space of t
 \BfPara{End-to-end Robotic Learning}
 Building generalist
 robots advances in multiple dimensions: 
-\cib{1} the development and integration of vision, language, large action models, and multimodal fusion techniques into robotic learning, 
-\cib{2} {\xo}-embodiment sensing and training using large, diverse datasets from across embodiments, enhanced transfer learning methods, and scalable data collection frameworks, and
+\cib{1} the development and integration of vision, language, action heads, and multimodal fusion techniques into robotic learning, 
+\cib{2} the use of {\xo}-embodiment large and diverse datasets to enhance generalization, and
 \cib{3} the incorporation of real-time feedback, reinforcement learning on modular RMs for various tasks.
 High-capacity models have demonstrated an exceptional ability to process and learn diverse and extensive datasets, which is critical for end-to-end robotic learning. 
-These models leverage their vast parameter space, \eg GPT-3, Jurassic-1, WuDao-2 with 175B+, Microsoft and Nvidia's Megatron-Turing NLG with 530B, and Google's Switch Transformer with 1.56 trillion parameters, to capture intricate patterns and relationships within the data, enabling them to generalize effectively across a wide array of tasks. 
-Compared to these models, models used for robotic learning directly are relatively smaller, \eg RT-1~\cite{rt-1}, MOO~\cite{stone2023open}, and CLIPort~\cite{shridhar2022cliport} (with CLIP-ViT-Base), have 35M+, 111M, and 400M+, respectively. RT-2~\cite{rt-2} and variations of RT-2-X~\cite{9} incorporate pre-trained VLMs, which have large parameter space (\eg RT-2-PaLM-E and RT-2-PaLI-X have 12B and 55B, respectively).
-Scaling up these models faces many challenges: 
+These models leverage their vast parameter space to capture patterns and relationships within the data, enabling them to generalize effectively across tasks. 
+% Compared to these models, models used for robotic learning directly are relatively smaller, \eg RT-1~\cite{rt-1}, MOO~\cite{stone2023open}, and CLIPort~\cite{shridhar2022cliport} (with CLIP-ViT-Base), have 35M+, 111M, and 400M+, respectively. RT-2~\cite{rt-2} and variations of RT-2-X~\cite{9} incorporate pre-trained VLMs, which have large parameter space (\eg RT-2-PaLM-E and RT-2-PaLI-X have 12B and 55B, respectively).
+Using such models in robotic learning faces many challenges: 
 \cib{1} maintaining real-time inference under strict time constraints (\eg 3-5Hz), 
 \cib{2} maintaining robustness and coherence when generalizing to novel tasks and environments, 
 \cib{3} addressing the computational demands and resource requirements of training and deployment, 
