@@ -61,7 +61,7 @@ safety, robustness, and interpretability. %This makes the physical consequences 
 \begin{figure*}[t]
   \centering
   % \vspace{-1.5ex}
-  \includegraphics[width=\textwidth]{figures/pipeline_7.pdf}\vspace{-2ex}
+  \includegraphics[width=\textwidth]{figures/pipeline8.drawio.pdf}\vspace{-2ex}
   \caption{\textbf{Toward Secure, Trustworthy, End-to-End RMs.} Gaps, Challenges, and Proposed Work.}
   \vspace{-4ex}
   \label{fig:pipeline}
@@ -140,15 +140,15 @@ This proposal presents three conceptual and practical ideas.
 % Each thrust carries measurable goals: attacks must reach their physical target at bounded budget, defenses must at least double the attack cost while keeping clean-task loss near zero, and the safety assessment must certify violation rates with statistical guarantees.
 \\
 \BfPara{{\cib{1}} T1: Threat Space and Vulnerability Analysis} Data and task complexity create a threat
-vector no single attack characterizes. We will build a threat model spanning \textit{evasion},
-\textit{poisoning}, \textit{privacy}, and \textit{abuse} attacks, across embodiments, environments, and tasks. Rather
-than adapting pixel-space or input-token attacks from VLMs, we exploit structure specific to RMs, \ie the uniform
+vector no single attack characterizes. We map the threat space and define threat models spanning \textit{evasion},
+\textit{poisoning}, \textit{privacy}, and \textit{abuse} attacks, across adversarial knowledge, embodiments, environments, and tasks. 
+Instead of adapting pixel-space or input-token attacks from VLMs, we exploit structure specific to RMs, \ie the uniform
 quantization of the action space, the temporal action chunk, and the mapping from predicted action-token to
-physical displacement. We propose an attack family, ABBP, that inverts the usual objective, first selecting \emph{which} bin shifts maximize physical displacement under kinematic feasibility, then synthesizing the cheapest input perturbation that achieves them, so the perturbation budget is allocated by physical effect instead of  gradient magnitude. T1 develops ABBP in white-box scenarios over the \emph{visual}, \emph{textual}, and coupled \emph{visual--language} channels, targeting mechanisms binding the modalities, \eg FiLM in RT-1~\cite{rt-1}, projection MLP in OpenVLA~\cite{kim2024openvla}, and cross-attention in Octo~\cite{team2024octo}, in \emph{evasion} and \emph{poisoning} adversarial goals.
+physical displacement. We propose an attack family, Action-Bin Boundary Perturbation (ABBP), that inverts the usual objective, first selecting \emph{which} bin shifts maximize physical displacement under kinematic feasibility, then synthesizing the cheapest input perturbation that achieves them, so the perturbation budget is allocated by physical effect instead of  gradient magnitude. T1 develops ABBP in white-box scenarios over the \emph{visual}, \emph{textual}, and coupled \emph{visual--language} channels, targeting mechanisms binding the modalities, \eg FiLM in RT-1~\cite{rt-1}, projection MLP in OpenVLA~\cite{kim2024openvla}, and cross-attention in Octo~\cite{team2024octo}, in \emph{evasion} and \emph{poisoning} adversarial goals.
 
-\BfPara{{\cib{2}} T2: Vulnerability Analysis Under Limited Access} Deployed models do not expose gradients, so T2 investigates vulnerabilities when the adversary holds only partial knowledge. Under gray-box access, surrogates fine-tuned on public components transfer perturbations to private victims, isolating how backbone, data, and embodiment mismatch degrade attacks. Under black-box access, query-based attacks accumulate kinematically plausible drift over an episode within a 500-query budget, and query-only privacy attacks expose membership, reconstruction, and prompt-stealing risks. Together, T1 and T2 map the same threat space across the full spectrum of adversarial knowledge.
+\BfPara{{\cib{2}} T2: Vulnerability Analysis Under Limited Access} Deployed models do not expose gradients, so T2 investigates vulnerabilities when the adversary holds only partial knowledge. Under gray-box access, our Surrogate-Transfer Action Perturbation (STAP) fine-tunes surrogates on public components and transfers ABBP-style perturbations to private victims, isolating how backbone, data, and embodiment mismatch degrade attacks. Under black-box access, our Temporal Trajectory Drift Attack (TTDA) accumulates kinematically plausible drift over an episode within a strict query budget. Both families are developed over the \emph{visual}, \emph{textual}, and coupled \emph{visual--language} channels and span \emph{evasion} and \emph{privacy} adversarial goals. %Together, T1 and T2 map the same threat space across the full spectrum of adversarial knowledge.
 
-\BfPara{{\cib{3}} T3: Benchmarks for Robustness, Safety, and Trustworthiness} Operational standards constrain robot mechanisms, not model outputs. We will defend the model at its point of effect with action-space detection and adversarial fine-tuning constrained by the same kinematics the attacks exploit, convert operational limits into a violation-based safety specification testable over predicted actions with confidence guarantees, and develop attribution methods
+\BfPara{{\cib{3}} T3: Benchmarks for Robustness, Safety, and Trustworthiness} Operational standards constrain robot mechanisms, not model outputs. We will defend the model at its point of effect with the Temporal Action Consistency Detector (TACD), an anomaly detector on predicted actions, and Action-Grounded Adversarial Fine-Tuning (AGAT), both constrained by the same kinematics the attacks exploit, convert operational limits into a violation-based safety specification testable over predicted actions with confidence guarantees, and develop attribution methods
 tracing predicted actions to input image regions and instruction tokens. We will release open benchmarks evaluating attacks, defenses, safety, and interpretability.
 
 
