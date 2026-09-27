@@ -373,27 +373,34 @@ To this end, we identify the following challenges.
 % We identify the key challenges in ensuring model resilience to adversarial attacks.
 
 
-\BfPara{C1: Wide-array of Data and Model Adoption}
+\BfPara{C1: Data and Model Adoption}
 The emergence of large-scale datasets for {\xo}-embodied generalist robots across diverse robotic platforms, embodiments, and environments has enabled many advances in the field.
-Standardizing and processing these heterogeneous datasets in a consistent format requires substantial effort and innovation, as seen in efforts such as RoboNet~\cite{dasari2020robonet} and Open {\xo}-Embodiment Repository~\cite{9}. 
-These datasets cover different kinds of tasks, objects, scenarios, and settings.
+Standardizing and processing these heterogeneous datasets, tasks, and models in a consistent format requires substantial effort and innovation, as seen in efforts such as RoboNet~\cite{dasari2020robonet} and Open {\xo}-Embodiment Repository~\cite{9}. 
+These datasets cover different kinds of tasks, objects, scenarios, and settings, and achieving robust cross-embodiment generalization remains an open challenge.
 Moreover, recent work showed the benefits of learning visual representations from human video data~\cite{nair2022r3m,xiao2022masked,radosavovic2022,majumdar2024we,karamcheti2023language,mu2023ec2,bahl2023affordances} for robotics learning. 
 Beyond robot-specific or {\xo}-embodied data, more data will inevitably be included to train generalist models.
 This introduces security/safety challenges that must be addressed to prevent/mitigate vulnerabilities.
 
 
-\BfPara{C2: Multimodal Data and Model Integration} 
+\BfPara{C2: Multimodal Data/Models Integration} 
 The integration of multimodal data, \ie vision, language, and action, into large foundation models for robotics presents substantial security complexities. 
-Despite the importance of this integration to improve robot functionality and autonomy through understanding and interacting with unseen environments, the heterogeneous nature of multimodal data greatly increases the attack surface, offering multiple avenues for malicious interference. 
-Each data modality introduces particular vulnerabilities; for instance, adversarial images can fool vision models, while subtly changed text inputs can fool language models. Moreover, it is more challenging to determine the impact of adversarial manipulations on input data due to the varied ways in which such data and models are used in end-to-end robot learning.
-We must identify and counteract attacks that can exploit the specific weaknesses of each modality. 
+Each modality introduces particular vulnerabilities, \ie adversarial images can fool vision models, subtly changed text inputs can fool language models, and the coupling between vision and language through mechanisms like FiLM and cross-attention creates additional attack surfaces that are not yet well understood.
+Moreover, the action tokens predicted by these models map directly to physical displacements, making the impact of adversarial manipulations difficult to assess using traditional token-space metrics.
+We must identify and counteract attacks that exploit the specific weaknesses of each modality and their integration points.
 
 
-\BfPara{C3: Robustness and Trustworthiness}
+\BfPara{C3: Limited Adversarial Access}
+Deployed robotic systems rarely expose model internals, gradients, or training data to external parties, yet adversaries can still interact with these systems through queries and observations.
+Transferability-based attacks exploit surrogate models trained on public components to generate adversarial examples that transfer to black-box victims, but the degree of transfer across different model architectures and robot embodiments remains underexplored.
+Understanding the cost and efficiency of such attacks is crucial to categorize their threat, impact, and practical feasibility, as well as to advise in developing effective defenses.
+We must characterize the transferability landscape across models and embodiments and develop query-efficient attack strategies to understand the true threat surface under realistic access constraints.
+
+\BfPara{C4: Robustness and Trustworthiness}
 Ensuring the robustness and trustworthiness of robotic agents is a major challenge. 
-Few studies have adequately assessed factors such as interpretability, robustness, safety, and fairness in robots, raising concerns about the potential for inherited vulnerabilities and bias from large backbone models. We must assess RMs
-under a variety of conditions, including adversarial attacks and unexpected inputs, and develop methods that can improve their robustness.
-We must develop methods for interpretability and fairness to ensure transparent and unbiased decisions.
+Few studies have adequately assessed factors such as interpretability, robustness, safety, and fairness in robots, raising concerns about the potential for inherited vulnerabilities and bias from large backbone models. 
+Current evaluation frameworks are limited in their ability to measure physical consequences of adversarial manipulations, and existing defenses are not grounded in the action space of the robot.
+Interpretability methods developed for vision and language models do not transfer cleanly to action prediction, leaving the mechanisms behind predictions, attacks, and defenses opaque.
+We must develop defenses, safety specifications, and interpretability tools to better understand robotic models and systems.
 
 
 These challenges represent a tremendous opportunity for research into end-to-end learning models for {\xo}-embodied generalist robots. The PIs are well-positioned to advance this field through their expertise in AI security, robust model development, robotic systems, and distributed modeling and analysis.
