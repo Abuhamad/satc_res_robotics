@@ -130,36 +130,25 @@ Building a single end-to-end model that generalizes to unforeseen conditions acr
 as shown in \autoref{fig:rt-x_result}.
 Like other neural networks, end-to-end RMs can be vulnerable to adversarial manipulations despite tolerating input noise.
 Recent works have begun exposing isolated vulnerabilities, including jailbreaking of LLM-controlled robots~\cite{robey2024jailbreaking}  (\autoref{fig:examples}-A), adversarial attacks on quadrupedal locomotion~\cite{shi2024rethinking,miki2022scirob,rslsubt2022}  (\autoref{fig:examples}-B), and emerging backdoor and adversarial attacks on vision-language-action models~\cite{badvla,advvla}. These efforts target isolated components or single models rather than the end-to-end robotic learning pipeline.
+\emph{We must investigate the threat space of foundation RMs, including the vision, language, and vision-language backbones used in end-to-end learning.}
 This proposal closes that gap with a unified framework spanning threat modeling, cross-modal
-vulnerability analysis, defenses, and benchmarks, organized as three research thrusts
-(\autoref{fig:pipeline}). We have assembled the supporting infrastructure, model collection, 15 dataset sources including the Open {\xo}-Embodiment repository~\cite{9} for six robot embodiments, as well as baseline attacks (results in
-simulation and on a real Xarm7 robot are shown in \autoref{sec:t0}).
-\emph{We must investigate the threat space of foundation RMs, including the vision, language, and/or vision-language backbone models used in end-to-end learning.}
+vulnerability analysis, defenses, and benchmarks, organized as three research tasks
+(\autoref{fig:pipeline}). Two commitments distinguish the proposal. First, every attack and defense is evaluated by physical consequence, end-effector deviation under kinematic feasibility, rather than by token-space outputs, under one protocol shared across all threat levels. Second, the proposal is grounded in preliminary evidence, \eg our white-box visual attacks and black-box token-level instruction perturbations degrade task success across three models (\autoref{sec:t0}), on infrastructure that include 15 dataset sources including the Open {\xo}-Embodiment repository~\cite{9} for six robot embodiments.
 \\
-Emerging industry efforts, \eg Google's RT-1 and RT-2, Nvidia's GR00T, Covariant's RFM-1, Meta's V-JEPA 2, and Tesla's Optimus, show that using large high-capacity RMs to transfer knowledge from large and diverse datasets can achieve high performance on robot-specific tasks even with smaller datasets. 
-The same trend now drives academia and laboratories worldwide \cite{openvla_oft,qu2025spatialvla,kim2024openvla,team2024octo}.%, and this progress is expected to continue.
-The open \xot \cite{9} project published a large \xot robotic dataset and shows that robots achieve better generalization when trained on such datasets.
-The democratization of these models and resources promises continuous growth in generalist robots.
-This proposal presents the following three conceptual and practical ideas: 
+Industry and academia now converge on the same trajectory, from Google's RT-2 and Gemini Robotics, Nvidia's GR00T, Covariant's RFM-1, Meta's V-JEPA 2, and Tesla's Optimus to open academic models~\cite{openvla_oft,qu2025spatialvla,kim2024openvla,team2024octo} trained on the open large and diverse datasets, so generalist robots will keep growing in capability and deployment.
+This proposal presents three conceptual and practical ideas.
+% Each thrust carries measurable goals: attacks must reach their physical target at bounded budget, defenses must at least double the attack cost while keeping clean-task loss near zero, and the safety assessment must certify violation rates with statistical guarantees.
 \\
 \BfPara{{\cib{1}} T1: Threat Space and Vulnerability Analysis} Data and task complexity create a threat
 vector no single attack characterizes. We will build a threat model spanning \textit{evasion},
 \textit{poisoning}, \textit{privacy}, and \textit{abuse} attacks, across embodiments, environments, and tasks. Rather
 than adapting pixel-space or input-token attacks from VLMs, we exploit structure specific to RMs, \ie the uniform
 quantization of the action space, the temporal action chunk, and the mapping from predicted action-token to
-physical displacement. The central attack primitive, ABBP, inverts the usual objective, first selecting \emph{which} bin shifts maximize physical displacement under kinematic feasibility, then synthesizing the cheapest input perturbation that achieves them, so the perturbation budget is allocated by physical effect rather than by gradient magnitude, and the evaluation measures end-effector deviation rather than token flips. Three attack families span \emph{white}-, \emph{gray}-, and \emph{black}-box adversaries, and two
-defenses inspect predicted actions rather than inputs, so both hold when the compromised modality is
-unknown. Connecting AI security and robotics grounds threat models and the defenses, ensuring practicality across embodiments.
+physical displacement. We propose an attack family, ABBP, that inverts the usual objective, first selecting \emph{which} bin shifts maximize physical displacement under kinematic feasibility, then synthesizing the cheapest input perturbation that achieves them, so the perturbation budget is allocated by physical effect instead of  gradient magnitude. T1 develops ABBP in white-box scenarios over the \emph{visual}, \emph{textual}, and coupled \emph{visual--language} channels, targeting mechanisms binding the modalities, \eg FiLM in RT-1~\cite{rt-1}, projection MLP in OpenVLA~\cite{kim2024openvla}, and cross-attention in Octo~\cite{team2024octo}, in \emph{evasion} and \emph{poisoning} adversarial goals.
 
-\BfPara{{\cib{2}} T2: Modality-Inherited Vulnerabilities in Multimodal Robots} Each modality carries
-its own weaknesses, and prior multimodal attacks perturb modalities independently, so alignment
-defenses detect them. We will instead target the mechanism binding vision to language in each
-architecture, \eg FiLM in RT-1~\cite{rt-1}, a projection MLP in OpenVLA~\cite{kim2024openvla}, and
-cross-attention in Octo~\cite{team2024octo}, and craft perturbations reinforcing one another at that
-layer. Mutating one modality at a time then isolates how much each contributes to the adversarial
-objective, and we evaluate input- and action-level defenses against the resulting attacks.
+\BfPara{{\cib{2}} T2: Vulnerability Analysis Under Limited Access} Deployed models do not expose gradients, so T2 investigates vulnerabilities when the adversary holds only partial knowledge. Under gray-box access, surrogates fine-tuned on public components transfer perturbations to private victims, isolating how backbone, data, and embodiment mismatch degrade attacks. Under black-box access, query-based attacks accumulate kinematically plausible drift over an episode within a 500-query budget, and query-only privacy attacks expose membership, reconstruction, and prompt-stealing risks. Together, T1 and T2 map the same threat space across the full spectrum of adversarial knowledge.
 
-\BfPara{{\cib{3}} T3: Benchmarks for Robustness, Safety, and Trustworthiness} Operational standards constrain robot mechanisms, not model outputs. We will defend the model at its point of effect with action-space detection and adversarial fine-tuning, convert operational limits into a specification testable over predicted actions, and develop attribution methods
+\BfPara{{\cib{3}} T3: Benchmarks for Robustness, Safety, and Trustworthiness} Operational standards constrain robot mechanisms, not model outputs. We will defend the model at its point of effect with action-space detection and adversarial fine-tuning constrained by the same kinematics the attacks exploit, convert operational limits into a violation-based safety specification testable over predicted actions with confidence guarantees, and develop attribution methods
 tracing predicted actions to input image regions and instruction tokens. We will release open benchmarks evaluating attacks, defenses, safety, and interpretability.
 
 
@@ -177,7 +166,7 @@ This project grounds attacks, defenses, and measurement in the action space of t
 
 
 
-\section{Background}
+\section{Background}\label{sec:background}
 ~{\vspace{-3ex}}
 \begin{wrapfigure}{r}{0.55\textwidth}\vspace{-7.6ex}
   \centering
@@ -535,7 +524,7 @@ Several threat models can be defined based on the adversarial specificity/goals,
 
 
 \newpage
-\section{Research Plan}
+\section{Research Plan} \label{sec:research_plan}
 
 This work proposes a novel security framework for end-to-end generalist robots to address the inherent challenges of ensuring robustness, security, and trustworthiness in general-purpose robots across various physical embodiments. 
 End-to-end generalist RMs leverage high-capacity models (\eg ViTs, LLMs, VLMs, and VLAs) pre-trained using Internet-scale data and training pipelines that use specific and/or \xot robotics datasets. 
