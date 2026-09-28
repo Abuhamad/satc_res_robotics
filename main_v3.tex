@@ -764,9 +764,9 @@ These results demonstrate the potential vulnerabilities of RMs to attacks.
 
 
 
-\subsection{T1: Full-Access Attacks on foundation RMs} \label{sec:t1}
+\subsection{T1: Full-Access Attacks on Foundation RMs} \label{sec:t1}
 Full-access (white-box) attacks exploit full access to the model's architecture and parameters.
-White-box attacks provide deep insights into model vulnerabilities, enabling better understanding of its robustness.% and security of models, ensuring reliable and safe performance in real-world applications.
+White-box attacks provide deep insights into model vulnerabilities, enabling better understanding of its robustness.
 \\
 \BfPara{Related Work} While the literature is rich in methods for white-box attacks against various models, the closest model families to generalist robot foundation models are VLMs.
 Most evasion attacks against VLM \cite{schlarmann2023adversarial, bailey2023image,gao2024adversarial,wang2024stop,tan2024wolf} typically use gradient-based approaches, \eg PGD and CW, to generate/optimize perturbation for adversarial samples.
@@ -774,7 +774,6 @@ Recent work has begun to move beyond static, single-frame formulations toward tr
 A recent study \cite{fu2023misusing} shows that seemingly harmless images with trojan-like characteristics can manipulate VLMs to call attacker-specific third-party tools or external APIs. 
 Gao \etal \cite{gao2024inducing} introduce verbose images, creating imperceptible perturbations to make VLMs generate longer output sentences. Such an attack raises energy consumption and latency, which can have serious consequences in robotics. 
 Recent studies \cite{qi2024visual,shayegani2023jailbreak} show that adversarial perturbations of visual and textual modalities can jointly succeed in creating malicious injections.
-% Recent work has begun to explore physical attention-hijacking and patch attacks that target the vision-language grounding of robot policies~\cite{zhang2026structure,yin2026vlaguard}.
 \ul{In this task, we propose new attack family, Action-Bin Boundary Perturbation (ABBP), and investigate the cross-modal behavior in evasion and poisoning scenarios against RMs.}
 
 \subsubsection{T1-1: White-Box Action-Space Attacks} \label{sec:t1_1}
@@ -782,7 +781,7 @@ Recent studies \cite{qi2024visual,shayegani2023jailbreak} show that adversarial 
 \BfPara{Proposed Attack} 
 We propose ABBP, a gradient-based white-box attack designed to exploit the uniform 256-bin discretization of the VLA action space. Because adjacent bins encode physically close but discretely different control signals, ABBP optimizes perturbations to drive predicted action tokens across bin boundaries.
 Let $\mathcal{C}\subseteq\{1,\dots,d\}$ denote the $d$-dimensional continuous action, each uniformly quantized into $B{=}256$ bins, leaving $\{1,\dots,d\}\setminus\mathcal{C}$ for the discrete dimensions ({\eg} RT-1's arm/base/terminate mode). For $j\in\mathcal{C}$ the model $\mathcal{F}$ outputs logits $\bm{z}_j(\bm{x}, \bm{t})\in\mathbb{R}^{B}$, and the decoded bin and action are 
-\vspace{-1ex}\begin{equation} 
+\vspace{-2.5ex}\begin{equation} 
   \small b_j=\argmax_{c\in\{0,\dots,B-1\}} z_{j,c}(\bm{x}, \bm{t}), \qquad \hat a_j=l_j+\bigl(b_j+\tfrac{1}{2}\bigr)\Delta_j, \qquad \Delta_j=\frac{u_j-l_j}{B}, 
   \label{eq:abbp-quant} 
 \vspace{-1.5ex}
@@ -794,7 +793,7 @@ with $[l_j,u_j]$ the range of dimension $j$ and $\Delta_j$ the bin width. We set
 
 ABBP exploits this structure in two stages.
 \cib{1} \emph{Target selection:} ABBP selects a coordinated bin-shift vector $\bm{s}\in\mathbb{Z}^{d}$ maximizing end-effector displacement under budget and kinematic-feasibility constraints,
-\vspace{-1ex}\begin{equation}
+\vspace{-1.5ex}\begin{equation}
   \small
 \bm{s}^{*}=\argmax_{\substack{\bm{s}\in\mathbb{Z}^{d},\; s_j=0\;\forall j\notin\mathcal{J}}}
 \bigl\|W G(\bm{\theta})\,(\bm{s}\odot\bm{\Delta})\bigr\|_{2}
@@ -853,21 +852,14 @@ subpopulation.
 
 
 \subsubsection{T1-2: Multimodal White-Box Action-Space Attacks}  \label{sec:t1_2}
-% This task aims to examine the security and defense strategies derived from the targeting of one or more modalities used by robots. 
-% Although much progress has been made in designing attacks in individual modalities (\eg vision or language), the interaction between modalities remains less explored. 
+
 Existing attacks, even with multimodal systems, typically treat the perturbations of different modalities separately and design them independently. 
-% This results in less interactive relations between the perturbed multimodal inputs and can be easily recognized by security alignment methods (\ie methods
-% to align the model behavior with expected values and intentions). 
-% In addition, along with visual and textual instructions, other modalities can be incorporated in the training of generalist robots. Some of these modalities can be sensory information, tabular environment data, or supplementary interpretation maps (\ie maps that indicate the region of importance in recent outputs). 
-% To date, emerging foundation models in robotics focus mainly on visual and textual instruction. With the current trend of democratization of data and models, we expect and plan to explore more modalities as they emerge as common information used by robots.
-% We note that incorporating additional modalities into the system provides attackers with more physical avenues to launch attacks.
 {In this task, our aim is to explore strategies to reveal vulnerabilities by crafting ``\textit{tightly-multimodal}'' adversarial examples that simultaneously perturb visual and textual input with strong connections.} 
 We will target the vision-language coupling mechanism specific to each model and formulate a model-specific co-perturbation objective at each mechanism so the visual and textual perturbations co-reinforce at the grounding layer. 
 To this end, variations of ABBP attacks will be explored and evaluated.
 
 \BfPara{ABBP-L over Language Instructions}
 The two-stage design of ABBP extends from the visual input to the language instruction $\bm{t}$ with no change to the action-space machinery, because only perturbation synthesis touches the input domain.
-% Target selection (\autoref{eq:abbp-shift}) operates entirely in action and kinematic space, so it is modality-agnostic and transfers verbatim; the selected shift $\bm{s}^{*}$ and target bins $b_j^{*}=b_j+s_j^{*}$ are unchanged.
 The synthesis step of ABBP (\autoref{eq:abbp-obj}) perturbs the instruction (instead of the visual input) and solves the same weighted hinge margin over the logits, driven by $\bm{t}$,
 \vspace{-1.5ex}\begin{equation}
   \small
@@ -878,17 +870,11 @@ The synthesis step of ABBP (\autoref{eq:abbp-obj}) perturbs the instruction (ins
 \label{eq:abbp-obj-text}
 \vspace{-1.5ex}\end{equation}
 where $\bm{t}'$ is the perturbed instruction, $\mathcal{C}_{\mathrm{text}}$ is the constraint function that enforces the perturbation to stay within the allowed textual modification budget, other terms are as defined in \autoref{eq:abbp-obj}.
-% Because the input is a discrete token sequence, we replace the projected-gradient solver with a first-order token-substitution search in the embedding space of the instruction encoder, followed by nearest-token projection; the gradient of the margin with respect to each token embedding identifies the highest-impact replacements.
-% Because the input is discrete tokens, we replace projected-gradient descent with a first-order token-substitution search. We compute the margin gradient with respect to each token embedding to identify candidate replacement directions, evaluate the margin at candidate substitutions, and select the replacement that most increases the margin.
 Because the input is discrete tokens, we replace projected-gradient descent with a first-order token-substitution search. We compute the margin gradient with respect to each token embedding, identify candidate replacements aligned with that gradient direction, and select the replacement that most increases the margin.
 Considering $\epsilon_t=\{\epsilon_{\mathrm{edit}},\epsilon_{\mathrm{sim}}\}$, $\mathcal{C}_{\mathrm{text}}$ carries two requirements, (1) bounded edit budget $d_{\mathrm{edit}}(\bm{t},\bm{t}')\le \epsilon_{\mathrm{edit}}$ and (2) bounded embedding-similarity budget $e_{\mathrm{sim}}(\bm{t},\bm{t}')\le \epsilon_{\mathrm{sim}}$ using a reference sentence encoder, so the perturbation stays imperceptible.
-% The second is semantic equivalence: without it, editing the instruction degenerates into changing the task rather than attacking it, and the clean reference trajectory in \autoref{eq:abbp-gate} no longer isolates the effect of the attack.
-% We therefore restrict $\bm{t}'$ to meaning-preserving edits, namely synonym substitution, paraphrase, reordering, misspelling, and appended adversarial suffixes, and we enforce this with a similarity threshold under a reference sentence encoder.
-% The poisoning constructions of \autoref{sec:t1_1} extend to the textual channel unchanged, since label flipping and backdoor poisoning already admit a textual trigger paired with the shifted labels $b_j^{*}$.
 
 \BfPara{ABBP-VL over Joint Visual and Language Input}
-We then formulate the tightly-multimodal attack as a joint optimization over both modalities.
-% Let $\bm{\delta}_x$ denote the visual perturbation of \autoref{eq:abbp-obj} and $\bm{t}'$ the perturbed instruction of \autoref{eq:abbp-obj-text}. 
+We then formulate the tightly-multimodal attack as a joint optimization over both modalities. 
 The joint objective couples the shared action-margin loss with a grounding term that forces the two perturbations to co-reinforce at the vision-language fusion layer,
 \vspace{-1.5ex}\begin{equation}
   \small
@@ -915,7 +901,7 @@ In both cases $\epsilon$ is drawn from a fixed geometric grid $E$ capped at $\ep
 We write $v_{0}(e)=v_{\mathcal{M}}(e,0)$ and $\mathcal{E}_{0}=\{e\in\mathcal{E}:v_{0}(e)=1\}$ for the episodes the undefended policy completes. We fix $H$ at one quarter of the median episode of the embodiment. We measure the following metrics.
 
 \cib{1} \textbf{Physical consequence.} Comparing the two pose sequences,
-\vspace{-1ex}\begin{equation}
+\vspace{-2ex}\begin{equation}
   \small
 \bm{e}_{k}=\begin{bmatrix}\bm{p}'_{k}-\bm{p}_{k}\\[2pt] rv\bigl(R_{k}^{\top}R'_{k}\bigr)\end{bmatrix},
 \qquad
@@ -926,7 +912,7 @@ D^{e}_{\mathcal{M}}(H)=\bigl\|W\bm{e}_{H}\bigr\|_{2},
 \vspace{-1.5ex}\end{equation}
 where $rv$ is the rotation-vector map of the relative rotation and $W=\mathrm{diag}(1,1,1, \ell,\ell,\ell)$ weights rotational displacement by the characteristic lever arm $\ell$ of the embodiment, so that $D$ and $\bar{D}$ carry units of length. $D^{e}_{\mathcal{M}}(H)$ is the terminal deviation, written $D_{\mathcal{M}}(H)$ when the episode is implicit; the peak deviation $\bar{D}^{e}_{\mathcal{M}}(H)$ is also reported. The threshold $\rho$ is calibrated per task (\ie based on the gripper-aperture clearance and the size of manipulated object, \eg $\rho{=}5$\,cm in preliminary tasks).
 \cib{2} \textbf{Task and attack success.} From the same runs,
-\vspace{-1ex}\begin{equation}
+\vspace{-1.5ex}\begin{equation}
   \small
 \mathrm{TSR}_{\mathcal{M}}(\epsilon)=\frac{1}{|\mathcal{E}|}\sum_{e\in\mathcal{E}}
 v_{\mathcal{M}}(e,\epsilon),
@@ -952,7 +938,7 @@ failures from inflating it.
 
 \cib{3} \textbf{Attack cost and comparison.} For an effect $\Phi$ and threshold
 $\rho_{\Phi}$,
-\vspace{-1ex}\begin{equation}
+\vspace{-2.5ex}\begin{equation}
   \small
 \epsilon^{*}_{\mathcal{M}}(\Phi,\rho_{\Phi})=\min\bigl\{\epsilon\in E:\;
 \widehat{\mathbb{E}}\bigl[\Phi_{\mathcal{M}}(\epsilon)\bigr]\ge\rho_{\Phi}\bigr\},
@@ -964,7 +950,6 @@ $\rho_{\Phi}$,
 \label{eq:budget-operator}
 \vspace{-1.5ex}\end{equation}
 with $\epsilon^{*}_{\mathcal{M}}=\epsilon_{\max}$ when no grid point reaches $\rho_{\Phi}$, the expectation taken over $\mathcal{E}$, and $\epsilon^{*,i}$ the value estimated on seed $i\in\mathcal{I}$. 
-% We instantiate $\Phi$ three ways: the task instantiation $\epsilon^{*}_{\mathrm{TSR}}=\epsilon^{*}\bigl(1-\mathrm{TSR}_{\mathcal{M}}(\epsilon)/ \mathrm{TSR}_{\mathcal{M}}(0),\,\rho_{\mathrm{TSR}}\bigr)$ with $\rho_{\mathrm{TSR}}{=}0.5$, the budget that halves task success, which is our primary metric; the physical instantiation $\epsilon^{*}_{\mathrm{phys}}=\epsilon^{*}(D_{\mathcal{M}}(H),\rho)$, which resolves attacks whose displacement has not yet crossed a task boundary; and the token instantiation $\epsilon^{*}_{\mathrm{tok}}=\epsilon^{*}(\mathrm{ASR}^{\mathrm{tok}}_{\mathcal{M}},0.5)$, which requires forward passes only. 
 We define $\Phi$ in three forms, based on the task success, the physical displacement, and the action-token-level attack success. For the task form, 
 $\epsilon^{*}_{\mathrm{TSR}}=\epsilon^{*}(1-\mathrm{TSR}_{\mathcal{M}}(\epsilon)/
 \mathrm{TSR}_{\mathcal{M}}(0),\,0.5)$ is the budget halving task success. 
@@ -975,60 +960,60 @@ $\epsilon^{*}_{\mathrm{tok}}=\epsilon^{*}(\mathrm{ASR}^{\mathrm{tok}}_{\mathcal{
 We report $\mathcal{M}_{b}$ as a distinct vulnerability over $\mathcal{M}_{1},\dots,\mathcal{M}_{m}$ when the median of $\hat{\gamma}^{\,i}_{ \mathcal{M}_{b}}$ over $\mathcal{I}$ satisfies $\hat{\gamma}_{\mathcal{M}_{b}}\le\gamma$ on $\epsilon^{*}_{\mathrm{TSR}}$ for at least two of three tasks. Weaker adversarial knowledge relaxes $\gamma$ ($\gamma{=}0.7$ in white-box, $\gamma_{g}{=}0.8$ in gray-box, $\gamma_{b}{=}0.9$ in black-box).
 
 \subsubsection{Deliverables} \label{sec:t1_deliverables}
-T1 delivers four results. \cib{1} Open-source reference implementations of ABBP in its visual, textual, and joint variants, covering evasion and the poisoning classes of \autoref{table:attacks_models}, with the PGD, FGSM, and CW baselines under the shared protocol. \cib{2} A per-model and per-task vulnerability benchmark reporting $\mathrm{TSR}_{\mathcal{M}}$, $\mathrm{ASR}^{\mathrm{task}}$, $\mathrm{ASR}^{\mathrm{phys}}$, $\mathrm{ASR}^{\mathrm{tok}}$, and $\epsilon^{*}(\rho)$ on the models and datasets of \autoref{tab:multi_dataset}, including the reachability calibration of $(\sigma,\rho)$. \cib{3} A budget-split study over $(\epsilon_x,\epsilon_t)$ quantifying how textual budget substitutes for pixel budget per model, identifying which vision-language coupling (FiLM, projection MLP, cross-attention) is most exploitable. \cib{4} An ablation isolating the physical-effect weighting ($w_j{=}1$, $\sigma{=}1$) and the poisoning rate, establishing which stages of the two-stage design drive attack success.
+T1 delivers four results. \cib{1} Open-source  implementations of ABBP, ABBP-L, and ABBP-VL covering evasion and the poisoning scenarios. \cib{2} A per-model and per-task vulnerability benchmark reporting $\mathrm{TSR}_{\mathcal{M}}$, $\mathrm{ASR}^{\mathrm{task}}$, $\mathrm{ASR}^{\mathrm{phys}}$, $\mathrm{ASR}^{\mathrm{tok}}$, and $\epsilon^{*}(\rho)$ on various models and datasets, including the reachability calibration of $(\sigma,\rho)$. 
+\cib{3} A budget-split study over $(\epsilon_x,\epsilon_t)$ quantifying how textual and pixel budgets interact, identifying which vision-language coupling is most exploitable.
+\cib{4} An ablation isolating the physical-effect weighting ($w_j{=}1$, $\sigma{=}1$) and the poisoning rate, establishing which stages of the two-stage design drive attack success.
 
 
-\begin{comment}
-\subsubsection{Evaluation Plan and Deliverables} \label{sec:t2_evaluation}
+\subsection{T2: Limited-Access Attacks on Foundation RMs} \label{sec:t2}
 
-We will benchmark various multimodal attacks, measuring their effectiveness across multiple robot embodiments and tasks. As in T1, our primary metric is task success rate (TSR) under attack, with the 30\% action-token deviation retained as a secondary proxy.
-In addition to attack evaluation metrics, such as Attack Success Rate, 
-\textit{Contain} \cite{lu2024test}, \textit{Exactmatch} \cite{luo2024image,lu2024test}, transferability, and imperceptibility, we will use cross-modal benign-adversarial shifting to evaluate the impact of different modality in achieving adversarial objective.
-For example, assess whether the attack can succeed or change behavior when an input to a successful multimodal attack (\ie $\mathcal{F}(\mathcal{M}(\bm{x},\bm{t}))\rightarrow\bm{a}_{out}'$) is mutated, \eg $\{\mathcal{M}(\bm{x},\bm{t})\} \rightarrow\{\mathcal{M}(\bm{x}),\bm{t}\}$ or $\{\bm{x},\mathcal{M}(\bm{t})\}$.
-The mutation process can be adjusted to alter the extent of shifts required to facilitate behavior change.
-As in T1, we also report maximum end-effector action displacement and safety-zone and force-threshold violation rate, each as mean~$\pm$~std over at least ten runs with significance assessed by Welch's $t$-test, and we contribute the multimodal attacks to the full cross-model transferability matrix.
-We will align this protocol with recent physically-grounded evaluation practice for robot policies~\cite{sun2026maniparena}.
-Deliverables include: \cib{1} a comprehensive framework for multimodal attacks/defenses against foundation RMs, analyzing how vulnerabilities propagate across modalities, \cib{2} open-source implementations of developed multimodal attacks, defenses, and benchmarks, and \cib{3} academic publications/reports/labs on findings and methodologies.
+Limited-access attacks encompass both gray- and black-box scenarios, where the adversary has restricted knowledge of the victim model.
+While gray-box attacks exploit partial knowledge, \eg the architecture and training data, to expose vulnerabilities, black-box attacks operate with no knowledge of the model's architecture, parameters, or gradients. The adversary queries the system and observes input-output pairs. Threat models under limited-access settings match commercial deployments. 
 
- \end{comment}
 
-\subsection{T2: Limited-Access Attacks on foundation RMs} \label{sec:t2}
+
+
+\BfPara{Related Work} Query-based and transfer-based attacks are well studied for vision models~\cite{guo2019simple,hallyburton2022security,abdukhamidov2022black,juraev2024attack,abdukhamidov2023microbial} and LLMs~\cite{li2023deepinception,yao2024fuzzllm,ding-etal-2024-wolf,wei2023jailbreak,deng2024pandora}. For VLMs, decision-based black-box visual instructions induce failures~\cite{zhang2024avibench}, and transfer attacks succeed even against defended models~\cite{dong2023robust}. 
+Wang \etal~\cite{wang2024transferable} disrupt modality-consistency features in critical attention regions. 
+Wu \etal~\cite{wu2024adversarial} embed adversarial sub-images within larger images to attack GPT-4o, Gemini, and Claude. 
+Work on RMs remains limited to isolated jailbreak and backdoor studies~\cite{badvla,advvla}. Lu \etal~\cite{lu2026whenrobots} construct universal adversarial patches which transfer across robot policies in physical settings. 
+\ul{In this task, we propose 
+two attack families, Surrogate-Transfer Action Perturbation (STAP) under gray-box settings and  Temporal Trajectory Drift Attack (TTDA) under black-box settings. We consider visual, textual, and joint perturbations in both families, and we study these attacks in evasion and privacy scenarios.}
+
+
+
 
 \subsubsection{T2-1: Gray-box Attacks}\label{sec:t2_1}
-Gray-box attacks exploit partial knowledge of the victim model, \eg the architecture and training data, to expose vulnerabilities under moderate adversarial capabilities. For example, existing gray-box attacks against VLMs use open-source vision or language encoders as surrogates to launch the attack.
-Attacks include \emph{prompt injection} and \emph{jailbreak} for evasion and \emph{membership}, \emph{property}, and \emph{attribute inference} for privacy (\autoref{table:attacks_models}).
-
-\BfPara{Related Work} Zhao \etal~\cite{zhao2024evaluating} align adversarial perturbations with CLIP~\cite{radford2021learning} and BLIP~\cite{li2022blip} embeddings to generate transferable adversarial examples. Wang \etal~\cite{wang2024transferable} disrupt modality-consistency features in critical attention regions. Wu \etal~\cite{wu2024adversarial} embed adversarial sub-images within larger images to attack GPT-4o, Gemini, and Claude. Prior work measures transfer success on the text or image outputs of VLMs, not on the actions of a robot policy, and relies on fixed public surrogates with no control over the surrogate training.
-\ul{In this sub-task, we propose a new attack family, Surrogate-Transfer Action Perturbation (STAP), and we study gray-box privacy attacks against RMs.}
 
 \BfPara{Proposed Attack} We propose STAP, a surrogate-transfer gray-box attack grounded in the action space of the robot. Let a victim policy  $\mathcal{F}=(\mathcal{P},\bm{\omega})$, where $\mathcal{P}$ collects the public components (\eg the vision encoder, the VLM backbone, and the action tokenizer) and $\bm{\omega}$ collects the private components (\eg fine-tuned policy weights, the action head, and the data mixture). The gray-box adversary knows $\mathcal{P}$ and the architecture family but not $\bm{\omega}$. 
-This assumption matches deployments of Octo and OpenVLA, whose base components are public while embodiment-specific checkpoints and training data remain private. For victims on closed backbones (\eg RT-2 with PaLI-X), the adversary substitutes the closest public VLM (see \autoref{tab:VLMs}). %Component knowledge separates this setting from the black-box setting of \autoref{sec:t2_2}, where the adversary knows no component and builds a generic surrogate.
+For example, models based on Octo and OpenVLA have base components that are public while embodiment-specific checkpoints and training data remain private. 
+The attacker constructs a surrogate policy $\mathcal{F}'$ by fine-tuning the same components $\mathcal{P}$ on the public data mixture (\eg data from \autoref{tab:multi_dataset}), %with independent splits and seeds
+so $\mathcal{F}'$ shares the architecture and tokenizer of $\mathcal{F}$ and approximates its task distribution, but not its weights or performace. 
+For same-embodiment pairs $G'=G(\bm{\theta})$, STAP realizes an untargeted evasion attack $\mathcal{M}(\bm{x}+\bm{\delta}^{*},\bm{t})\xrightarrow{{}_{\textbf{U}}}\bm{a}_{out}'$ with  perturbation $\bm{\delta}^{*}$ solving the ABBP objective on the surrogate, \ie the attacker runs target selection (\autoref{eq:abbp-shift}) with the surrogate kinematics $G'(\bm{\theta})$ and perturbation synthesis (\autoref{eq:abbp-obj}) with the surrogate logits $\bm{z}'_j(\bm{x}+\bm{\delta}^{*},\bm{t})$, then applies $\bm{\delta}^{*}$ to the victim without re-optimization. 
+% For cross-embodiment pairs, stage 1 keeps the surrogate kinematics and the perturbation transfers as is, since the embodiment of the victim is observable. 
+To improve transfer, we optimize the margin over an ensemble of $K$ surrogates with input diversity and momentum, and we ablate $K\in\{1,3\}$ in the evaluation. Because we control the surrogate backbone, training data, and embodiment head, we examine each factor independently and measure how surrogate-victim mismatch degrades $\epsilon^{*}(\rho)$. %, a study infeasible with fixed public surrogates. This study identifies which factor dominates transfer degradation and forms a deliverable of the attack framework. Language-modality attacks (\eg \emph{prompt injection} and \emph{jailbreak} through surrogate text embeddings) apply only to language-conditioned models (\ie RT-1, RT-2, OpenVLA, and Octo) and exclude vision-only models such as ACT.
 
-The attacker constructs a surrogate policy $\mathcal{F}'$ by fine-tuning the same components $\mathcal{P}$ on the public data mixture of \autoref{tab:multi_dataset} with independent splits and seeds, so $\mathcal{F}'$ shares the architecture and tokenizer of $\mathcal{F}$ and approximates its task distribution, but not its weights or demonstrations. 
-STAP realizes an untargeted evasion attack $\mathcal{M}(\bm{x},\bm{t})\xrightarrow{{}_{\textbf{U}}}\bm{a}_{out}'$ with $\mathcal{M}(\bm{x},\bm{t})=(\bm{x}+\bm{\delta}^{*},\bm{t})$. The perturbation $\bm{\delta}^{*}$ solves the ABBP objective on the surrogate, \ie the attacker runs target selection (\autoref{eq:abbp-shift}) with the surrogate kinematics $G'(\bm{\theta}')$ and perturbation synthesis (\autoref{eq:abbp-obj}) with the surrogate logits $\bm{z}'_j(\bm{x}+\bm{\delta},\bm{t})$, then applies $\bm{\delta}^{*}$ to the victim without re-optimization. 
-For same-embodiment pairs $G'=G(\bm{\theta})$. For cross-embodiment pairs, stage 1 keeps the surrogate kinematics and the perturbation transfers as is, since the embodiment of the victim is observable. To improve transfer, we optimize the margin over an ensemble of $K$ surrogates with input diversity and momentum, and we ablate $K\in\{1,3\}$ in the evaluation. Because we control the surrogate backbone, training data, and embodiment head, we vary each factor independently and measure how surrogate-victim mismatch degrades $\epsilon^{*}(\rho)$, a study infeasible with fixed public surrogates. This study identifies which factor dominates transfer degradation and forms a deliverable of the attack framework. Language-modality attacks (\eg \emph{prompt injection} and \emph{jailbreak} through surrogate text embeddings) apply only to language-conditioned models (\ie RT-1, RT-2, OpenVLA, and Octo) and exclude vision-only models such as ACT.
+\BfPara{STAP over Language and Joint Modalities} The surrogate-transfer design extends to the textual and joint perturbations. % of \autoref{sec:t1_2} with no change to the threat model, because the instruction pathway is part of the public components $\mathcal{P}$, so the surrogate $\mathcal{F}'$ shares the tokenizer and the text encoder with the victim.
+In the textual variant (STAP-L), $\mathcal{M}(\bm{x},\bm{t})=(\bm{x},\bm{t}')$, where $\bm{t}'$ solves the margin objective of \autoref{eq:abbp-obj-text} on the surrogate logits $\bm{z}'_j(\bm{x},\bm{t}')$ under the same constraint $\mathcal{C}_{\mathrm{text}}(\bm{t},\bm{t}')\le\epsilon_t$, and is then applied to the victim without re-optimization. 
+% The token-substitution search runs on surrogate gradients, which the gray-box adversary holds even though victim gradients are unavailable.
+For same-backbone pairs, the shared tokenizer transfers token-level edits directly. For closed-backbone victims with a substituted public VLM, tokenizers diverge and token-level edits do not directly transfer, so we restrict $\bm{t}'$ to synonym and suffix edits, whose effect is carried by semantics not token-id. 
+We test this restriction empirically, \ie the evaluation stratifies textual transfer success by surrogate-victim backbone mismatch and compares token-level edits against synonym and suffix edits under the same budget $\epsilon_t$, so the tokenizer-mismatch penalty is measured directly on the transferability matrix.
+In the joint variant (STAP-VL), $\mathcal{M}(\bm{x}+\bm{\delta}_x^{*},\bm{t}')$ solves \autoref{eq:abbp-obj-joint} on the surrogate with the surrogate coupling $\Psi'$, and the alternating optimization and the ensemble of $K$ surrogates.
 
-\BfPara{STAP over Language and Joint Modalities} The surrogate-transfer design extends to the textual and joint perturbations of \autoref{sec:t1_2} with no change to the threat model, because the instruction pathway is part of the public components $\mathcal{P}$, so the surrogate $\mathcal{F}'$ shares the tokenizer and the text encoder with the victim.
-In the textual variant, $\mathcal{M}(\bm{x},\bm{t})=(\bm{x},\bm{t}')$, where $\bm{t}'$ solves the margin objective of \autoref{eq:abbp-obj-text} on the surrogate logits $\bm{z}'_j(\bm{x},\bm{t}')$ under the same constraint $\mathcal{C}_{\mathrm{text}}(\bm{t},\bm{t}')\le\epsilon_t$, and is then applied to the victim without re-optimization. The token-substitution search runs on surrogate gradients, which the gray-box adversary holds even though victim gradients are unavailable.
-For same-backbone pairs, the shared tokenizer transfers token-level edits directly. For closed-backbone victims with a substituted public VLM, tokenizers diverge and token-level edits need not transfer, so we restrict $\bm{t}'$ to paraphrase and suffix edits, whose effect is carried by semantics rather than token identity. We test this restriction empirically rather than assume it: the evaluation stratifies textual transfer success by surrogate-victim backbone mismatch and compares token-level edits against paraphrase and suffix edits under the same budget $\epsilon_t$, so the tokenizer-mismatch penalty is measured directly on the transferability matrix.
-In the joint variant, $\mathcal{M}(\bm{x},\bm{t})=(\bm{x}+\bm{\delta}_x^{*},\bm{t}')$ solves \autoref{eq:abbp-obj-joint} on the surrogate with the surrogate coupling $\Psi'$, since the FiLM, projection-MLP, and cross-attention mechanisms named in \autoref{sec:t1_2} are all public components, and the alternating optimization and the ensemble of $K$ surrogates apply unchanged.
-Both variants apply only to language-conditioned models.
 
-\BfPara{STAP in Privacy Attacks} The privacy attacks query the victim through its public interface and record the predicted actions $\bm{a}_{out}$, so they apply to every model in scope, including ACT. For \emph{membership inference}, the attacker draws candidate episodes from the public corpora of \autoref{tab:multi_dataset} without knowledge of inclusion in the victim's fine-tuning data, queries the victim on the episode observations, and scores each episode $e$ of length $H_e$ by the action agreement $r(e)=\frac{1}{H_e}\sum_{k=1}^{H_e}\mathbb{1}[\,|a_{k,j}-a^{(e)}_{k,j}|\le\Delta_j\;\;\forall j\in\mathcal{C}]$, \ie the fraction of steps at which the predicted action $\bm{a}_k$ matches the recorded action $\bm{a}^{(e)}_k$ within a one-bin tolerance on every continuous dimension. Shadow surrogates fine-tuned on disjoint halves of the corpora provide member and non-member score distributions and calibrate the decision threshold without any victim query. Victim queries then proceed under a budget of 500 queries. For \emph{attribute} and \emph{property inference}, we train a probe on surrogate action traces to recover attributes of the victim, \eg embodiment and task composition, from predicted actions.
+\BfPara{STAP in Privacy Attacks} The privacy attacks query the victim through its public interface and record the predicted actions $\bm{a}_{out}$, so they apply to all models. 
+For \emph{membership inference}, the attacker draws candidate episodes from the public corpora  without knowledge of inclusion in the victim's fine-tuning data, queries the victim on the episode observations, and scores each episode $e$ of length $H_e$ by the action agreement $r(e)=\frac{1}{H_e}\sum_{k=1}^{H_e}\mathbb{1}[\,|a_{k,j}-a^{(e)}_{k,j}|\le\Delta_j\;\;\forall j\in\mathcal{C}]$, \ie the fraction of steps at which the predicted action $\bm{a}_k$ matches the recorded action $\bm{a}^{(e)}_k$ within a one-bin tolerance on every continuous dimension. 
+Shadow surrogates fine-tuned on disjoint halves of the corpora provide member and non-member score distributions and calibrate the decision threshold without any victim query. Victim queries then proceed under a budget of 500 queries. For \emph{attribute} and \emph{property inference}, we train a probe on surrogate action traces to recover attributes of the victim, \eg embodiment and task composition, from predicted actions.
 
 
 \BfPara{Evaluation} We evaluate STAP under the same protocol of \autoref{sec:t1} with the gray-box factor $\gamma_{g}=0.8$ across various attack settings, estimating $\epsilon^{*}(\rho)$ per surrogate-victim pair in the transferability matrix. 
-We define transfer success as the fraction of evaluation episodes where a perturbation synthesized entirely on surrogates reaches $D_{\mathcal{M}}(H)\ge\rho$ on the victim. We report transfer success, $\epsilon^{*}(\rho)$ along each mismatch across backbone and data/embodiment, and membership-inference advantage (true-positive rate at a 1\% false-positive rate). For the textual and joint variants, we report transfer success per modality and per edit type under each level of backbone mismatch, which identifies which channel and which edit class carries transfer across surrogate-victim mismatch.
+We define transfer success as the fraction of evaluation episodes where a perturbation synthesized entirely on surrogates reaches $D_{\mathcal{M}}(H)\ge\rho$ on the victim. We report transfer success, $\epsilon^{*}(\rho)$ along each mismatch across backbone and data/embodiment, and membership-inference advantage (true-positive rate at a 1\% false-positive rate). For the textual and joint variants, we report transfer success per modality and per edit type under each level of backbone mismatch to identify which channel/edit-class carries transfer across surrogate-victim mismatch.
 
 \subsubsection{T2-2: Black-box Attacks} \label{sec:t2_2}
-Black-box attacks operate without access to the model's architecture, parameters, or gradients. The adversary queries the system and observes input-output pairs only. This threat model matches commercial deployments, where vendors do not share model details, and gives black-box attacks the most restrictive adversarial knowledge we study.
-
-\BfPara{Related Work} Query-based and transfer-based attacks are well studied for vision models~\cite{guo2019simple,hallyburton2022security,abdukhamidov2022black,juraev2024attack,abdukhamidov2023microbial} and LLMs~\cite{li2023deepinception,yao2024fuzzllm,ding-etal-2024-wolf,wei2023jailbreak,deng2024pandora}. For VLMs, decision-based black-box visual instructions induce failures~\cite{zhang2024avibench}, and transfer attacks succeed even against defended models~\cite{dong2023robust}. Work on foundation RMs remains limited to isolated jailbreak and backdoor studies~\cite{badvla,advvla}. Lu \etal~\cite{lu2026whenrobots} construct universal adversarial patches which transfer across robot policies in physical settings. Our preliminary experiments show token-level instruction perturbations degrade task success under a 500-query budget.
-\ul{In this sub-task, we propose a new query-based attack family, Temporal Trajectory Drift Attack (TTDA), spanning visual, textual, and joint perturbations, and we study black-box privacy attacks (\eg \emph{data reconstruction} and \emph{prompt stealing}) against RMs.}
 
 \BfPara{Proposed Attack} Alongside the language-based attacks we investigate (\eg SHIELD, \autoref{fig:lang_black_box}), we propose TTDA, a query-based black-box attack against chunking policies, \ie policies predicting a sequence of $c$ actions per inference (\eg Octo, ACT). 
 Unlike per-step attacks, TTDA optimizes a sequence of perturbations $\bm{\delta}_{0:H}$ so each step satisfies the per-step kinematic limits of \autoref{eq:abbp-shift} and evades anomaly checks, while the executed trajectory drifts toward a task-failing state. TTDA solves:
-\vspace{-1ex}\begin{equation}
+\vspace{-1.5ex}\begin{equation}
 \max_{\bm{\delta}_{0:H}}\; D_{\mathcal{M}}(H)
 \quad\text{s.t.}\quad
 \|\bm{\delta}_k\|_{\infty}\le\epsilon,\;\;
@@ -1036,30 +1021,36 @@ Unlike per-step attacks, TTDA optimizes a sequence of perturbations $\bm{\delta}
 \|W G(\bm{\theta}_k)\bm{u}_k\|_{2}\le\eta,
 \label{eq:ttda-obj}
 \vspace{-1.5ex}\end{equation}
-where $D_{\mathcal{M}}(H)$ is the terminal deviation of \autoref{eq:abbp-gate}, $\nu$ bounds the per-step change of the perturbation so drift accumulates slowly, and $\eta$ keeps each step below the displacement threshold of the per-step detector in \autoref{sec:t3}. The adversary has no gradients, so we optimize \autoref{eq:ttda-obj} with zeroth-order estimation under a query budget of $Q{=}500$. Because TTDA perturbs vision observations, we expect it to apply to most VLAs and to be most effective against vision-focused models such as ACT, a hypothesis the evaluation tests directly. 
+where $D_{\mathcal{M}}(H)$ is the terminal deviation of \autoref{eq:abbp-gate}, $\nu$ bounds the per-step change of the perturbation so drift accumulates slowly, and $\eta$ keeps each step below the displacement threshold of the per-step detector in \autoref{sec:t3}. The adversary has no gradients, so we optimize \autoref{eq:ttda-obj} with zeroth-order estimation under a query budget
+of $Q{=}500$. 
+While TTDA is expandable to other modalities, we expect it to be most effective when using visual perturbations against vision-focused models.
+%Because TTDA perturbs vision observations, we expect it to apply to most VLAs and to be most effective against vision-focused models such as ACT, a hypothesis the evaluation tests directly. 
 A surrogate-based black-box variant can benefit from STAP. 
 % We will formalize sufficient conditions for drift and characterize how chunk length $c$ affects feasibility. %, and we will extend TTDA to flow-matching policies (\eg pi-0), whose denoising trajectory provides an analogous sequence structure.
 
-\BfPara{TTDA over Language and Joint Modalities} The drift objective of \autoref{eq:ttda-obj} extends to the instruction channel, since the objective is defined in trajectory space and only the search variable changes.
-In the textual variant, the attacker fixes $\bm{\delta}_{0:H}{=}\bm{0}$ and perturbs the instruction once, because the instruction is a single conditioning input and not a per-step observation: $\bm{t}'$ solves \autoref{eq:ttda-obj} with the constraints of \autoref{eq:abbp-obj-text} in place of the $\epsilon$ and $\nu$ bounds, while the per-step kinematic bound $\eta$ is unchanged. Without gradients, we replace the token-substitution search of \autoref{eq:abbp-obj-text} with a query-based edit search over the same meaning-preserving edit classes, \ie synonym substitution, paraphrase, reordering, misspelling, and adversarial suffixes, scored by the queried action sequences under the budget $Q$ shared with the visual variant. Our preliminary token-level instruction perturbations (\autoref{fig:lang_black_box}) instantiate this variant with a single-edit search.
-In the joint variant, the attacker optimizes $(\bm{\delta}_{0:H},\bm{t}')$ jointly under the per-modality budgets $\epsilon_x$ and $\epsilon_t$ of \autoref{eq:abbp-obj-joint}, while the kinematic bound $\eta$ of \autoref{eq:ttda-obj} continues to govern the induced action, since both modalities act on the same output. Because the black-box adversary has no access to the coupling $\Psi$, the co-reinforcement term of \autoref{eq:abbp-obj-joint} cannot be optimized directly; we instead alternate zeroth-order steps on $\bm{\delta}_{0:H}$ with edit steps on $\bm{t}'$. This alternation recovers the structure of \autoref{sec:t1_2} without gradients. The joint variant lets us measure how the query budget divides across modalities for a fixed target deviation $\rho$, complementing the budget-split study of \autoref{sec:t1_2} in the query-limited regime.
-Both variants apply only to language-conditioned models.
+\BfPara{TTDA over Language and Joint Modalities} 
+% The drift objective of \autoref{eq:ttda-obj} extends to the instruction channel, since the objective is defined in trajectory space and only the search variable changes.
+In the textual variant (TTDA-L), the attacker fixes $\bm{\delta}_{0:H}{=}\bm{0}$ and perturbs the instruction once, because the instruction is a single conditioning input and not a per-step observation: $\bm{t}'$ solves \autoref{eq:ttda-obj} with the constraints of \autoref{eq:abbp-obj-text} and $\nu$ bounds, while the per-step kinematic bound $\eta$ is unchanged. Without gradients, we replace the token-substitution search of \autoref{eq:abbp-obj-text} with a query-based edit search over the same meaning-preserving edit classes, \ie synonym substitution, reordering, misspelling, and adversarial suffixes, scored by the queried action sequences under the budget $Q$. % shared with the visual variant. 
+Our preliminary token-level instruction perturbations (\autoref{fig:lang_black_box}) instantiate this variant with a single-edit search.
+In the joint variant (TTDA-VL), the attacker optimizes $(\bm{\delta}_{0:H},\bm{t}')$ jointly under the per-modality budgets $\epsilon_x$ and $\epsilon_t$ of \autoref{eq:abbp-obj-joint}, while the kinematic bound $\eta$ of \autoref{eq:ttda-obj} continues to govern the induced action, since both modalities act on the same output. 
+Because the black-box adversary has no access to the coupling $\Psi$, the co-reinforcement term of \autoref{eq:abbp-obj-joint} cannot be optimized directly; we instead alternate zeroth-order steps on $\bm{\delta}_{0:H}$ with edit steps on $\bm{t}'$. This alternation recovers the structure of \autoref{sec:t1_2} without gradients. 
+The joint variant lets us measure how the query budget divides across modalities for a fixed target deviation $\rho$, complementing the study of \autoref{sec:t1_2}. % in the query-limited regime.
+% Both variants apply only to language-conditioned models.
 
-\BfPara{TTDA in Privacy Attacks} Black-box privacy attacks use the same query interface. For \emph{data reconstruction}, the adversary crafts observation sequences whose predicted actions reveal episodes from the victim's fine-tuning data, scored by the action-agreement measure $r(e)$ of \autoref{sec:t2}. For \emph{prompt stealing}, the adversary queries a language-conditioned victim and recovers the conditioning prompt from behavioral shifts in $\bm{a}_{out}$; the attack applies only to language-conditioned models.
-
+\BfPara{TTDA in Privacy Attacks} For \emph{data reconstruction}, the adversary crafts observation sequences whose predicted actions reveal episodes from the victim's fine-tuning data, scored by the action-agreement measure $r(e)$ of \autoref{sec:t2_1}. For \emph{prompt stealing}, the adversary queries a language-conditioned victim and recovers the conditioning prompt from behavioral shifts in $\bm{a}_{out}$. 
 
 \BfPara{Evaluation} We evaluate TTDA under the shared protocol of \autoref{sec:t1} with the black-box factor $\gamma_{b}{=}0.9$ against three black-box baselines, \ie random query perturbation, sparse query-based search adapted to the action objective, and the token-perturbation attack of Experiment~2. 
-We additionally report the query-efficiency curve (episodes reaching $\rho$ versus queries used) and the privacy metrics of \autoref{sec:t2}. For the textual and joint variants, we report the query-efficiency curve per modality and the allocation of the query budget across modalities at each target deviation $\rho$, so the cost of text-only, vision-only, and joint drift is comparable under the same budget $Q$.
+% We additionally report the query-efficiency curve (episodes reaching $\rho$ versus queries used) and the privacy metrics of \autoref{sec:t2}. 
+For TTDA variants, we report the query-efficiency curve per modality and the allocation of the query budget across modalities at each target deviation $\rho$, so the cost of text-only, vision-only, and joint drift is comparable under the same budget $Q$.
 
 \subsubsection{Deliverables} \label{sec:t2_deliverables}
-T2 delivers four results. \cib{1} Open-source implementations of STAP and TTDA in their visual, textual, and joint variants, with the surrogate-construction pipeline and the zeroth-order and edit-search optimizers, all under the query budget $Q{=}500$. \cib{2} A surrogate-victim transferability matrix reporting transfer success and $\epsilon^{*}(\rho)$ per pair, stratified by backbone, data-mixture, and embodiment mismatch, identifying which factor dominates transfer degradation. \cib{3} A black-box query-efficiency benchmark reporting episodes reaching $\rho$ versus queries per modality, with the allocation of the query budget across modalities in the joint variant. \cib{4} A privacy evaluation reporting membership-inference advantage at a 1\% false-positive rate, attribute and property inference from action traces, data reconstruction scored by $r(e)$, and prompt stealing on language-conditioned models.
+T2 delivers four results. \cib{1} Open-source implementations of STAP and TTDA in their visual, textual, and joint variants, with the surrogate-construction pipeline and the zeroth-order and edit-search optimizers, all under the query budget $Q{=}500$. \cib{2} A surrogate-victim transferability matrix reporting transfer success and $\epsilon^{*}(\rho)$ per pair, stratified by backbone, data-mixture, and embodiment mismatch, identifying which factor dominates transfer degradation. \cib{3} A black-box query-efficiency benchmark reporting episodes reaching $\rho$ versus queries per modality, with the allocation of the query budget across modalities in the joint variant. \cib{4} A privacy evaluation reporting membership-inference advantage at 1\% false-positive rate, attribute and property inference from action traces, and  data reconstruction scored by $r(e)$.%, and prompt stealing on language-conditioned models.
 
 
 
 \subsection{T3: Defense, Safety, and Interpretation of foundation RMs} \label{sec:t3}
 
-The attack tasks of \autoref{sec:t1} and \autoref{sec:t2} expose how foundation RMs fail under adversarial pressure; 
-
+This pursues three goals. \cib{1} \emph{Defense}: mitigate the attacks at their point of effect with an action-space 
 \begin{wraptable}{r}{0.3\textwidth}{\vspace{-3ex}}
 \centering
 \caption{\scriptsize{(\textbf{T})raining\&(\textbf{I})nference defenses.}}\vspace{-2ex}
@@ -1083,9 +1074,14 @@ The attack tasks of \autoref{sec:t1} and \autoref{sec:t2} expose how foundation 
 \end{tabular}
 }\vspace{-2ex}
 \end{wraptable}
-this task builds the counterpart that makes those failures detectable, certifiable, and explainable. T3 pursues three goals. \cib{1} \emph{Defense} (\autoref{sec:t3_1}): mitigate the attacks at their point of effect, the predicted actions, with an action-space anomaly detector and adversarial fine-tuning constrained by the same kinematics the attacks exploit. \cib{2} \emph{Safety assessment} (\autoref{sec:t3_2}): turn the physical-consequence metrics of the attack protocol into a violation-based safety benchmark with statistical guarantees, covering both adversarial and benign failure modes. \cib{3} \emph{Interpretation} (\autoref{sec:t3_3}): explain why attacks succeed and defenses work by attributing decisions to their driving modalities, layers, and tokens. The three sub-tasks reinforce each other: the detector certifies the safety event, the assessment scores the defenses, and the interpretation feeds its findings back into defense design.
+anomaly detector and adversarial fine-tuning constrained by the same kinematics the attacks exploit.
+  \cib{2} \emph{Safety assessment}: turn the physical-consequence metrics of the attack protocol into a violation-based safety benchmark with statistical guarantees, covering both adversarial and benign failure modes. \cib{3} \emph{Interpretation}: explain why attacks succeed and defenses work by attributing decisions to source modalities and tokens. 
+\\
+\BfPara{Related Work} %The defense landscape relevant to all three sub-tasks splits by where it acts. 
+VLM inference- and training-timedefenses are shown in \autoref{tab:defense}. VLA-specific defenses have begun to appear, including structure-aware robust fine-tuning, randomized smoothing for certified robustness, and backdoor token reconstruction~\cite{zhang2026structure,seferis2025randomized,li2026whenattention}. %None of these inspects the physical plausibility of the predicted actions, which is the gap T3-1 addresses. Safety assessment of robot foundation models and interpretation of their action predictions draw on further literatures, operational-safety standards and interpretability methods respectively, which we review in \autoref{sec:t3_2} and \autoref{sec:t3_3}.
 
-\BfPara{Related Work} The defense landscape relevant to all three sub-tasks splits by where it acts. VLM-era defenses act on the input or the output text (\autoref{tab:defense}): anomaly and mutation-based detection~\cite{zhang2023mutation,gou2024eyes,pi2024mllm}, prompt engineering~\cite{wu2023jailbreaking,wang2024adashield,chen2023can}, inference-time alignment~\cite{wang2024inferaligner}, and training-time robust feedback or contrastive fine-tuning~\cite{zhang2023adversarial,chen2023dress,li2024one,yang2024robust,li2024red}. VLA-specific defenses have begun to appear, including structure-aware robust fine-tuning, randomized smoothing for certified robustness, and backdoor token reconstruction~\cite{zhang2026structure,seferis2025randomized,li2026whenattention}. None of these inspects the physical plausibility of the predicted actions, which is the gap T3-1 addresses. Safety assessment of robot foundation models and interpretation of their action predictions draw on further literatures, operational-safety standards and interpretability methods respectively, which we review in \autoref{sec:t3_2} and \autoref{sec:t3_3}.
+In terms of safety, operational safety of robots is governed by established standards, \eg ISO 13482:2014, ISO 10218-1, ISO 10218-2, and ISO/TS 15066, and by prior work on validation under rare failures and on standardized physical testbeds~\cite{FoschVillaronga2015CreationOA,RePEc:eps:cepswp:26204,10.3389/frobt.2022.1002226,fosch21,zhangei2023quadruped-tro,weng2023standard-legged-test,weng2023comparability}. These frameworks assess the robot as a physical system, and none assesses the foundation model as the component that can be driven to unsafe outputs by benign or adversarial inputs.
+
 
 \subsubsection{T3-1: Defense Strategies for foundation RMs}\label{sec:t3_1}
 % (\autoref{table:attacks_models}).
@@ -1096,7 +1092,7 @@ this task builds the counterpart that makes those failures detectable, certifiab
 {\ul{In this sub-task, we propose two robotics-specific defenses, the Temporal Action Consistency Detector (TACD) and Action-Grounded Adversarial Fine-Tuning (AGAT), and benchmark them against various defenses.}}
 
 \BfPara{Proposed Defense 1} We propose TACD, an action-space anomaly detector operating on predicted actions rather than inputs. Because TACD inspects the action output directly, it complements input-side defenses and remains effective when the compromised modality is unknown. TACD operates at two levels. At the per-step level, it flags predicted actions outside the embodiment's feasible set $\mathcal{A}_0(\bm{\theta})$, \ie actions violating joint limits, the reachable workspace, or the velocity bound relative to the previously executed action; $\mathcal{A}_0$ is the absolute counterpart of the attacker's reference-dependent feasible set $\mathcal{A}(\bm{\theta})$ of \autoref{eq:abbp-shift}. At the sequence level, a multi-task trajectory-forecasting model conditioned on a task embedding, trained jointly on the benign demonstrations of all tasks, forecasts $\hat{\bm{a}}_{k:k+c}$ from the action history $\bm{a}_{k-c:k}$ (padded with the start pose for $k<c$), where the horizon equals the policy chunk length $c$ of \autoref{sec:t2_2}, and raises an alarm when
-\vspace{-1ex}\begin{equation}
+\vspace{-1.5ex}\begin{equation}
   \small
 s_k=\max_{k'\in[k,k+c)} \bigl\|W\bigl(\bm{a}_{k'}-\hat{\bm{a}}_{k'}\bigr)\bigr\|_{2},
 \qquad
@@ -1106,7 +1102,7 @@ s_k=\max_{k'\in[k,k+c)} \bigl\|W\bigl(\bm{a}_{k'}-\hat{\bm{a}}_{k'}\bigr)\bigr\|
 where $\bm{a}_{k'}$ is the action the policy predicts at step $k'$, $W$ is the displacement weighting of \autoref{eq:abbp-shift}, and $\xi_t$ is a per-task threshold calibrated on held-out benign episodes to a 1\% false-positive rate. The sequence-level check catches TTDA-style drift (\autoref{eq:ttda-obj}) that satisfies every per-step bound, since the cumulative deviation diverges from the forecast even when each individual action is feasible.
 
 \BfPara{Proposed Defense 2} We complement detection with AGAT, which augments fine-tuning with kinematically-constrained ABBP-style perturbations. Formally, AGAT minimizes a mixture of the clean task loss and the task loss under perturbations drawn from the attack distribution,
-\vspace{-1ex}\begin{equation}
+\vspace{-1.5ex}\begin{equation}
   \small
 \min_{\bm{\omega}_{\mathrm{LoRA}}}\;\mathbb{E}_{(\bm{x},\bm{t},\bm{a})}\Bigl[\mathcal{L}_{\mathrm{task}}\bigl(\mathcal{F}(\bm{x},\bm{t}),\bm{a}\bigr)+\lambda_{\mathrm{adv}}\,\mathbb{E}_{\bm{\delta}\sim\mathcal{D}_{\mathrm{ABBP}}}\,\mathcal{L}_{\mathrm{task}}\bigl(\mathcal{F}(\bm{x}+\bm{\delta},\bm{t}),\bm{a}\bigr)\Bigr],
 \label{eq:agat-obj}
@@ -1118,7 +1114,7 @@ where $\mathcal{D}_{\mathrm{ABBP}}$ samples perturbations by the margin objectiv
 
 \BfPara{Defense Evaluation Protocol}
 Under the same protocol, for each attack $\mathcal{M}$,
-\vspace{-1ex}\begin{equation}
+\vspace{-1.5ex}\begin{equation}
   \small
 \mathcal{C}_{\mathcal{M}}=\frac{\epsilon^{*}_{\mathcal{M}}(\Phi,\rho_{\Phi})\big|_{\mathrm{def}}}
 {\epsilon^{*}_{\mathcal{M}}(\Phi,\rho_{\Phi})\big|_{\mathrm{undef}}},
@@ -1132,11 +1128,10 @@ where $\mathcal{C}_{\mathcal{M}}$ is the multiplicative attack-cost increase, $\
 $\xi_{t}$ calibrated on held-out benign episodes. Here $\mathcal{C}_{\mathcal{M}}$ and $\Delta_{\mathrm{clean}}$ measure AGAT of \autoref{eq:agat-obj}, the first against each attack $\mathcal{M}$ and the second on clean episodes, while $\mathrm{TPR}_{\mathcal{M}}$ measures TACD. We benchmark TACD and AGAT against the input-side VLM defenses of \autoref{tab:defense}, namely mutation-based detection~\cite{zhang2023mutation,gou2024eyes}, harmful-instruction detection with output detoxification~\cite{pi2024mllm}, and inference-time alignment~\cite{wang2024inferaligner}, together with input smoothing, VLM-ported adversarial training, and ensemble voting, so the action-space defenses are measured against the strongest available input-space alternatives.
 
 \subsubsection{T3-2: Safety Assessment of foundation RMs} \label{sec:t3_2}
-Operational safety of robots is governed by established standards, among them ISO 13482:2014 for personal care robots, ISO 10218-1 and ISO 10218-2 for industrial robots, and ISO/TS 15066 for collaborative robots, and by prior work on validation under rare failures and on standardized physical testbeds~\cite{FoschVillaronga2015CreationOA,RePEc:eps:cepswp:26204,10.3389/frobt.2022.1002226,fosch21,zhangei2023quadruped-tro,weng2023standard-legged-test,weng2023comparability}. These frameworks assess the robot as a physical system; none assesses the foundation model as the component that can be driven to unsafe outputs by benign or adversarial inputs.
-Recent work has begun to release dedicated VLA security benchmarks and physically-grounded evaluation suites, which we will build on and compare against~\cite{li2025attackvla,sun2026maniparena}.
+
 \ul{To assess the safety of generalist RMs, we propose a violation-based assessment protocol that measures how often a model, defended or not, produces physically unsafe behavior under attacks and under benign distribution shift.}
 We define a per-episode safety-violation event from the physical quantities of \autoref{sec:t1},
-\vspace{-1ex}\begin{equation}
+\vspace{-1.5ex}\begin{equation}
   \small
 \mathcal{V}(e)=\mathbb{1}\Bigl[\,\exists k:\ \bm{a}_k\notin\mathcal{A}_0(\bm{\theta}_k)\ \lor\ \bigl\|W\bm{e}_k\bigr\|_{2}>\rho_{\mathrm{safe}}\,\Bigr],
 \label{eq:safety-violation}
@@ -1144,7 +1139,7 @@ We define a per-episode safety-violation event from the physical quantities of \
 where $\mathcal{A}_0(\bm{\theta}_k)$ is the embodiment feasible set of \autoref{eq:tacd-rule} and $\bm{e}_k$ the weighted pose deviation of \autoref{eq:abbp-gate}, taken relative to the clean reference rollout when one exists and omitted otherwise, and $\rho_{\mathrm{safe}}$ a per-task safety margin; we set $\rho_{\mathrm{safe}}{=}\rho$ of \autoref{sec:t1} unless a task specifies a tighter clearance, so the safety threshold inherits the calibration of the attack protocol. Safety assessment is then the estimation of $\Pr[\mathcal{V}]$ per condition over the evaluation episodes, with conditions spanning the attack families of \autoref{sec:t1} and \autoref{sec:t2}, the defenses of \autoref{sec:t3_1}, and benign shifts in lighting, clutter, and instruction phrasing, so the assessment covers both adversarial and non-adversarial failure modes. Because $\mathcal{V}$ subsumes the per-step detector of \autoref{eq:tacd-rule}, the same protocol scores the defenses and certifies the detector, and the resulting violation rates form the safety benchmark of this task.
 
 \BfPara{Estimation and Verification} Each condition $q$ is a cell of the condition matrix $\mathcal{Q}$ (model $\times$ attack $\times$ defense $\times$ shift), and within a cell we run the $|\mathcal{E}||\mathcal{I}|$ episode-seed pairs of \autoref{sec:t1}, giving the estimator and confidence bound
-\vspace{-1ex}\begin{equation}
+\vspace{-1.5ex}\begin{equation}
   \small
 \hat p_q=\frac{1}{|\mathcal{E}||\mathcal{I}|}\sum_{e,i}\mathcal{V}(e,i,q),
 \qquad
@@ -1199,7 +1194,7 @@ In this task, probing answers a different question: where bin-boundary sensitivi
 \BfPara{Attribution Faithfulness} Interpretation is only useful if the attributions are faithful to the model's behavior. We validate each attribution method with a deletion check grounded in the token-level vocabulary of \autoref{eq:metric-stack}: masking the inputs ranked highest by attribution should flip the predicted bins, so an attribution is scored by the token-flip rate it induces per masked unit, and a method passes if its top-ranked modality matches the channel that carried the attack in at least 80\% of successful-attack episodes.
 
 \BfPara{From Classification to Action Prediction} The interpretation methods above attribute a class logit, but a VLA predicts $d$ bin distributions per step over an $H$-step episode, so attribution is undefined until its target is specified. We attribute the decoded action-token logit of \autoref{eq:abbp-quant},
-\vspace{-1ex}\begin{equation}
+\vspace{-1.5ex}\begin{equation}
   \small
 \phi\bigl(z_{j,b_{j,k}}(\bm{x},\bm{t})\bigr),\qquad (j,k)\in\mathcal{J}\times[0,H],
 \label{eq:attr-target}
