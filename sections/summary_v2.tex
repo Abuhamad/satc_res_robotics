@@ -5,33 +5,42 @@ Project Summary
 
 
 
-\section*{Overview}
+\subsection*{Overview}
 
-This proposal aims to address the security and safety challenges in developing foundation models for robotics, ensuring robust frameworks and defense mechanisms for such models as they incorporate various pre-trained models for different modality, and securing against inherited vulnerabilities and adversarial threats.
-Generalist foundation robotic models are inspired by advancements in large language, vision, and vision-language models and represent a pivotal development in intelligent robotic systems. 
-\xot robotic datasets and new end-to-end training methods are becoming more democratized, paving the way for significant advancements in foundation robotic models in the near future.
-These models incorporate various pre-trained models (\eg vision and language models) that are trained on Internet-scale datasets.
-Recent studies show that these models enable robotic systems to reason, interact, and learn new tasks in diverse unseen environments.
-However, ensuring their security, safety, and trustworthiness is challenging. This proposal focuses on creating comprehensive frameworks, benchmarks, advanced security measures, and specialized methods to enhance the security and reliability of these models for practical applications.
-This main objective can be achieved through three main tasks: \cib{1} performing a comprehensive vulnerability analysis in foundation robotic models, \cib{2} investigating the modality-inherited vulnerabilities and their impact on multimodal robots, and \cib{3} developing benchmarks to ensure the robustness and trustworthiness of robotic models.
-To successfully conduct these tasks, we must overcome unique challenges of building and examining robotic models due to their complex architectures, the multimodal nature of their input, restrictions on the output/action space (which is bounded by the robot embodiment and data), and the evolving landscape of security measures.
+This proposal seeks to address the security and trustworthiness challenges in
+developing foundation models for robotics, ensuring robust frameworks and defense mechanisms for
+integrating various pre-trained models, and securing against inherited vulnerabilities and adversarial
+threats.
+The project comprises four tasks. \cibxx{T0} builds the shared infrastructure, including a 15-source data mixture for six robotic embodiments and a range of robotic foundation models. \cibxx{T1} develops white-box attacks grounded in the action space of the robot. \cibxx{T2} extends to realistic limited-access levels, and proposes surrogate-transfer attacks and query-limited trajectory-drift attacks under various threat models. \cibxx{T3} delivers action-space defenses, safety assessment, action-attribution interpretability tools, and VLA-SecBench, an open benchmark for the community.
 
 
-
-\section*{Intellectual Merit}
-
-
-This work aims to enhance the security and robustness of foundation models in robotics by \cib{1} developing a taxonomy and framework for threat vectors in multimodal robotic systems, \cib{2} analyzing cross-modal attack propagation to uncover vulnerabilities in vision-language-action integration, and \cib{3} creating benchmarks and evaluation frameworks for robotic security, safety, and interpretability, bridging AI, cybersecurity, and robotics.
-The project will deliver transformative outcomes, including security-enhanced foundational robotics models, open-source tools for attacks, defenses, and interpretability, and datasets to enable replication and further research. It will provide an attack framework, assessment methods for robotic embodiments, and evaluation benchmarks to advance secure robotic systems.
-The educational components of this project integrate research findings into academic courses and professional workshops. It emphasizes hands-on labs and research participation for students from various educational levels. These efforts aim to promote a strong focus on security-conscious design and implementation in AI and robotics.
+% To successfully conduct these tasks, we must overcome unique challenges of building and examining robotic models due to their complex architectures, the multimodal nature of their input, restrictions on the output/action space (which is bounded by the robot embodiment and data), and the evolving landscape of security measures.
 
 
-\section*{Broader Impacts}
 
-This project will improve the security, robustness, and trustworthiness of foundation models in robotics, facilitating their safe and responsible deployment in critical systems. By addressing fundamental vulnerabilities and establishing comprehensive security frameworks, this work will increase public confidence and acceptance in robotic systems while cultivating a new generation of security-conscious researchers and practitioners in robotics and AI.
-The project will provide open-source tools, datasets, benchmarks, and security frameworks, fostering collaboration and innovation in the research community and industry. These transformative resources will enable researchers and practitioners to evaluate and improve the security of robotic systems and accelerate progress in the field. The methodologies developed here will extend beyond robotics and benefit adjacent domains, contributing to the security of AI and multimodal models.
-% Educational and outreach activities are integral to this work, promoting awareness of security challenges in robotics and AI. Students from different knowledge levels will be engaged through hands-on labs, workshops, and curriculum modules.
-Educational and outreach initiatives in this work will promote awareness of robotic and AI security challenges across academic and professional communities through curricula, labs, workshops, panel discussions, and seminars.
-This will create substantial knowledge-transfer pathways between academia and industry, ensuring that research advances are rapidly incorporated into professional practice.
+
+\subsection*{Intellectual Merit}
+Robotic models carry an attack surface absent from vision and language models. Action heads {quantize continuous control into uniform bins}, policies emit chunks of consecutive actions, and every predicted action maps to a physical displacement bounded by joint limits and the reachable workspace. Prior security work adapts pixel-space attacks from VLMs and scores success in action-token space, leaving physical consequence unmeasured. 
+This project grounds attacks, defenses, and measurement in the action space of the robot, delivering \cib{1} a threat taxonomy for multimodal robotic systems across embodiments and tasks, \cib{2} methods for analyzing cross-modal attack propagation, and \cib{3} standardized benchmarks for robotic security, safety, and interpretability. Five artifacts realize these contributions.
+\cibx{1} Three attack families exploit structure specific to VLAs under various threat models. 
+\cibx{2} Two defenses operate on predicted actions rather than inputs, the Temporal Action Consistency Detector (TACD) and Action-Grounded Adversarial Fine-Tuning (AGAT), so both hold when the compromised modality is unknown. 
+\cibx{3} One evaluation protocol reports task success under attack, end-effector deviation, and the perturbation budget needed to halve task success, replacing the sole reliance on action-token deviation.
+\cibx{4} Action-level interpretation methods explain robot behavior under attack, attributing predicted action tokens to their driving modalities, image regions, and instruction tokens, validated by faithfulness, action-grounding, and temporal-consistency checks.
+\cibx{5} VLA-SecBench releases the model zoo, hardened checkpoints, attacks, defenses, a cross-model transferability matrix, and the interpretability tools across various robot embodiments and datasets.
+
+
+
+
+\subsection*{Broader Impacts}
+
+General-purpose robotic systems are advancing rapidly and moving from research laboratories into manufacturing, logistics, healthcare, public service, and other settings where failures can have physical consequences. As these systems become more capable and autonomous, it is increasingly important to understand how they can fail, how they can be manipulated, and how weaknesses can be identified \textbf{before deployment}.
+\cib{1} 
+This project will contribute to the \textbf{safer development and deployment of robotic systems} by creating practical methods for evaluating failures in terms of their physical consequences. Rather than considering only whether an artificial intelligence model makes an incorrect prediction, the project will examine whether failures cause a robot to move incorrectly, depart from an intended path, exceed safe operating limits, or fail to complete its task. Such evaluation methods can help researchers and developers identify potentially dangerous weaknesses earlier and can inform emerging industry practices for \textbf{testing robotic systems before real-world deployment}.
+\cib{2} 
+The project will also make its software, benchmarks, evaluation methods, and research resources \textbf{openly available} through VLA-SecBench. These resources will lower barriers for researchers, students, and developers seeking to study the safety and security of advanced robotic systems. Open evaluation tools can support \textbf{reproducibility and independent testing} and provide common methods for comparing systems as the field evolves.
+\cib{3} 
+Finally, the project will contribute to \textbf{education and workforce development}. Students from Loyola University Chicago's NSF CyberRamblers Scholarship for Service program will participate directly in the research, while undergraduate researchers will be engaged through Loyola's Undergraduate Research Opportunities Program and competitive university fellowships. Students will gain experience in cybersecurity, robotics, artificial intelligence, experimental evaluation, and \textbf{responsible system design}.
+
+% More broadly, the project seeks to help establish a culture in which \textbf{safety and security testing advance alongside improvements in robotic capability}, supporting the \textbf{responsible development} of technologies with growing importance to workplaces and society.
 
 

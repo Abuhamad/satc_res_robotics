@@ -25,7 +25,7 @@ Inspired by the tremendous advancements in large language, vision, and vision-la
 However, ensuring their security, safety, and trustworthiness remains a significant challenge. Building on these models, system designers need comprehensive frameworks, advanced security measures, and specialized methods to build secure, safe, and reliable models for downstream tasks. This proposal aims to address these critical needs, improving the security and trustworthiness of RMs for real-world deployment. 
 
 Millions of industrial robots (\eg logistics and manufacturing) and service robots (\eg medicine, home, transportation, defense, and military) are poised to become smarter and more reliable with advances in foundation RMs. The previous barrier to the emergence of large foundation RMs, namely, the need for large-scale ``\emph{Internet-wide}'' datasets as seen in large language models (LLMs) and vision-language models (VLMs), has diminished. Recent efforts employ large-scale \xot robotic datasets and new training methods, making this challenge less critical and paving the way for significant advancements.
-Current efforts to build foundation RMs, \eg Language-Vision-Action (VLA) models, focus on integrating various pre-trained models (\eg vision models, LLMs, and VLMs) for multiple modalities (\eg visual and textual instructions) used by robots. 
+Current efforts to build foundation RMs, \eg Vision-Language-Action (VLA) models, focus on integrating various pre-trained models (\eg vision models, LLMs, and VLMs) for multiple modalities (\eg visual and textual instructions) used by robots. 
 The transfer learning capabilities of these components enable robotic systems to understand, interact, and learn new tasks. However, this raises concerns about potential security and safety issues that might be inherited from these models, along with other adversarial threats.% they may face.
 
 \vspace{-2ex}
@@ -133,7 +133,7 @@ Recent works have begun exposing isolated vulnerabilities, including jailbreakin
 \emph{We must investigate the threat space of foundation RMs, including the vision, language, and vision-language backbones used in end-to-end learning.}
 This proposal closes that gap with a unified framework spanning threat modeling, cross-modal
 vulnerability analysis, defenses, and benchmarks, organized as three research tasks
-(\autoref{fig:pipeline}). Two commitments distinguish the proposal. First, every attack and defense is evaluated by physical consequence, end-effector deviation under kinematic feasibility, rather than by token-space outputs, under one protocol shared across all threat levels. Second, the proposal is grounded in preliminary evidence, \eg our white-box visual attacks and black-box token-level instruction perturbations degrade task success across three models (\autoref{sec:t0}), on infrastructure that include 15 dataset sources including the Open {\xo}-Embodiment repository~\cite{9} for six robot embodiments.
+(\autoref{fig:pipeline}). Two commitments distinguish the proposal. First, every attack and defense is evaluated by physical consequence, end-effector deviation under kinematic feasibility, rather than by token-space outputs, under one protocol shared across all threat levels. Second, the proposal is grounded in preliminary evidence, \eg our white-box visual attacks and black-box token-level instruction perturbations degrade task success across three models (\autoref{sec:t0}), on infrastructure that includes 15 dataset sources including the Open {\xo}-Embodiment repository~\cite{9} for six robot embodiments.
 \\
 Industry and academia now converge on the same trajectory, from Google's RT-2 and Gemini Robotics, Nvidia's GR00T, Covariant's RFM-1, Meta's V-JEPA 2, and Tesla's Optimus to open academic models~\cite{openvla_oft,qu2025spatialvla,kim2024openvla,team2024octo} trained on the open large and diverse datasets, so generalist robots will keep growing in capability and deployment.
 This proposal presents three conceptual and practical ideas.
@@ -370,7 +370,7 @@ Using such models in robotic learning faces many challenges:
 \cib{3} addressing the computational demands and resource requirements of training and deployment, 
 \cib{4} managing the complexity of integrating multimodal inputs, and 
 \cib{5} ensuring reliability and safety in dynamic and unpredictable real-world settings.
-As end-to-end techniques and integration of large vision, LLM, and VLM backbones become more prevalent~\cite{9} (see the evolution of RMs in \autoref{fig:vla-timeline}), security research for these models is limited. Generalist RMs continue to emerge, \eg OpenVLA-OFT, {GR00T}~N1, Gemini Robotics, pi-0.5, and WorldVLA~\cite{qu2025spatialvla,openvla_oft,gr00tn1,geminirobotics2025,pi05_2025,cen2025worldvla,cheang2024gr2}. Ensuring these models resilience to attacks is crucial.
+As end-to-end techniques and integration of large vision, LLM, and VLM backbones become more prevalent~\cite{9} (see the evolution of RMs in \autoref{fig:vla-timeline}), security research for these models is limited. Generalist RMs continue to emerge, \eg OpenVLA-OFT, {GR00T}~N1, Gemini Robotics, pi-0.5, and WorldVLA~\cite{qu2025spatialvla,openvla_oft,gr00tn1,geminirobotics2025,pi05_2025,cen2025worldvla,cheang2024gr2}. Ensuring these models' resilience to attacks is crucial.
 To this end, we identify the following challenges.
 % We identify the key challenges in ensuring model resilience to attacks.
 
@@ -496,7 +496,7 @@ Similarly, $\mathcal{M}(\bm{t}) \xrightarrow{{}_{\textbf{T}}} \bm{a}_{jailbreak}
 If the attack is designed such that $\mathcal{M}(\bm{x},\bm{t}) \xrightarrow{{}_{\textbf{U}}} \bm{a}_{out}'$ where $\bm{a}_{out}'$ reveals confidential information, this constitutes a privacy attack.
 Depending on the level of the \ul{\emph{adversary's capabilities and knowledge}} on the victim model/data/system, attacks can be categorized into \textbf{white-box}, \textbf{gray-box}, and \textbf{black-box} attacks. 
 % \autoref{table:attacks_models} shows the general adversarial attack on RMs.
-Several threat models can be defined based on the adversarial specificity/goals, timing of the attack (\eg training or inference), the extent of adversarial capabilities/knowledge on the target system (\eg model parameters, source code, and/or training data).
+Several threat models can be defined based on the adversarial specificity/goals, timing of the attack (\eg training or inference), and the extent of adversarial capabilities/knowledge on the target system (\eg model parameters, source code, and/or training data).
 
 
 
@@ -767,8 +767,8 @@ Full-access (white-box) attacks exploit full access to the model's architecture 
 White-box attacks provide deep insights into model vulnerabilities, enabling better understanding of its robustness.
 \\
 \BfPara{Related Work} While the literature is rich in methods for white-box attacks against various models, the closest model families to generalist robot foundation models are VLMs.
-Most evasion attacks against VLM \cite{schlarmann2023adversarial, bailey2023image,gao2024adversarial,wang2024stop,tan2024wolf} typically use gradient-based approaches, \eg PGD and CW, to generate/optimize perturbation for adversarial samples.
-Recent work has begun to move beyond static, single-frame formulations toward trajectory-level redirection and architecture-specific attacks designed to flow-matching robot policies~\cite{puthumanaillam2026trajectory,tae2026drift,zhang2026structure,yin2026vlaguard}.
+Most evasion attacks against VLMs \cite{schlarmann2023adversarial, bailey2023image,gao2024adversarial,wang2024stop,tan2024wolf} typically use gradient-based approaches, \eg PGD and CW, to generate/optimize perturbation for adversarial samples.
+Recent work has begun to move beyond static, single-frame formulations toward trajectory-level redirection and architecture-specific attacks designed for flow-matching robot policies~\cite{puthumanaillam2026trajectory,tae2026drift,zhang2026structure,yin2026vlaguard}.
 % A recent study \cite{fu2023misusing} shows that seemingly harmless images with trojan-like characteristics can manipulate VLMs to call attacker-specific third-party tools or external APIs. 
 Gao \etal \cite{gao2024inducing} introduce verbose images, creating imperceptible perturbations to make VLMs generate longer output sentences. Such an attack raises energy consumption and latency, which can have serious consequences in robotics. 
 Recent studies \cite{qi2024visual,shayegani2023jailbreak} show that visual and textual perturbations can jointly create malicious injections.
@@ -985,7 +985,7 @@ two attack families, Surrogate-Transfer Action Perturbation (STAP) under gray-bo
 \BfPara{Proposed Attack} We propose STAP, a surrogate-transfer gray-box attack grounded in the action space of the robot. Let a victim policy  $\mathcal{F}=(\mathcal{P},\bm{\omega})$, where $\mathcal{P}$ collects the public components (\eg the vision encoder, the VLM backbone, and the action tokenizer) and $\bm{\omega}$ collects the private components (\eg fine-tuned policy weights, the action head, and the data mixture). The gray-box adversary knows $\mathcal{P}$ and the architecture family but not $\bm{\omega}$. 
 For example, models based on Octo and OpenVLA have base components that are public while embodiment-specific checkpoints and training data remain private. 
 The attacker constructs a surrogate policy $\mathcal{F}'$ by fine-tuning the same components $\mathcal{P}$ on the public data mixture (\eg data from \autoref{tab:multi_dataset}), %with independent splits and seeds
-so $\mathcal{F}'$ shares the architecture and tokenizer of $\mathcal{F}$ and approximates its task distribution, but not its weights or performace. 
+so $\mathcal{F}'$ shares the architecture and tokenizer of $\mathcal{F}$ and approximates its task distribution, but not its weights or performance. 
 For same-embodiment pairs $G'=G(\bm{\theta})$, STAP realizes an untargeted evasion attack $\mathcal{M}(\bm{x}+\bm{\delta}^{*},\bm{t})\xrightarrow{{}_{\textbf{U}}}\bm{a}_{out}'$ with  perturbation $\bm{\delta}^{*}$ solving the ABBP objective on the surrogate, \ie the attacker runs target selection (\autoref{eq:abbp-shift}) with the surrogate kinematics $G'(\bm{\theta})$ and perturbation synthesis (\autoref{eq:abbp-obj}) with the surrogate logits $\bm{z}'_j(\bm{x}+\bm{\delta}^{*},\bm{t})$, then applies $\bm{\delta}^{*}$ to the victim without re-optimization. 
 % For cross-embodiment pairs, stage 1 keeps the surrogate kinematics and the perturbation transfers as is, since the embodiment of the victim is observable. 
 To improve transfer, we optimize the margin over an ensemble of $K$ surrogates with input diversity and momentum, and we ablate $K\in\{1,3\}$ in the evaluation. Because we control the surrogate backbone, training data, and embodiment head, we examine each factor independently and measure how surrogate-victim mismatch degrades $\epsilon^{*}(\rho)$. %, a study infeasible with fixed public surrogates. This study identifies which factor dominates transfer degradation and forms a deliverable of the attack framework. Language-modality attacks (\eg \emph{prompt injection} and \emph{jailbreak} through surrogate text embeddings) apply only to language-conditioned models (\ie RT-1, RT-2, OpenVLA, and Octo) and exclude vision-only models such as ACT.
@@ -995,7 +995,7 @@ In the textual variant (STAP-L), $\mathcal{M}(\bm{x},\bm{t})=(\bm{x},\bm{t}')$, 
 % The token-substitution search runs on surrogate gradients, which the gray-box adversary holds even though victim gradients are unavailable.
 For same-backbone pairs, the shared tokenizer transfers token-level edits directly. For closed-backbone victims with a substituted public VLM, tokenizers diverge and token-level edits do not directly transfer, so we restrict $\bm{t}'$ to synonym and suffix edits, whose effect is carried by semantics not token-id. 
 We test this restriction empirically, \ie the evaluation stratifies textual transfer success by surrogate-victim backbone mismatch and compares token-level edits against synonym and suffix edits under the same budget $\epsilon_t$, so the tokenizer-mismatch penalty is measured directly on the transferability matrix.
-In the joint variant (STAP-VL), $\mathcal{M}(\bm{x}+\bm{\delta}_x^{*},\bm{t}')$ solves \autoref{eq:abbp-obj-joint} on the surrogate with the surrogate coupling $\Psi'$, and the alternating optimization and the ensemble of $K$ surrogates.
+In the joint variant (STAP-VL), $\mathcal{M}(\bm{x}+\bm{\delta}_x^{*},\bm{t}')$ solves \autoref{eq:abbp-obj-joint} on the surrogate with the surrogate coupling $\Psi'$, and the same alternating optimization and the ensemble of $K$ surrogates.
 
 
 \BfPara{STAP in Privacy Attacks} The privacy attacks query the victim through its public interface and record the predicted actions $\bm{a}_{out}$, so they apply to all models. 
@@ -1047,7 +1047,7 @@ For TTDA variants, we report the query-efficiency curve per modality and the all
 
 \subsection{T3: Defense, Safety, and Interpretation of foundation RMs} \label{sec:t3}
 
-This pursues three goals. \cib{1} \emph{Defense}: mitigate the attacks at their point of effect with an action-space 
+This task pursues three goals. \cib{1} \emph{Defense}: mitigate the attacks at their point of effect with an action-space 
 \begin{wraptable}{r}{0.3\textwidth}{\vspace{-3ex}}
 \centering
 \caption{\scriptsize{(\textbf{T})raining\&(\textbf{I})nference defenses.}}\vspace{-2ex}
@@ -1075,7 +1075,7 @@ anomaly detector and adversarial fine-tuning constrained by the same kinematics 
   \cib{2} \emph{Safety assessment}: turn the physical-consequence metrics of the attack protocol into a violation-based safety benchmark with statistical guarantees, covering both adversarial and benign failure modes. \cib{3} \emph{Interpretation}: explain why attacks succeed and defenses work by attributing decisions to source modalities and tokens. 
 \\
 \BfPara{Related Work} %The defense landscape relevant to all three sub-tasks splits by where it acts. 
-VLM inference- and training-timedefenses are shown in \autoref{tab:defense}. VLA-specific defenses have begun to appear, including structure-aware robust fine-tuning, randomized smoothing for certified robustness, and backdoor token reconstruction~\cite{zhang2026structure,seferis2025randomized,li2026whenattention}. %None of these inspects the physical plausibility of the predicted actions, which is the gap T3-1 addresses. Safety assessment of robot foundation models and interpretation of their action predictions draw on further literatures, operational-safety standards and interpretability methods respectively, which we review in \autoref{sec:t3_2} and \autoref{sec:t3_3}.
+VLM inference- and training-time defenses are shown in \autoref{tab:defense}. VLA-specific defenses have begun to appear, including structure-aware robust fine-tuning, randomized smoothing for certified robustness, and backdoor token reconstruction~\cite{zhang2026structure,seferis2025randomized,li2026whenattention}. %None of these inspects the physical plausibility of the predicted actions, which is the gap T3-1 addresses. Safety assessment of robot foundation models and interpretation of their action predictions draw on further literatures, operational-safety standards and interpretability methods respectively, which we review in \autoref{sec:t3_2} and \autoref{sec:t3_3}.
 In terms of safety, operational safety of robots is governed by established standards, \eg ISO 13482:2014, ISO 10218-1, ISO 10218-2, and ISO/TS 15066, and by prior work on validation under rare failures and on standardized physical testbeds~\cite{FoschVillaronga2015CreationOA,RePEc:eps:cepswp:26204,10.3389/frobt.2022.1002226,fosch21,zhangei2023quadruped-tro,weng2023standard-legged-test,weng2023comparability}. These frameworks assess the robot as a physical system, and none assesses the foundation model as the component that can be driven to unsafe outputs by benign or adversarial inputs.
 
 As for interpretability, methods can be categorized into gradient- and inference-based approaches. 
@@ -1096,7 +1096,7 @@ Interactive tools, \eg VL-InterpreT \cite{aflalo2022vl} and MultiViz \cite{liang
 % Prompt-engineering defenses~\cite{wu2023jailbreaking,wang2024adashield,chen2023can} optimize the prompt to harden the model. Training-time VLM defenses construct robust feedback or prompts~\cite{chen2023dress,zhang2023adversarial,li2024one}, or train robust VLMs by fine-tuning or contrastive learning~\cite{li2024red,yang2024robust}. 
 % {\ul{In this sub-task, we propose two robotics-specific defenses, the Temporal Action Consistency Detector (TACD) and Action-Grounded Adversarial Fine-Tuning (AGAT), and benchmark them against various defenses.}}
 
-\BfPara{Proposed Defense 1} We propose  Temporal Action Consistency Detector (TACD), an action-space anomaly detector operating on predicted actions rather than inputs. Because TACD inspects the action output directly, it complements input-side defenses and remains effective when the compromised modality is unknown. TACD operates at two levels. At the per-step level, it flags predicted actions outside the embodiment's feasible set $\mathcal{A}_0(\bm{\theta})$, \ie actions violating joint limits, the reachable workspace, or the velocity bound relative to the previously executed action; $\mathcal{A}_0$ is the absolute counterpart of the attacker's reference-dependent feasible set $\mathcal{A}(\bm{\theta})$ of \autoref{eq:abbp-shift}. 
+\BfPara{Proposed Defense 1} We propose Temporal Action Consistency Detector (TACD), an action-space anomaly detector operating on predicted actions rather than inputs. Because TACD inspects the action output directly, it complements input-side defenses and remains effective when the compromised modality is unknown. TACD operates at two levels. At the per-step level, it flags predicted actions outside the embodiment's feasible set $\mathcal{A}_0(\bm{\theta})$, \ie actions violating joint limits, the reachable workspace, or the velocity bound relative to the previously executed action; $\mathcal{A}_0$ is the absolute counterpart of the attacker's reference-dependent feasible set $\mathcal{A}(\bm{\theta})$ of \autoref{eq:abbp-shift}. 
 At the sequence level, a multi-task trajectory-forecasting model conditioned on a task embedding, trained jointly on the benign demonstrations of all tasks, forecasts $\hat{\bm{a}}_{k:k+c}$ from the action history $\bm{a}_{k-c:k}$ (padded with the start pose for $k<c$), where the horizon equals the policy chunk length $c$ of \autoref{sec:t2_2}, and raises a flag when
 \vspace{-2.5ex}\begin{equation}
   \small
@@ -1158,7 +1158,7 @@ where $\mathcal{A}_0(\bm{\theta}_k)$ is the embodiment feasible set of \autoref{
 \;\;\text{with probability }1-\alpha,
 \label{eq:safety-est}
 \vspace{-1.5ex}\end{equation}
-by the Hoeffding bound, since $\mathcal{V}\in\{0,1\}$; at the shared protocol size the half-width is below $0.13$ at $\alpha{=}0.05$, and we report exact Clopper-Pear`son intervals alongside. Rare unsafe events are the failure mode of naive estimation, \ie in benign cells, where $p_q$ may sit below the grid resolution, we apply importance sampling over the shift distribution, biasing lighting, clutter, and phrasing toward configurations with high kinematic gain $\|(WG(\bm{\theta}))_{:,j}\|_{2}$ and correcting by the likelihood ratio, keeping the estimator unbiased at a fraction of the episode count.
+by the Hoeffding bound, since $\mathcal{V}\in\{0,1\}$; at the shared protocol size the half-width is below $0.13$ at $\alpha{=}0.05$, and we report exact Clopper-Pearson intervals alongside. Rare unsafe events are the failure mode of naive estimation, \ie in benign cells, where $p_q$ may sit below the grid resolution, we apply importance sampling over the shift distribution, biasing lighting, clutter, and phrasing toward configurations with high kinematic gain $\|(WG(\bm{\theta}))_{:,j}\|_{2}$ and correcting by the likelihood ratio, keeping the estimator unbiased at a fraction of the episode count.
 Verification proceeds by falsification, \ie the attack families act as stress generators that search each cell for witnesses of $\mathcal{V}$, and the assessment reports both the rate $\hat p_q$ and the witness set, so every claimed-safe cell carries the strongest counterexample search we can mount.
 
 \BfPara{Testing and Acceptance} Three criteria make the assessment decidable.
@@ -1250,23 +1250,23 @@ More broadly, the project seeks to help establish a culture in which \textbf{saf
 \bibliography{refs,refs_v2_additions,gkt-award-2107020,gkt-award-2343595,gkt-award-2537309,project_results}
 
 
-% \newpage\newsection{B}
-% \input{sections/budgetjustification_v2}
+\newpage\newsection{B}
+\input{sections/budgetjustification_v2}
 
-% \newpage\newsection{C}
-% \input{sections/facilities}
+\newpage\newsection{C}
+\input{sections/facilities}
 
-% \newpage\newsection{D}
-% \input{sections/datamanagement_v2}
+\newpage\newsection{D}
+\input{sections/datamanagement_v2}
 
-% \newpage\newsection{E}
-% \input{sections/mentoring_v2}
+\newpage\newsection{E}
+\input{sections/mentoring_v2}
 
-% \newpage\newsection{F}
-% \input{sections/summary_v2}
+\newpage\newsection{F}
+\input{sections/summary_v2}
 
-% \newpage\newsection{G}
-% \input{sections/synergy}
+\newpage\newsection{G}
+\input{sections/synergy}
 
 
 
